@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Pie, PieChart, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 type UnitSystem = 'metric' | 'imperial';
 
@@ -110,22 +109,14 @@ export default function BmiCalculatorPage() {
   
   const bmiCategory = useMemo(() => (bmi ? getBmiCategory(bmi) : ''), [bmi]);
   const bmiColor = useMemo(() => (bmi ? getBmiColor(bmi) : 'transparent'), [bmi]);
-
-  const gaugeData = useMemo(() => [
-    { name: 'Underweight', value: 8.5, color: 'hsl(var(--chart-4))' }, // 10 to 18.5
-    { name: 'Normal', value: 6.5, color: 'hsl(var(--chart-2))' },      // 18.5 to 25
-    { name: 'Overweight', value: 5, color: 'hsl(var(--chart-5))' },   // 25 to 30
-    { name: 'Obesity', value: 15, color: 'hsl(var(--chart-1))' },    // 30 to 45
-  ], []);
-
-  const bmiNeedleRotation = useMemo(() => {
-    if (!bmi) return -90;
-    const minBmi = 10;
-    const maxBmi = 45;
+  
+  const bmiMarkerPosition = useMemo(() => {
+    if (!bmi) return 0;
+    const minBmi = 15;
+    const maxBmi = 40;
     const value = Math.max(minBmi, Math.min(maxBmi, bmi));
-    // map value from [minBmi, maxBmi] to [-90, 90] degrees
-    const percentage = (value - minBmi) / (maxBmi - minBmi);
-    return percentage * 180 - 90;
+    const percentage = ((value - minBmi) / (maxBmi - minBmi)) * 100;
+    return percentage;
   }, [bmi]);
   
 
@@ -233,7 +224,11 @@ export default function BmiCalculatorPage() {
                     </div>
                      {bmi !== null && (
                          <div className="flex flex-col items-center justify-center rounded-lg border p-4 md:p-6">
-                            <h3 className="text-lg font-semibold mb-2">Result</h3>
+                            <h3 className="text-lg font-semibold mb-4">Your Result</h3>
+                            <div className="text-center mb-4">
+                                <p className="text-4xl font-bold" style={{color: bmiColor}}>{bmi.toFixed(1)}</p>
+                                <p className="text-lg font-semibold" style={{color: bmiColor}}>({bmiCategory})</p>
+                            </div>
                             <div className="text-sm text-center w-full space-y-2">
                                 <p>Healthy BMI range: <span className="font-semibold">18.5 kg/m² - 25 kg/m²</span></p>
                                 {healthyWeightRange && (
@@ -250,55 +245,32 @@ export default function BmiCalculatorPage() {
                     )}
                 </div>
                  {bmi !== null && (
-                    <div className="mt-8 flex flex-col items-center justify-center rounded-lg border p-4 md:p-6 min-h-[350px]">
-                        <div className="relative w-full max-w-xs h-48">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={gaugeData}
-                                        dataKey="value"
-                                        cx="50%"
-                                        cy="100%"
-                                        startAngle={180}
-                                        endAngle={0}
-                                        innerRadius="70%"
-                                        outerRadius="100%"
-                                        paddingAngle={2}
-                                        stroke="none"
-                                    >
-                                        {gaugeData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip
-                                        contentStyle={{ display: 'none' }}
-                                        trigger="none"
-                                    />
-                                </PieChart>
-                            </ResponsiveContainer>
-                            <div
-                                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none"
-                            >
+                    <div className="mt-8 flex flex-col items-center justify-center rounded-lg border p-4 md:p-6">
+                        <div className="w-full max-w-xl">
+                            <div className="relative h-6 w-full rounded-full flex overflow-hidden">
+                                <div className="w-[14%] bg-[hsl(var(--chart-4))]" /> 
+                                <div className="w-[26%] bg-[hsl(var(--chart-2))]" />
+                                <div className="w-[20%] bg-[hsl(var(--chart-5))]" />
+                                <div className="w-[40%] bg-[hsl(var(--chart-1))]" />
                                 <div
-                                    className="absolute bottom-0 left-1/2 w-0.5 h-[calc(50%-1rem)] origin-bottom transition-transform duration-500"
-                                    style={{ transform: `translateX(-50%) rotate(${bmiNeedleRotation}deg)` }}
+                                    className="absolute top-0 h-full w-1.5 -translate-x-1/2 transform rounded-full bg-foreground border-2 border-background"
+                                    style={{ left: `${bmiMarkerPosition}%` }}
                                 >
-                                    <div className="w-full h-full bg-foreground rounded-t-full"></div>
+                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold">{bmi.toFixed(1)}</div>
                                 </div>
-                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-foreground z-10 border-2 border-background"></div>
                             </div>
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center pointer-events-none">
-                                <p className="text-sm text-muted-foreground">Your BMI</p>
-                                <p className="text-4xl font-bold" style={{color: bmiColor}}>{bmi.toFixed(1)}</p>
-                                <p className="text-lg font-semibold" style={{color: bmiColor}}>({bmiCategory})</p>
+                            <div className="relative mt-2 flex w-full text-xs text-muted-foreground">
+                                <div className="w-[14%] text-center">Underweight</div>
+                                <div className="w-[26%] text-center">Normal</div>
+                                <div className="w-[20%] text-center">Overweight</div>
+                                <div className="w-[40%] text-center">Obesity</div>
                             </div>
-
-                            <div className="absolute bottom-[20%] w-full px-2 text-xs text-muted-foreground pointer-events-none">
-                                <span className="absolute left-[8%]">15</span>
-                                <span className="absolute left-[26%]">18.5</span>
-                                <span className="absolute left-1/2 -translate-x-1/2">25</span>
-                                <span className="absolute right-[28%]">30</span>
-                                <span className="absolute right-[8%]">40</span>
+                             <div className="relative mt-1 flex w-full text-xs text-muted-foreground">
+                                <span className="absolute" style={{left: `0%`}}>15</span>
+                                <span className="absolute" style={{left: `14%`, transform: 'translateX(-50%)'}}>18.5</span>
+                                <span className="absolute" style={{left: `40%`, transform: 'translateX(-50%)'}}>25</span>
+                                <span className="absolute" style={{left: `60%`, transform: 'translateX(-50%)'}}>30</span>
+                                <span className="absolute" style={{left: `100%`, transform: 'translateX(-100%)'}}>40</span>
                             </div>
                         </div>
                     </div>
