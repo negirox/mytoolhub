@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
 
 type UnitSystem = 'metric' | 'imperial';
 
@@ -65,7 +64,7 @@ export default function BmiCalculatorPage() {
       const inches = parseFloat(heightIn);
       if (weight > 0 && (feet > 0 || inches > 0)) {
         weightNum = weight * 0.453592; // lbs to kg
-        heightNumMeters = (feet * 12 + inches) * 0.0254; // ft+in to meters
+        heightNumMeters = (feet * 12 + (inches || 0)) * 0.0254; // ft+in to meters
       }
     }
 
@@ -271,5 +270,5 @@ export default function BmiCalculatorPage() {
         </div>
       </main>
     </>
-    
-  
+  );
+}
