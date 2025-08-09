@@ -20,49 +20,57 @@ import {
 } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal, ArrowRightLeft } from 'lucide-react';
-import { countries, Currency } from '@/lib/countries';
 
-const API_URL = 'https://api.exchangerate.host/latest';
+const CURRENCIES_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
+const EXCHANGE_RATE_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies';
 
-const uniqueCurrencies = Array.from(
-  new Set(
-    Object.values(countries)
-      .map((c) => (c.currency_code ? `${c.currency_code} - ${c.currency_name}`: null))
-      .filter(Boolean)
-  )
-).map(str => {
-    const [code, ...nameParts] = str!.split(' ');
-    return {
-        code,
-        name: nameParts.join(' ').replace(/-/g, '').trim()
-    };
-}).sort((a,b) => a.code.localeCompare(b.code));
-
+interface Currencies {
+  [key: string]: string;
+}
 
 export default function CurrencyConverterPage() {
   const [amount, setAmount] = useState('1');
-  const [fromCurrency, setFromCurrency] = useState('USD');
-  const [toCurrency, setToCurrency] = useState('EUR');
+  const [fromCurrency, setFromCurrency] = useState('usd');
+  const [toCurrency, setToCurrency] = useState('eur');
   const [result, setResult] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [currencies, setCurrencies] = useState<Currencies>({});
+  const [date, setDate] = useState('');
+
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const res = await fetch(CURRENCIES_URL);
+        if (!res.ok) throw new Error('Failed to fetch currencies.');
+        const data: Currencies = await res.json();
+        setCurrencies(data);
+      } catch (e: any) {
+        setError('Could not load currency list.');
+      }
+    };
+    fetchCurrencies();
+  }, []);
 
   const convertCurrency = useCallback(async () => {
-    if (!amount) return;
+    if (!amount || !fromCurrency || !toCurrency) return;
     setIsLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const res = await fetch(
-        `${API_URL}?base=${fromCurrency}&symbols=${toCurrency}&amount=${amount}`
-      );
+      const res = await fetch(`${EXCHANGE_RATE_URL}/${fromCurrency}.json`);
       if (!res.ok) {
         throw new Error('Failed to fetch exchange rate.');
       }
       const data = await res.json();
-      if (data.rates && data.rates[toCurrency]) {
-        setResult(data.rates[toCurrency]);
+      
+      const rate = data[fromCurrency]?.[toCurrency];
+      setDate(data.date);
+
+      if (rate) {
+        const numericAmount = parseFloat(amount);
+        setResult(numericAmount * rate);
       } else {
         throw new Error('Could not find rate for the selected currency.');
       }
@@ -79,9 +87,10 @@ export default function CurrencyConverterPage() {
     setToCurrency(temp);
   };
   
-  useEffect(() => {
-    convertCurrency();
-  }, [fromCurrency, toCurrency, convertCurrency]);
+  const currencyOptions = Object.entries(currencies).map(([code, name]) => ({
+    code: code,
+    name: name,
+  })).sort((a,b) => a.name.localeCompare(b.name));
 
   return (
     <>
@@ -125,9 +134,9 @@ export default function CurrencyConverterPage() {
                       <SelectValue placeholder="From currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      {uniqueCurrencies.map((c) => (
+                      {currencyOptions.map((c) => (
                         <SelectItem key={c.code} value={c.code}>
-                          {c.code} - {c.name}
+                          {c.code.toUpperCase()} - {c.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -140,9 +149,9 @@ export default function CurrencyConverterPage() {
                       <SelectValue placeholder="To currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      {uniqueCurrencies.map((c) => (
+                      {currencyOptions.map((c) => (
                         <SelectItem key={c.code} value={c.code}>
-                          {c.code} - {c.name}
+                           {c.code.toUpperCase()} - {c.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -163,8 +172,9 @@ export default function CurrencyConverterPage() {
                     Result
                   </h3>
                   <p className="text-2xl font-bold text-primary">
-                    {amount} {fromCurrency} = {result.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })} {toCurrency}
+                    {amount} {fromCurrency.toUpperCase()} = {result.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })} {toCurrency.toUpperCase()}
                   </p>
+                  {date && <p className="text-sm text-muted-foreground mt-2">Last updated on: {date}</p>}
                 </div>
               )}
             </CardContent>
