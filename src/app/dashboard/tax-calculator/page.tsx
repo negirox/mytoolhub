@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -190,6 +190,23 @@ export default function TaxCalculatorPage() {
   const [homeLoanInterest, setHomeLoanInterest] = useState('0');
   const [otherDeductions, setOtherDeductions] = useState('0');
   
+  const financialYear = useMemo(() => {
+    const today = new Date();
+    const currentMonth = today.getMonth(); // 0-11
+    const currentYear = today.getFullYear();
+
+    let startYear;
+    let endYear;
+
+    if (currentMonth < 3) { // Before April (Jan, Feb, Mar)
+      startYear = currentYear - 1;
+      endYear = currentYear;
+    } else { // April and after
+      startYear = currentYear;
+      endYear = currentYear + 1;
+    }
+    return `FY ${startYear}-${String(endYear).slice(-2)}`;
+  }, []);
 
   const calculateTax = () => {
     const incomeNum = parseFloat(income);
@@ -242,7 +259,7 @@ export default function TaxCalculatorPage() {
           <Card>
             <CardHeader>
               <CardTitle className="font-headline">
-                Indian Income Tax Calculator (FY 2023-24)
+                Indian Income Tax Calculator ({financialYear})
               </CardTitle>
               <CardDescription>
                 Estimate your tax liability under the Old and New tax regimes.
