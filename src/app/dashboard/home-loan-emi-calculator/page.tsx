@@ -898,7 +898,7 @@ export default function HomeLoanEmiCalculatorPage() {
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="item-1">
+                <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>
                     What is the difference between an EMI and a Home Loan EMI?
                   </AccordionTrigger>
@@ -911,7 +911,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     see the complete picture.
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-2">
+                <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>How does the down payment affect my loan?</AccordionTrigger>
                   <AccordionContent>
                     A larger down payment reduces your total loan amount,
@@ -920,7 +920,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     help you secure a better interest rate from the lender.
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-3">
+                <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>
                     What are one-time expenses and why should I consider them?
                   </AccordionTrigger>
@@ -933,7 +933,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     percentage of the home value.
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-4">
+                <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>
                     How do prepayments or extra payments help?
                   </AccordionTrigger>
@@ -944,7 +944,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     shorten your loan tenure by several years.
                   </AccordionContent>
                 </AccordionItem>
-                 <AccordionItem value="item-5">
+                 <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>
                     Are property taxes and home insurance mandatory?
                   </AccordionTrigger>

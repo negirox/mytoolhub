@@ -622,31 +622,31 @@ export default function EmiCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
+                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is an EMI?</AccordionTrigger>
                         <AccordionContent>
                         An Equated Monthly Installment (EMI) is a fixed payment amount made by a borrower to a lender on a specified date each month. EMIs are used to pay off both interest and principal each month so that over a specified number of years, the loan is paid off in full.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2">
+                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>How is EMI calculated?</AccordionTrigger>
                         <AccordionContent>
                         The mathematical formula for calculating EMI is: EMI = [P x R x (1+R)^N] / [(1+R)^N-1], where P is the principal loan amount, R is the monthly interest rate, and N is the number of monthly installments. Our calculator simplifies this process for you.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-3">
+                    <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is an amortization schedule?</AccordionTrigger>
                         <AccordionContent>
                         An amortization schedule is a table detailing each periodic payment on a loan. It breaks down each payment into its principal and interest components and shows the remaining balance of the loan after each payment is made. This calculator provides a yearly and monthly schedule.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-4">
+                    <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>How does prepayment of a loan help?</AccordionTrigger>
                         <AccordionContent>
                         Making prepayments (paying more than your scheduled EMI) can significantly reduce your total interest cost and shorten your loan tenure. By paying down the principal faster, you reduce the balance on which interest is calculated, leading to substantial savings over the life of the loan.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5">
+                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is the difference between fixed and floating interest rates?</AccordionTrigger>
                         <AccordionContent>
                         A fixed interest rate remains the same throughout the loan tenure, meaning your EMI amount will not change. A floating interest rate, on the other hand, is linked to a benchmark rate and can change over time, causing your EMI amount to increase or decrease. This calculator assumes a fixed interest rate.

@@ -275,31 +275,31 @@ export default function CalorieCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
+                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is BMR?</AccordionTrigger>
                         <AccordionContent>
                         Basal Metabolic Rate (BMR) is the number of calories your body needs to accomplish its most basic (basal) life-sustaining functions, such as breathing, circulation, nutrient processing, and cell production. This calculator uses the Mifflin-St Jeor equation to estimate your BMR.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2">
+                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>How does activity level affect calorie needs?</AccordionTrigger>
                         <AccordionContent>
                         Your BMR is multiplied by an activity factor to estimate your total daily energy expenditure (TDEE), or maintenance calories. The more active you are, the higher your activity multiplier, and the more calories you need to consume to maintain your current weight.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-3">
+                     <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is a calorie deficit for weight loss?</AccordionTrigger>
                         <AccordionContent>
                         To lose weight, you need to consume fewer calories than your body burns. This is called a calorie deficit. A deficit of 500 calories per day typically leads to about 1 pound (0.45 kg) of weight loss per week.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-4">
+                     <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is a calorie surplus for weight gain?</AccordionTrigger>
                         <AccordionContent>
                         To gain weight (primarily muscle, with proper training), you need to consume more calories than your body burns. This is a calorie surplus. A surplus of 250-500 calories per day is a common recommendation for steady weight gain.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5">
+                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>Are these calculations 100% accurate?</AccordionTrigger>
                         <AccordionContent>
                         No, these are estimations. Calorie calculators provide a good starting point, but individual metabolisms can vary. It's best to use this as a guideline, monitor your weight over a few weeks, and adjust your calorie intake as needed based on your results.
