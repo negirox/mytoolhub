@@ -19,7 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Pie, PieChart, Cell } from 'recharts';
+import { Pie, PieChart, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
   ChartContainer,
   ChartTooltip,
@@ -262,8 +262,9 @@ export default function CreditCardEmiCalculatorPage() {
   
   const chartConfig = {
       principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
-      interest: { label: 'Total Interest', color: 'hsl(var(--chart-1))' },
+      interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
       fees: { label: 'Total Fees & GST', color: 'hsl(var(--chart-5))' },
+      gstOnInterest: { label: 'GST on Interest', color: 'hsl(var(--chart-5))' },
   };
 
   const pieChartData = useMemo(() => {
@@ -275,6 +276,11 @@ export default function CreditCardEmiCalculatorPage() {
         { name: 'fees', value: totalFees, fill: 'var(--color-fees)' },
       ];
   }, [amount, results]);
+
+  const monthlyChartData = useMemo(() => {
+    if (!amortizationSchedule.length) return [];
+    return amortizationSchedule.flatMap(year => year.monthlyData);
+  }, [amortizationSchedule]);
 
 
   return (
@@ -368,25 +374,58 @@ export default function CreditCardEmiCalculatorPage() {
             </CardContent>
           </Card>
           
-          <Card>
-              <CardHeader>
-                <CardTitle className="font-headline">Cost Breakdown</CardTitle>
-                <CardDescription>A visual breakdown of your total payment.</CardDescription>
-              </CardHeader>
-              <CardContent className="flex items-center justify-center">
-                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
-                      <PieChart>
-                          <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
-                          <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100}>
-                            {pieChartData.map((entry) => (
-                                <Cell key={entry.name} fill={entry.fill} />
-                            ))}
-                          </Pie>
-                          <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
-                      </PieChart>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+                <CardHeader>
+                  <CardTitle className="font-headline">Cost Breakdown</CardTitle>
+                  <CardDescription>A visual breakdown of your total payment.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center justify-center">
+                    <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
+                        <PieChart>
+                            <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
+                            <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100}>
+                              {pieChartData.map((entry) => (
+                                  <Cell key={entry.name} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                        </PieChart>
+                    </ChartContainer>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-headline">Monthly Payment Breakdown</CardTitle>
+                  <CardDescription>Visual breakdown of each EMI payment.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                      <BarChart data={monthlyChartData} accessibilityLayer>
+                          <CartesianGrid vertical={false} />
+                          <XAxis 
+                              dataKey="month" 
+                              tickLine={false}
+                              axisLine={false}
+                              tickMargin={8}
+                              tickFormatter={(value) => `M${value}`} 
+                          />
+                          <YAxis 
+                            tickFormatter={(value) => formatCurrency(value as number)}
+                          />
+                          <ChartTooltip 
+                            cursor={false}
+                            content={<ChartTooltipContent />} 
+                          />
+                          <ChartLegend content={<ChartLegendContent />} />
+                          <Bar dataKey="principal" stackId="a" fill="var(--color-principal)" name="Principal" radius={4} />
+                          <Bar dataKey="interest" stackId="a" fill="var(--color-interest)" name="Interest" radius={4} />
+                          <Bar dataKey="gstOnInterest" stackId="a" fill="var(--color-fees)" name="GST on Interest" radius={4} />
+                      </BarChart>
                   </ChartContainer>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
 
             {amortizationSchedule.length > 0 && (
                 <Card>
@@ -466,3 +505,5 @@ export default function CreditCardEmiCalculatorPage() {
     </TooltipProvider>
   );
 }
+
+    
