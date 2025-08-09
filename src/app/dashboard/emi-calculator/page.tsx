@@ -301,8 +301,8 @@ export default function EmiCalculatorPage() {
   };
   
   const pieChartData = useMemo(() => ([
-    { name: 'Principal Amount', value: parseFloat(principal) || 0, fill: 'hsl(var(--chart-2))' },
-    { name: 'Total Interest', value: totalInterest || 0, fill: 'hsl(var(--chart-1))' }
+    { name: 'Principal Amount', value: parseFloat(principal) || 0, fill: 'var(--color-principal)' },
+    { name: 'Total Interest', value: totalInterest || 0, fill: 'var(--color-interest)' }
   ]), [principal, totalInterest]);
 
 
@@ -480,8 +480,7 @@ export default function EmiCalculatorPage() {
                         tickFormatter={(value) => `Year ${value}`}
                       />
                       <YAxis
-                        tickFormatter={(value) => formatCurrency(value)}
-                        
+                        tickFormatter={(value) => formatCurrency(value as number)}
                       />
                       <ChartTooltip
                         cursor={false}
@@ -507,7 +506,7 @@ export default function EmiCalculatorPage() {
                         fillOpacity={0.7}
                         stroke="var(--color-principal)"
                         stackId="a"
-                        name="Principal"
+                        name="principal"
                       />
                       <Area
                         dataKey="interest"
@@ -516,7 +515,7 @@ export default function EmiCalculatorPage() {
                         fillOpacity={0.7}
                         stroke="var(--color-interest)"
                         stackId="a"
-                        name="Interest"
+                        name="interest"
                       />
                        {prepaymentFrequency !== 'none' && parseFloat(prepaymentAmount) > 0 && (
                           <Area
@@ -526,7 +525,7 @@ export default function EmiCalculatorPage() {
                             fillOpacity={0.7}
                             stroke="var(--color-extraPayment)"
                             stackId="a"
-                            name="Extra Payment"
+                            name="extraPayment"
                           />
                         )}
                     </AreaChart>
