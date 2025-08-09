@@ -20,11 +20,9 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  Bar,
-  BarChart,
-  XAxis,
-  YAxis,
 } from '@/components/ui/chart';
+import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+
 
 const CURRENCIES_URL =
   'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
