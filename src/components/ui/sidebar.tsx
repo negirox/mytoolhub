@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, X } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -168,14 +168,20 @@ const Sidebar = React.forwardRef<
     {
       side = "left",
       variant = "sidebar",
-      collapsible = "offcanvas",
+      collapsible = "icon",
       className,
       children,
       ...props
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar()
+    
+    React.useEffect(() => {
+       if (isMobile) {
+         setOpen(false)
+       }
+    }, [isMobile, setOpen])
 
     if (collapsible === "none") {
       return (
@@ -194,21 +200,23 @@ const Sidebar = React.forwardRef<
 
     if (isMobile) {
       return (
-        <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-          <SheetContent
-            data-sidebar="sidebar"
-            data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-              } as React.CSSProperties
-            }
-            side={side}
-          >
-            <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
-        </Sheet>
+        <div data-mobile-only>
+            <div 
+              data-sidebar="sidebar"
+              data-mobile="true"
+              className={cn(
+                "fixed inset-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground transition-transform duration-300 ease-in-out",
+                openMobile ? "translate-x-0" : "-translate-x-full"
+              )}
+            >
+              <div className="flex h-full w-full flex-col p-4">
+                {children}
+                <Button variant="ghost" size="icon" className="absolute top-4 right-4" onClick={() => setOpenMobile(false)}>
+                  <X />
+                </Button>
+              </div>
+            </div>
+        </div>
       )
     }
 
@@ -405,7 +413,7 @@ const SidebarContent = React.forwardRef<
       data-sidebar="content"
       className={cn(
         "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
-        className
+        "md:p-2"
       )}
       {...props}
     />
@@ -421,7 +429,7 @@ const SidebarGroup = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+      className={cn("relative flex w-full min-w-0 flex-col", className)}
       {...props}
     />
   )
@@ -441,7 +449,7 @@ const SidebarGroupLabel = React.forwardRef<
       className={cn(
         "duration-200 flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opacity] ease-in-out focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
-        className
+        "px-2"
       )}
       {...props}
     />
@@ -554,7 +562,7 @@ const SidebarMenuButton = React.forwardRef<
     ref
   ) => {
     const Comp = asChild ? Slot : "button"
-    const { isMobile, state } = useSidebar()
+    const { isMobile, state, setOpenMobile } = useSidebar()
 
     const button = (
       <Comp
@@ -562,7 +570,13 @@ const SidebarMenuButton = React.forwardRef<
         data-sidebar="menu-button"
         data-size={size}
         data-active={isActive}
-        className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+        className={cn(sidebarMenuButtonVariants({ variant, size }), isMobile && "!h-12 !p-3 !text-base", className)}
+        onClick={(e) => {
+          if (isMobile) {
+            setOpenMobile(false)
+          }
+          props.onClick?.(e)
+        }}
         {...props}
       />
     )
@@ -761,5 +775,3 @@ export {
   SidebarTrigger,
   useSidebar,
 }
-
-    

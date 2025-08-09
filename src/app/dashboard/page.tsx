@@ -45,7 +45,7 @@ const tools = [
 export default function DashboardPage() {
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm">
+      <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">Dashboard</h1>
       </header>
       <main className="flex-1 p-4 md:p-6">

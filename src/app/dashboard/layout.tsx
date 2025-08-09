@@ -9,12 +9,14 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import {
   Calculator,
   HardHat,
   Landmark,
   LayoutDashboard,
+  Menu,
   Percent,
   Ruler,
   Wallet,
@@ -125,7 +127,15 @@ export default function DashboardLayout({
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6 md:hidden">
+          <Logo />
+          <SidebarTrigger>
+            <Menu />
+          </SidebarTrigger>
+        </header>
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }
