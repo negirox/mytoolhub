@@ -3,8 +3,12 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'MyToolHub',
-  description: 'A hub for powerful, client-side tools.',
+  title: {
+    template: '%s | MyToolHub',
+    default: 'MyToolHub - Free Online Calculators & Converters',
+  },
+  description: 'A free, powerful hub of client-side tools including BMI, Calorie, EMI, and Currency Converters. Fast, secure, and easy to use.',
+  keywords: ['calculator', 'converter', 'bmi', 'emi', 'currency', 'calorie', 'free tools', 'online tools'],
 };
 
 export default function RootLayout({

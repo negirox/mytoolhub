@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts';
 import {
   ChartContainer,
   ChartTooltip,
@@ -28,7 +28,6 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-
 
 type UnitSystem = 'metric' | 'imperial';
 type Gender = 'male' | 'female';
@@ -248,12 +247,19 @@ export default function CalorieCalculatorPage() {
                     </CardHeader>
                     <CardContent>
                       <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
-                        <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 20 }}>
+                        <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 20, right: 50 }}>
                           <CartesianGrid horizontal={false} />
                           <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} tickMargin={10} />
                           <XAxis type="number" hide />
                           <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                            <Bar dataKey="calories" radius={5}>
+                             <LabelList
+                                dataKey="calories"
+                                position="right"
+                                offset={8}
+                                className="fill-foreground font-semibold"
+                                formatter={(value: number) => value.toLocaleString()}
+                            />
                            </Bar>
                         </BarChart>
                       </ChartContainer>
@@ -307,5 +313,3 @@ export default function CalorieCalculatorPage() {
     </>
   );
 }
-
-    
