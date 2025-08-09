@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { Wand2, LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -65,18 +65,6 @@ export default function DashboardLayout({
                 <Link href="/dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="SEO Booster"
-                isActive={pathname === '/dashboard/seo-booster'}
-              >
-                <Link href="/dashboard/seo-booster">
-                  <Wand2 />
-                  <span>SEO Booster</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
