@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -304,7 +305,7 @@ export default function HomeLoanEmiCalculatorPage() {
           <CollapsibleContent asChild>
             <tr className="bg-background">
               <TableCell colSpan={8} className="p-0">
-                <div className="p-4">
+                <div className="p-4 overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -748,7 +749,7 @@ export default function HomeLoanEmiCalculatorPage() {
                   <h3 className="mb-4 text-center font-semibold">
                     Loan Payment (Principal, Interest & Taxes)
                   </h3>
-                  <ChartContainer config={chartConfig} className="min-h-[250px]">
+                  <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm mx-auto">
                     <PieChart>
                       <RechartsTooltip
                         content={<ChartTooltipContent hideLabel />}
@@ -786,7 +787,7 @@ export default function HomeLoanEmiCalculatorPage() {
                       'Taxes, Home Insurance & Maintenance':
                         chartConfig.taxesAndMaintenance,
                     }}
-                    className="min-h-[250px]"
+                    className="min-h-[250px] w-full max-w-sm mx-auto"
                   >
                     <PieChart>
                       <RechartsTooltip
@@ -841,13 +842,13 @@ export default function HomeLoanEmiCalculatorPage() {
                       tickMargin={8}
                       tickFormatter={(value) => `Year ${value}`}
                     />
-                    <YAxis
-                      yAxisId="left"
-                      tickFormatter={(value) => formatCurrency(value as number)}
-                    />
                      <YAxis
                       yAxisId="right"
                       orientation="right"
+                      tickFormatter={(value) => formatCurrency(value as number)}
+                    />
+                    <YAxis
+                      yAxisId="left"
                       tickFormatter={(value) => formatCurrency(value as number)}
                     />
                     <ChartTooltip
@@ -860,7 +861,7 @@ export default function HomeLoanEmiCalculatorPage() {
                   </BarChart>
                 </ChartContainer>
 
-                <div className="mt-8">
+                <div className="mt-8 overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>

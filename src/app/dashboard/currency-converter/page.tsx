@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
-
 const CURRENCIES_URL =
   'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
 const EXCHANGE_RATE_URL_PREFIX =
@@ -186,18 +185,7 @@ export default function CurrencyConverterPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <div className="grid gap-4 md:grid-cols-2">
-                 <div className="space-y-2">
-                  <Label htmlFor="amount">Amount</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="1.00"
-                  />
-                </div>
-                 <div />
+              <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr]">
                 <div className="space-y-2">
                   <Label>From</Label>
                    <Combobox
@@ -207,6 +195,11 @@ export default function CurrencyConverterPage() {
                     placeholder="From currency"
                     searchPlaceholder="Search currency..."
                   />
+                </div>
+                <div className="flex items-end">
+                    <Button variant="outline" onClick={handleSwapCurrencies} size="icon" className="self-end">
+                      <ArrowRightLeft className="size-4" />
+                    </Button>
                 </div>
                 <div className="space-y-2">
                   <Label>To</Label>
@@ -218,12 +211,18 @@ export default function CurrencyConverterPage() {
                     searchPlaceholder="Search currency..."
                   />
                 </div>
-              </div>
-                <div className="flex items-center pt-4">
-                    <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
-                      <ArrowRightLeft className="size-4" />
-                    </Button>
+                 <div className="space-y-2 md:col-span-3">
+                  <Label htmlFor="amount">Amount</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="1.00"
+                  />
                 </div>
+              </div>
+              
               {isLoading && <p className="mt-4 text-sm text-muted-foreground">Converting...</p>}
               {result !== null && !isLoading && (
                 <div className="mt-6 rounded-lg border p-4">

@@ -22,7 +22,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
-
 type UnitSystem = 'metric' | 'imperial';
 
 const getBmiCategory = (bmi: number) => {

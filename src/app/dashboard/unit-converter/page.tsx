@@ -131,15 +131,14 @@ export default function UnitConverterPage() {
     if (fromValue === 0 && toValue === 0) return [];
 
     return [
-      { name: fromLabel, value: fromValue },
-      { name: toLabel, value: toValue },
+      { name: fromLabel, value: fromValue, fill: 'hsl(var(--chart-1))' },
+      { name: toLabel, value: toValue, fill: 'hsl(var(--chart-2))' },
     ];
   }, [inputValue, convertedValue, fromUnit, toUnit, units]);
 
   const chartConfig = {
     value: {
       label: 'Value',
-      color: 'hsl(var(--chart-1))',
     },
   };
 
@@ -229,13 +228,13 @@ export default function UnitConverterPage() {
                 <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
                   <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{left: 20}}>
                     <CartesianGrid horizontal={false} />
-                    <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} />
+                    <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={100} />
                     <XAxis type="number" hide />
                     <ChartTooltip
                       cursor={false}
                       content={<ChartTooltipContent indicator="dot" />}
                     />
-                    <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+                    <Bar dataKey="value" radius={4} />
                   </BarChart>
                 </ChartContainer>
               </CardContent>
@@ -318,4 +317,3 @@ export default function UnitConverterPage() {
     </>
   );
 }
-

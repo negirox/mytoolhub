@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -428,32 +429,34 @@ export default function TaxCalculatorPage() {
                           <h4 className="font-headline text-md mb-2 font-semibold">
                             Tax Breakdown:
                           </h4>
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Income Slab (₹)</TableHead>
-                                <TableHead>Tax Rate</TableHead>
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Income Slab (₹)</TableHead>
+                                  <TableHead>Tax Rate</TableHead>
 
-                                <TableHead className="text-right">
-                                  Tax Amount (₹)
-                                </TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {taxBreakdown.map((bracket, index) => (
-                                <TableRow key={index}>
-                                  <TableCell>{bracket.slab}</TableCell>
-                                  <TableCell>{bracket.rate}</TableCell>
-                                  <TableCell className="text-right">
-                                    {bracket.tax.toLocaleString('en-IN', {
-                                      maximumFractionDigits: 2,
-                                      minimumFractionDigits: 2,
-                                    })}
-                                  </TableCell>
+                                  <TableHead className="text-right">
+                                    Tax Amount (₹)
+                                  </TableHead>
                                 </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
+                              </TableHeader>
+                              <TableBody>
+                                {taxBreakdown.map((bracket, index) => (
+                                  <TableRow key={index}>
+                                    <TableCell>{bracket.slab}</TableCell>
+                                    <TableCell>{bracket.rate}</TableCell>
+                                    <TableCell className="text-right">
+                                      {bracket.tax.toLocaleString('en-IN', {
+                                        maximumFractionDigits: 2,
+                                        minimumFractionDigits: 2,
+                                      })}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

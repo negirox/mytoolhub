@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -10,6 +9,12 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight, Calculator, EggFried, Home, Landmark, Percent, Ruler, Scale, Wallet } from 'lucide-react';
 import { Clock } from '@/components/ui/clock';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Dashboard | MyToolHub',
+    description: 'Explore a collection of free and powerful online calculators and converters for health, finance, and general utility. All tools are client-side and easy to use.'
+};
 
 const tools = [
   {

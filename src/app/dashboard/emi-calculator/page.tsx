@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -250,7 +251,7 @@ export default function EmiCalculatorPage() {
           <CollapsibleContent asChild>
             <tr className="bg-background">
               <TableCell colSpan={7} className="p-0">
-                <div className="p-4">
+                <div className="p-4 overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -584,7 +585,7 @@ export default function EmiCalculatorPage() {
               <CardHeader>
                 <CardTitle className="font-headline">Amortization Schedule</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
