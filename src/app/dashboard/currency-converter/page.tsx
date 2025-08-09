@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -11,21 +11,37 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal, ArrowRightLeft } from 'lucide-react';
+import { Combobox } from '@/components/ui/combobox';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+} from '@/components/ui/chart';
 
-const CURRENCIES_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
-const EXCHANGE_RATE_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies';
+const CURRENCIES_URL =
+  'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
+const EXCHANGE_RATE_URL_PREFIX =
+  'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies';
 
 interface Currencies {
   [key: string]: string;
+}
+
+interface ConversionHistory {
+  id: string;
+  from: string;
+  to: string;
+  amount: number;
+  result: number;
+  rate: number;
 }
 
 export default function CurrencyConverterPage() {
@@ -37,6 +53,9 @@ export default function CurrencyConverterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [currencies, setCurrencies] = useState<Currencies>({});
   const [date, setDate] = useState('');
+  const [conversionHistory, setConversionHistory] = useState<
+    ConversionHistory[]
+  >([]);
 
   useEffect(() => {
     const fetchCurrencies = async () => {
@@ -53,44 +72,92 @@ export default function CurrencyConverterPage() {
   }, []);
 
   const convertCurrency = useCallback(async () => {
-    if (!amount || !fromCurrency || !toCurrency) return;
+    if (!amount || !fromCurrency || !toCurrency || !currencies[fromCurrency] || !currencies[toCurrency]) return;
+
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      setResult(null);
+      return;
+    }
+
+    if (fromCurrency === toCurrency) {
+      setResult(numericAmount);
+      setDate(new Date().toISOString().split('T')[0]);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
-    setResult(null);
 
     try {
-      const res = await fetch(`${EXCHANGE_RATE_URL}/${fromCurrency}.json`);
+      const res = await fetch(`${EXCHANGE_RATE_URL_PREFIX}/${fromCurrency}.json`);
       if (!res.ok) {
-        throw new Error('Failed to fetch exchange rate.');
+        throw new Error('Failed to fetch exchange rate data.');
       }
       const data = await res.json();
-      
       const rate = data[fromCurrency]?.[toCurrency];
+      
       setDate(data.date);
 
       if (rate) {
-        const numericAmount = parseFloat(amount);
-        setResult(numericAmount * rate);
+        const conversionResult = numericAmount * rate;
+        setResult(conversionResult);
+        
+        const newHistoryEntry: ConversionHistory = {
+            id: `${fromCurrency}-${toCurrency}-${Date.now()}`,
+            from: fromCurrency.toUpperCase(),
+            to: toCurrency.toUpperCase(),
+            amount: numericAmount,
+            result: conversionResult,
+            rate: rate
+        };
+
+        setConversionHistory(prev => [newHistoryEntry, ...prev].slice(0, 10));
+
       } else {
-        throw new Error('Could not find rate for the selected currency.');
+        throw new Error('Could not find rate for the selected currency pair.');
       }
     } catch (e: any) {
       setError(e.message);
+      setResult(null);
     } finally {
       setIsLoading(false);
     }
-  }, [amount, fromCurrency, toCurrency]);
+  }, [amount, fromCurrency, toCurrency, currencies]);
+  
+  useEffect(() => {
+    convertCurrency();
+  }, [amount, fromCurrency, toCurrency, convertCurrency]);
 
   const handleSwapCurrencies = () => {
     const temp = fromCurrency;
     setFromCurrency(toCurrency);
     setToCurrency(temp);
   };
-  
-  const currencyOptions = Object.entries(currencies).map(([code, name]) => ({
-    code: code,
-    name: name,
-  })).sort((a,b) => a.name.localeCompare(b.name));
+
+  const currencyOptions = useMemo(() => {
+    return Object.entries(currencies)
+      .map(([code, name]) => ({
+        value: code,
+        label: `${code.toUpperCase()} - ${name}`,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [currencies]);
+
+  const chartData = useMemo(() => {
+    return conversionHistory.map(item => ({
+        name: `${item.from} to ${item.to}`,
+        result: item.result,
+        label: `${item.amount.toLocaleString()} ${item.from} = ${item.result.toLocaleString(undefined, {maximumFractionDigits: 2})} ${item.to}`
+    })).reverse();
+  }, [conversionHistory]);
+
+  const chartConfig = {
+    result: {
+      label: "Result",
+      color: "hsl(var(--primary))",
+    },
+  };
 
   return (
     <>
@@ -105,7 +172,7 @@ export default function CurrencyConverterPage() {
             <CardHeader>
               <CardTitle className="font-headline">Currency Converter</CardTitle>
               <CardDescription>
-                Get real-time exchange rates.
+                Get real-time exchange rates. The conversion will happen automatically.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -116,7 +183,7 @@ export default function CurrencyConverterPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-[1fr,auto,1fr] items-center">
                 <div className="space-y-2">
                   <Label htmlFor="amount">Amount</Label>
                   <Input
@@ -127,58 +194,70 @@ export default function CurrencyConverterPage() {
                     placeholder="1.00"
                   />
                 </div>
+                 <div className="hidden md:flex items-center pt-6">
+                    <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
+                      <ArrowRightLeft className="size-4" />
+                    </Button>
+                  </div>
                 <div className="space-y-2">
                   <Label>From</Label>
-                  <Select value={fromCurrency} onValueChange={setFromCurrency}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="From currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencyOptions.map((c) => (
-                        <SelectItem key={c.code} value={c.code}>
-                          {c.code.toUpperCase()} - {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                   <Combobox
+                    options={currencyOptions}
+                    value={fromCurrency}
+                    onValueChange={setFromCurrency}
+                    placeholder="From currency"
+                    searchPlaceholder="Search currency..."
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>To</Label>
-                  <Select value={toCurrency} onValueChange={setToCurrency}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="To currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencyOptions.map((c) => (
-                        <SelectItem key={c.code} value={c.code}>
-                           {c.code.toUpperCase()} - {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                   <Combobox
+                    options={currencyOptions}
+                    value={toCurrency}
+                    onValueChange={setToCurrency}
+                    placeholder="To currency"
+                    searchPlaceholder="Search currency..."
+                  />
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-2">
-                <Button onClick={convertCurrency} disabled={isLoading}>
-                  {isLoading ? 'Converting...' : 'Convert'}
-                </Button>
-                <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
-                  <ArrowRightLeft className="size-4" />
-                </Button>
-              </div>
-              {result !== null && (
+                <div className="flex md:hidden items-center pt-4">
+                    <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
+                      <ArrowRightLeft className="size-4" />
+                    </Button>
+                </div>
+              {isLoading && <p className="mt-4 text-sm text-muted-foreground">Converting...</p>}
+              {result !== null && !isLoading && (
                 <div className="mt-6 rounded-lg border p-4">
                   <h3 className="font-headline text-lg font-semibold">
                     Result
                   </h3>
                   <p className="text-2xl font-bold text-primary">
-                    {amount} {fromCurrency.toUpperCase()} = {result.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })} {toCurrency.toUpperCase()}
+                    {parseFloat(amount).toLocaleString()} {fromCurrency.toUpperCase()} = {result.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })} {toCurrency.toUpperCase()}
                   </p>
                   {date && <p className="text-sm text-muted-foreground mt-2">Last updated on: {date}</p>}
                 </div>
               )}
             </CardContent>
           </Card>
+          {conversionHistory.length > 0 && (
+             <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline">Conversion History</CardTitle>
+                    <CardDescription>Last 10 conversion results.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                        <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{left: 120}}>
+                             <XAxis type="number" dataKey="result" hide/>
+                             <YAxis dataKey="name" type="category" tickLine={false} tickMargin={10} axisLine={false} tick={{fontSize: 12}} width={200} />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+                             <ChartLegend content={<ChartLegendContent />} />
+                            <Bar dataKey="result" layout="vertical" radius={5} />
+                        </BarChart>
+                    </ChartContainer>
+                </CardContent>
+             </Card>
+          )}
         </div>
       </main>
     </>
