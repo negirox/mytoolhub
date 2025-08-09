@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/accordion';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
-import { Pie, PieChart, Cell, Tooltip } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, LabelList } from 'recharts';
 import {
   ChartContainer,
   ChartTooltipContent,
@@ -54,6 +54,15 @@ type TaxBracket = {
 
 // Health and Education Cess
 const CESS_RATE = 0.04;
+
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 2,
+    }).format(value);
+};
+
 
 const calculateNewRegimeTax = (taxableIncome: number) => {
   let tax = 0;
@@ -258,17 +267,31 @@ export default function TaxCalculatorPage() {
   const isOldRegime = taxRegime === 'old';
 
   const chartConfig = {
-      incomeTax: { label: 'Income Tax', color: 'hsl(var(--chart-1))' },
-      cess: { label: 'Cess (4%)', color: 'hsl(var(--chart-2))' },
+    amount: {
+      label: 'Amount (₹)',
+    },
+    grossIncome: {
+        label: 'Gross Income',
+        color: 'hsl(var(--chart-2))'
+    },
+    taxableIncome: {
+        label: 'Taxable Income',
+        color: 'hsl(var(--chart-3))'
+    },
+    totalTax: {
+        label: 'Total Tax',
+        color: 'hsl(var(--chart-1))'
+    }
   };
 
-  const taxPieChartData = useMemo(() => {
-    if (incomeTax === null || cess === null) return [];
+  const barChartData = useMemo(() => {
+    if (totalTax === null || taxableIncome === null) return [];
     return [
-      { name: 'incomeTax', value: incomeTax, fill: 'var(--color-incomeTax)' },
-      { name: 'cess', value: cess, fill: 'var(--color-cess)' },
-    ].filter(item => item.value > 0);
-  }, [incomeTax, cess]);
+      { name: 'Gross Income', amount: parseFloat(income) || 0, fill: 'var(--color-grossIncome)' },
+      { name: 'Taxable Income', amount: taxableIncome, fill: 'var(--color-taxableIncome)' },
+      { name: 'Total Tax', amount: totalTax, fill: 'var(--color-totalTax)' },
+    ];
+  }, [income, taxableIncome, totalTax]);
 
 
   return (
@@ -485,20 +508,38 @@ export default function TaxCalculatorPage() {
                     </Card>
                     <Card>
                       <CardHeader>
-                        <CardTitle>Tax Components</CardTitle>
-                        <CardDescription>Visual breakdown of your total tax.</CardDescription>
+                        <CardTitle>Income vs. Tax</CardTitle>
+                        <CardDescription>Visual comparison of your income and tax.</CardDescription>
                       </CardHeader>
                       <CardContent className="flex items-center justify-center">
-                          <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm">
-                              <PieChart>
-                                  <Tooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
-                                  <Pie data={taxPieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100} labelLine={false} label>
-                                    {taxPieChartData.map((entry) => (
-                                        <Cell key={entry.name} fill={entry.fill} />
-                                    ))}
-                                  </Pie>
-                                  <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
-                              </PieChart>
+                          <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                            <BarChart accessibilityLayer data={barChartData} layout="vertical">
+                                <CartesianGrid horizontal={false} />
+                                <YAxis 
+                                    dataKey="name" 
+                                    type="category" 
+                                    tickLine={false} 
+                                    axisLine={false}
+                                    tickMargin={10}
+                                />
+                                <XAxis type="number" hide />
+                                <Tooltip 
+                                    cursor={false} 
+                                    content={<ChartTooltipContent 
+                                        formatter={(value) => formatCurrency(value as number)} 
+                                        hideLabel
+                                    />} 
+                                />
+                                <Bar dataKey="amount" name="Amount" radius={5}>
+                                    <LabelList
+                                        dataKey="amount"
+                                        position="right"
+                                        offset={8}
+                                        className="fill-foreground font-semibold"
+                                        formatter={(value: number) => formatCurrency(value)}
+                                    />
+                                </Bar>
+                            </BarChart>
                           </ChartContainer>
                       </CardContent>
                     </Card>
@@ -591,5 +632,3 @@ export default function TaxCalculatorPage() {
     </>
   );
 }
-
-    
