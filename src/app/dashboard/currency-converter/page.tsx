@@ -19,34 +19,33 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+import { Terminal, ArrowRightLeft } from 'lucide-react';
+import { countries, Currency } from '@/lib/countries';
 
 const API_URL = 'https://api.exchangerate.host/latest';
+
+const uniqueCurrencies = Array.from(
+  new Set(
+    Object.values(countries)
+      .map((c) => (c.currency_code ? `${c.currency_code} - ${c.currency_name}`: null))
+      .filter(Boolean)
+  )
+).map(str => {
+    const [code, ...nameParts] = str!.split(' ');
+    return {
+        code,
+        name: nameParts.join(' ').replace(/-/g, '').trim()
+    };
+}).sort((a,b) => a.code.localeCompare(b.code));
+
 
 export default function CurrencyConverterPage() {
   const [amount, setAmount] = useState('1');
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('EUR');
-  const [currencies, setCurrencies] = useState<string[]>([]);
   const [result, setResult] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchCurrencies = async () => {
-      try {
-        const res = await fetch(API_URL);
-        if (!res.ok) {
-          throw new Error('Failed to fetch currency list');
-        }
-        const data = await res.json();
-        setCurrencies(Object.keys(data.rates));
-      } catch (e: any) {
-        setError(e.message);
-      }
-    };
-    fetchCurrencies();
-  }, []);
 
   const convertCurrency = useCallback(async () => {
     if (!amount) return;
@@ -79,6 +78,10 @@ export default function CurrencyConverterPage() {
     setFromCurrency(toCurrency);
     setToCurrency(temp);
   };
+  
+  useEffect(() => {
+    convertCurrency();
+  }, [fromCurrency, toCurrency, convertCurrency]);
 
   return (
     <>
@@ -122,9 +125,9 @@ export default function CurrencyConverterPage() {
                       <SelectValue placeholder="From currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      {currencies.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
+                      {uniqueCurrencies.map((c) => (
+                        <SelectItem key={c.code} value={c.code}>
+                          {c.code} - {c.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -137,9 +140,9 @@ export default function CurrencyConverterPage() {
                       <SelectValue placeholder="To currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      {currencies.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
+                      {uniqueCurrencies.map((c) => (
+                        <SelectItem key={c.code} value={c.code}>
+                          {c.code} - {c.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -150,8 +153,8 @@ export default function CurrencyConverterPage() {
                 <Button onClick={convertCurrency} disabled={isLoading}>
                   {isLoading ? 'Converting...' : 'Convert'}
                 </Button>
-                <Button variant="outline" onClick={handleSwapCurrencies}>
-                  Swap
+                <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
+                  <ArrowRightLeft className="size-4" />
                 </Button>
               </div>
               {result !== null && (
@@ -160,7 +163,7 @@ export default function CurrencyConverterPage() {
                     Result
                   </h3>
                   <p className="text-2xl font-bold text-primary">
-                    {amount} {fromCurrency} = {result.toFixed(2)} {toCurrency}
+                    {amount} {fromCurrency} = {result.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })} {toCurrency}
                   </p>
                 </div>
               )}
