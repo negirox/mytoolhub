@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -13,6 +13,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Pie, PieChart, Cell } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
 
 export default function FatIntakeCalculatorPage() {
   const [dailyCalories, setDailyCalories] = useState('2000');
@@ -20,6 +28,8 @@ export default function FatIntakeCalculatorPage() {
 
   const [results, setResults] = useState<{
     grams: number;
+    fatCalories: number;
+    otherCalories: number;
   } | null>(null);
 
   const calculateFatIntake = () => {
@@ -37,8 +47,24 @@ export default function FatIntakeCalculatorPage() {
 
     setResults({
       grams: Math.round(fatGrams),
+      fatCalories: Math.round(fatCalories),
+      otherCalories: Math.round(calories - fatCalories),
     });
   };
+
+  const chartData = useMemo(() => {
+    if (!results) return [];
+    return [
+        { name: 'Fat Calories', value: results.fatCalories, fill: 'hsl(var(--chart-1))' },
+        { name: 'Other Calories', value: results.otherCalories, fill: 'hsl(var(--chart-3))' }
+    ];
+  }, [results]);
+
+  const chartConfig = {
+      calories: {
+          label: 'Calories'
+      }
+  }
 
   return (
     <>
@@ -77,12 +103,37 @@ export default function FatIntakeCalculatorPage() {
                          <p className="text-3xl font-bold text-primary">{results.grams} grams/day</p>
                       </div>
                       <p className="text-sm text-muted-foreground pt-4">
-                        This amount is based on your total calorie intake. Focus on consuming healthy unsaturated fats.
+                        This is equivalent to <span className="font-semibold">{results.fatCalories.toLocaleString()} calories</span> from fat per day. Focus on consuming healthy unsaturated fats.
                       </p>
                     </div>
                   </div>
                 )}
               </div>
+                {results && (
+                 <div className="mt-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="font-headline">Calorie Breakdown</CardTitle>
+                            <CardDescription>
+                                This chart shows the proportion of your daily calories that come from fat.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-center">
+                            <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm">
+                                <PieChart accessibilityLayer>
+                                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                                        {chartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                        ))}
+                                    </Pie>
+                                    <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+                                </PieChart>
+                            </ChartContainer>
+                        </CardContent>
+                    </Card>
+                 </div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -129,3 +180,5 @@ export default function FatIntakeCalculatorPage() {
     </>
   );
 }
+
+    

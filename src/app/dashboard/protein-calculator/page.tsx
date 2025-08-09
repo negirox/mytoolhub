@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -20,6 +20,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, LabelList } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 type UnitSystem = 'metric' | 'imperial';
 type Goal = 'maintenance' | 'fat_loss' | 'muscle_gain';
@@ -61,6 +67,22 @@ export default function ProteinCalculatorPage() {
       high: Math.round(weightNumKg * selectedMultipliers.high),
     });
   };
+
+  const chartData = useMemo(() => {
+    if (!results) return [];
+    return [
+      { name: 'Low', value: results.low, label: `${results.low}g`, fill: 'hsl(var(--chart-3))' },
+      { name: 'Moderate', value: results.moderate, label: `${results.moderate}g`, fill: 'hsl(var(--chart-2))' },
+      { name: 'High', value: results.high, label: `${results.high}g`, fill: 'hsl(var(--chart-5))' },
+    ];
+  }, [results]);
+
+  const chartConfig = {
+    value: {
+      label: 'Protein (grams)',
+    },
+  };
+
 
   return (
     <>
@@ -138,6 +160,29 @@ export default function ProteinCalculatorPage() {
                   </div>
                 )}
               </div>
+               {results && (
+                <div className="mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="font-headline">Protein Intake Comparison</CardTitle>
+                      <CardDescription>A visual representation of low, moderate, and high protein intake levels for your goal.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                         <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 10, right: 40, top: 10, bottom: 10 }}>
+                          <CartesianGrid horizontal={false} />
+                          <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} tickMargin={10} />
+                          <XAxis type="number" hide />
+                          <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                          <Bar dataKey="value" radius={5}>
+                             <LabelList dataKey="label" position="right" offset={8} className="fill-foreground font-semibold" />
+                          </Bar>
+                        </BarChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -184,3 +229,5 @@ export default function ProteinCalculatorPage() {
     </>
   );
 }
+
+    

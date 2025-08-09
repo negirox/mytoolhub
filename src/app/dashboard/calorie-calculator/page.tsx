@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -20,6 +20,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+
 
 type UnitSystem = 'metric' | 'imperial';
 type Gender = 'male' | 'female';
@@ -83,6 +92,21 @@ export default function CalorieCalculatorPage() {
         weightGain: Math.round(maintenanceCalories + 500),
         fastGain: Math.round(maintenanceCalories + 1000),
     });
+  };
+
+  const chartData = useMemo(() => {
+    if (!results) return [];
+    return [
+      { name: 'Weight Loss', calories: results.weightLoss, fill: 'hsl(var(--chart-5))' },
+      { name: 'Maintenance', calories: results.maintenance, fill: 'hsl(var(--chart-2))' },
+      { name: 'Weight Gain', calories: results.weightGain, fill: 'hsl(var(--chart-1))' },
+    ];
+  }, [results]);
+
+  const chartConfig = {
+    calories: {
+      label: 'Calories',
+    },
   };
 
   return (
@@ -181,40 +205,62 @@ export default function CalorieCalculatorPage() {
                         <span className="font-semibold">Maintenance</span>
                         <span className="font-bold text-primary">{results.maintenance.toLocaleString()} Calories/day</span>
                       </div>
-                       <div className="space-y-2 text-center">
-                            <h4 className="font-semibold">Weight Loss</h4>
+                       <div className="space-y-2 text-center pt-4">
+                            <h4 className="font-semibold">Weight Loss Goals</h4>
                             <div className="flex justify-between p-2 text-sm">
                                 <span>Mild weight loss (0.5 lb/week)</span>
-                                <span>{results.mildLoss.toLocaleString()} Calories/day</span>
+                                <span>{results.mildLoss.toLocaleString()} Cal/day</span>
                             </div>
                             <div className="flex justify-between p-2 text-sm">
                                 <span>Weight loss (1 lb/week)</span>
-                                <span>{results.weightLoss.toLocaleString()} Calories/day</span>
+                                <span>{results.weightLoss.toLocaleString()} Cal/day</span>
                             </div>
                             <div className="flex justify-between p-2 text-sm">
                                 <span>Extreme weight loss (2 lb/week)</span>
-                                <span>{results.extremeLoss.toLocaleString()} Calories/day</span>
+                                <span>{results.extremeLoss.toLocaleString()} Cal/day</span>
                             </div>
                        </div>
                        <div className="space-y-2 text-center">
-                            <h4 className="font-semibold">Weight Gain</h4>
+                            <h4 className="font-semibold">Weight Gain Goals</h4>
                             <div className="flex justify-between p-2 text-sm">
                                 <span>Mild weight gain (0.5 lb/week)</span>
-                                <span>{results.mildGain.toLocaleString()} Calories/day</span>
+                                <span>{results.mildGain.toLocaleString()} Cal/day</span>
                             </div>
                             <div className="flex justify-between p-2 text-sm">
                                 <span>Weight gain (1 lb/week)</span>
-                                <span>{results.weightGain.toLocaleString()} Calories/day</span>
+                                <span>{results.weightGain.toLocaleString()} Cal/day</span>
                             </div>
                              <div className="flex justify-between p-2 text-sm">
                                 <span>Fast weight gain (2 lb/week)</span>
-                                <span>{results.fastGain.toLocaleString()} Calories/day</span>
+                                <span>{results.fastGain.toLocaleString()} Cal/day</span>
                             </div>
                        </div>
                     </div>
                   </div>
                 )}
               </div>
+               {results && (
+                <div className="mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="font-headline">Calorie Goals Overview</CardTitle>
+                      <CardDescription>A visual comparison of daily calorie targets for different goals.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
+                        <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 20 }}>
+                          <CartesianGrid horizontal={false} />
+                          <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} tickMargin={10} />
+                          <XAxis type="number" hide />
+                          <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                           <Bar dataKey="calories" radius={5}>
+                           </Bar>
+                        </BarChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -261,3 +307,5 @@ export default function CalorieCalculatorPage() {
     </>
   );
 }
+
+    
