@@ -21,7 +21,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 
 const CURRENCIES_URL =
@@ -146,6 +146,7 @@ export default function CurrencyConverterPage() {
     return conversionHistory.map(item => ({
         name: `${item.from} to ${item.to}`,
         result: item.result,
+        rate: item.rate,
         label: `${item.amount.toLocaleString()} ${item.from} = ${item.result.toLocaleString(undefined, {maximumFractionDigits: 2})} ${item.to}`
     })).reverse();
   }, [conversionHistory]);
@@ -153,8 +154,12 @@ export default function CurrencyConverterPage() {
   const chartConfig = {
     result: {
       label: "Result",
-      color: "hsl(var(--primary))",
+      color: "hsl(var(--chart-1))",
     },
+    rate: {
+        label: "Exchange Rate",
+        color: "hsl(var(--chart-2))",
+    }
   };
 
   return (
@@ -181,8 +186,8 @@ export default function CurrencyConverterPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <div className="grid gap-4 md:grid-cols-[1fr,auto,1fr] items-center">
-                <div className="space-y-2">
+              <div className="grid gap-4 md:grid-cols-2">
+                 <div className="space-y-2">
                   <Label htmlFor="amount">Amount</Label>
                   <Input
                     id="amount"
@@ -192,11 +197,7 @@ export default function CurrencyConverterPage() {
                     placeholder="1.00"
                   />
                 </div>
-                 <div className="hidden md:flex items-center pt-6">
-                    <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
-                      <ArrowRightLeft className="size-4" />
-                    </Button>
-                  </div>
+                 <div />
                 <div className="space-y-2">
                   <Label>From</Label>
                    <Combobox
@@ -218,7 +219,7 @@ export default function CurrencyConverterPage() {
                   />
                 </div>
               </div>
-                <div className="flex md:hidden items-center pt-4">
+                <div className="flex items-center pt-4">
                     <Button variant="outline" onClick={handleSwapCurrencies} size="icon">
                       <ArrowRightLeft className="size-4" />
                     </Button>
@@ -244,13 +245,15 @@ export default function CurrencyConverterPage() {
                     <CardDescription>Last 10 conversion results.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-                        <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{left: 120}}>
-                             <XAxis type="number" dataKey="result" hide/>
-                             <YAxis dataKey="name" type="category" tickLine={false} tickMargin={10} axisLine={false} tick={{fontSize: 12}} width={200} />
+                    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                        <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 5, }}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                            <YAxis />
                             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
-                             <ChartLegend content={<ChartLegendContent />} />
-                            <Bar dataKey="result" layout="vertical" radius={5} />
+                            <ChartLegend content={<ChartLegendContent />} />
+                            <Bar dataKey="result" name="Conversion Result" fill="var(--color-result)" radius={4} />
+                            <Bar dataKey="rate" name="Exchange Rate" fill="var(--color-rate)" radius={4} />
                         </BarChart>
                     </ChartContainer>
                 </CardContent>
