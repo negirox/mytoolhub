@@ -348,14 +348,52 @@ export default function HomeLoanEmiCalculatorPage() {
     );
   };
 
+  const chartConfig = useMemo(
+    () => ({
+      principal: {
+        label: 'Principal',
+        color: 'hsl(var(--chart-2))',
+      },
+      interest: {
+        label: 'Interest',
+        color: 'hsl(var(--chart-1))',
+      },
+      prepayments: {
+        label: 'Prepayments',
+        color: 'hsl(var(--chart-5))',
+      },
+      taxesAndMaintenance: {
+        label: 'Taxes, Insurance & Maintenance',
+        color: 'hsl(var(--chart-3))',
+      },
+      balance: {
+        label: 'Balance',
+        color: 'hsl(var(--chart-4))',
+      },
+      downPaymentAndFees: {
+        label: 'Down Payment, Fees & One-time Expenses',
+        color: 'hsl(var(--chart-6))',
+      },
+    }),
+    []
+  );
+
   const pieData = useMemo(
     () => [
-      { name: 'Principal', value: loanAmount, fill: 'hsl(var(--chart-2))' },
-      { name: 'Interest', value: results.totalInterest, fill: 'hsl(var(--chart-1))' },
+      {
+        name: 'Principal',
+        value: loanAmount,
+        fill: 'var(--color-principal)',
+      },
+      {
+        name: 'Interest',
+        value: results.totalInterest,
+        fill: 'var(--color-interest)',
+      },
       {
         name: 'Taxes, Insurance & Maintenance',
         value: results.taxesAndInsurance,
-        fill: 'hsl(var(--chart-3))',
+        fill: 'var(--color-taxesAndMaintenance)',
       },
     ],
     [loanAmount, results.totalInterest, results.taxesAndInsurance]
@@ -366,34 +404,27 @@ export default function HomeLoanEmiCalculatorPage() {
       {
         name: 'Down Payment, Fees & One-time Expenses',
         value: results.downPaymentAndFees,
-        fill: 'hsl(var(--chart-4))',
+        fill: 'var(--color-downPaymentAndFees)',
       },
-      { name: 'Principal', value: loanAmount, fill: 'hsl(var(--chart-2))' },
+      { name: 'Principal', value: loanAmount, fill: 'var(--color-principal)' },
       {
         name: 'Prepayments',
         value: results.totalPrepayments,
-        fill: 'hsl(var(--chart-5))',
+        fill: 'var(--color-prepayments)',
       },
-      { name: 'Interest', value: results.totalInterest, fill: 'hsl(var(--chart-1))' },
+      {
+        name: 'Interest',
+        value: results.totalInterest,
+        fill: 'var(--color-interest)',
+      },
       {
         name: 'Taxes, Home Insurance & Maintenance',
         value: results.taxesAndInsurance,
-        fill: 'hsl(var(--chart-3))',
+        fill: 'var(--color-taxesAndMaintenance)',
       },
     ],
     [results, loanAmount]
   );
-
-  const chartConfig = {
-    principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
-    interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
-    prepayments: { label: 'Prepayments', color: 'hsl(var(--chart-5))' },
-    taxesAndMaintenance: {
-      label: 'Taxes, Insurance & Maintenance',
-      color: 'hsl(var(--chart-3))',
-    },
-    balance: { label: 'Balance', color: 'hsl(var(--chart-6))' },
-  };
 
   return (
     <>
@@ -749,26 +780,11 @@ export default function HomeLoanEmiCalculatorPage() {
                   </h3>
                   <ChartContainer
                     config={{
-                      'Down Payment, Fees & One-time Expenses': {
-                        label: 'Down Payment, Fees & One-time Expenses',
-                        color: 'hsl(var(--chart-4))',
-                      },
-                      Principal: {
-                        label: 'Principal',
-                        color: 'hsl(var(--chart-2))',
-                      },
-                      Prepayments: {
-                        label: 'Prepayments',
-                        color: 'hsl(var(--chart-5))',
-                      },
-                      Interest: {
-                        label: 'Interest',
-                        color: 'hsl(var(--chart-1))',
-                      },
-                      'Taxes, Home Insurance & Maintenance': {
-                        label: 'Taxes, Home Insurance & Maintenance',
-                        color: 'hsl(var(--chart-3))',
-                      },
+                      ...chartConfig,
+                      'Down Payment, Fees & One-time Expenses':
+                        chartConfig.downPaymentAndFees,
+                      'Taxes, Home Insurance & Maintenance':
+                        chartConfig.taxesAndMaintenance,
                     }}
                     className="min-h-[250px]"
                   >
