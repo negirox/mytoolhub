@@ -112,19 +112,20 @@ export default function BmiCalculatorPage() {
   const bmiColor = useMemo(() => (bmi ? getBmiColor(bmi) : 'transparent'), [bmi]);
 
   const gaugeData = useMemo(() => [
-    { name: 'Underweight', value: 8.5, color: 'hsl(var(--chart-4))' }, // up to 18.5
-    { name: 'Normal', value: 6.5, color: 'hsl(var(--chart-2))' },      // 18.5 - 25
-    { name: 'Overweight', value: 5, color: 'hsl(var(--chart-5))' },   // 25 - 30
-    { name: 'Obesity', value: 15, color: 'hsl(var(--chart-1))' },    // 30+ (up to 45 for chart)
+    { name: 'Underweight', value: 8.5, color: 'hsl(var(--chart-4))' }, // 10 to 18.5
+    { name: 'Normal', value: 6.5, color: 'hsl(var(--chart-2))' },      // 18.5 to 25
+    { name: 'Overweight', value: 5, color: 'hsl(var(--chart-5))' },   // 25 to 30
+    { name: 'Obesity', value: 15, color: 'hsl(var(--chart-1))' },    // 30 to 45
   ], []);
 
   const bmiNeedleRotation = useMemo(() => {
-    if (!bmi) return 0;
+    if (!bmi) return -90;
     const minBmi = 10;
     const maxBmi = 45;
     const value = Math.max(minBmi, Math.min(maxBmi, bmi));
+    // map value from [minBmi, maxBmi] to [-90, 90] degrees
     const percentage = (value - minBmi) / (maxBmi - minBmi);
-    return percentage * 180;
+    return percentage * 180 - 90;
   }, [bmi]);
   
 
@@ -276,23 +277,23 @@ export default function BmiCalculatorPage() {
                                 </PieChart>
                             </ResponsiveContainer>
                             <div
-                                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full"
+                                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none"
                             >
                                 <div
-                                    className="absolute bottom-1/2 left-1/2 w-0.5 h-[calc(50%-1rem)] origin-bottom transition-transform duration-500"
-                                    style={{ transform: `rotate(${bmiNeedleRotation-90}deg)` }}
+                                    className="absolute bottom-0 left-1/2 w-0.5 h-[calc(50%-1rem)] origin-bottom transition-transform duration-500"
+                                    style={{ transform: `translateX(-50%) rotate(${bmiNeedleRotation}deg)` }}
                                 >
                                     <div className="w-full h-full bg-foreground rounded-t-full"></div>
                                 </div>
-                                <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 rounded-full bg-foreground z-10 border-2 border-background"></div>
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-foreground z-10 border-2 border-background"></div>
                             </div>
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center pointer-events-none">
                                 <p className="text-sm text-muted-foreground">Your BMI</p>
                                 <p className="text-4xl font-bold" style={{color: bmiColor}}>{bmi.toFixed(1)}</p>
                                 <p className="text-lg font-semibold" style={{color: bmiColor}}>({bmiCategory})</p>
                             </div>
 
-                            <div className="absolute bottom-1/4 w-full px-2 text-xs text-muted-foreground">
+                            <div className="absolute bottom-[20%] w-full px-2 text-xs text-muted-foreground pointer-events-none">
                                 <span className="absolute left-[8%]">15</span>
                                 <span className="absolute left-[26%]">18.5</span>
                                 <span className="absolute left-1/2 -translate-x-1/2">25</span>
