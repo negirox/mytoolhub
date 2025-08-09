@@ -104,16 +104,15 @@ export default function BmiCalculatorPage() {
     }
   };
   
-  const bmiGaugePosition = useMemo(() => {
-    if (!bmi) return '0%';
-    let percentage = 0;
-    if (bmi < 16) percentage = ((bmi - 10) / 6) * 12.5; // Starts at 10 for gauging
-    else if (bmi < 18.5) percentage = 12.5 + ((bmi - 16) / 2.5) * 25;
-    else if (bmi < 25) percentage = 37.5 + ((bmi - 18.5) / 6.5) * 25;
-    else if (bmi < 30) percentage = 62.5 + ((bmi - 25) / 5) * 12.5;
-    else if (bmi < 40) percentage = 75 + ((bmi-30)/10) * 25;
-    else percentage = 100;
-    return `${Math.max(0, Math.min(100, percentage))}%`;
+  const bmiNeedleRotation = useMemo(() => {
+    if (!bmi) return -90; // Start at the beginning
+    // The gauge is a semi-circle (180 degrees). We'll map BMI range 10-50 to -90deg to 90deg.
+    const minBmi = 10;
+    const maxBmi = 50;
+    const value = Math.max(minBmi, Math.min(maxBmi, bmi));
+    const percentage = (value - minBmi) / (maxBmi - minBmi);
+    const rotation = -90 + (percentage * 180);
+    return rotation;
   }, [bmi]);
 
   return (
@@ -220,33 +219,49 @@ export default function BmiCalculatorPage() {
                     </div>
                      {bmi !== null && (
                         <div className="flex flex-col items-center justify-center rounded-lg border p-6">
-                            <h3 className="font-headline text-lg font-semibold mb-2">
-                                Your BMI is: {bmi.toFixed(1)} kg/m²
-                            </h3>
-                            <p className="text-xl font-bold text-primary mb-4">
-                                ({bmiCategory})
-                            </p>
-                            
-                            <div className="w-full">
-                                <div className="relative h-8 w-full rounded-full overflow-hidden flex">
-                                    <div className="w-[37.5%] bg-blue-400" />
-                                    <div className="w-[25%] bg-green-500" />
-                                    <div className="w-[12.5%] bg-yellow-400" />
-                                    <div className="w-[25%] bg-red-500" />
-                                </div>
-                                <div className="relative w-full h-4 -mt-6">
-                                    <div className="absolute top-1/2 -translate-y-1/2 transform transition-all duration-500" style={{ left: bmiGaugePosition }}>
-                                        <div className="w-4 h-4 bg-foreground rounded-full border-2 border-background shadow-lg" />
-                                        <div className="absolute left-1/2 -translate-x-1/2 mt-2 text-xs font-semibold whitespace-nowrap">BMI = {bmi.toFixed(1)}</div>
-                                    </div>
-                                </div>
-                                <div className="flex justify-between text-xs text-muted-foreground mt-4 px-1">
-                                    <span>16</span>
-                                    <span>18.5</span>
-                                    <span>25</span>
-                                    <span>30</span>
-                                    <span>40</span>
-                                </div>
+                            <div className="relative w-full max-w-[300px] aspect-square">
+                              <div className="absolute bottom-1/2 left-0 w-full h-1/2 overflow-hidden">
+                                  <div
+                                      className="absolute left-0 top-0 w-full h-[200%] rounded-full border-[30px] box-border"
+                                      style={{
+                                          borderBottomColor: '#f87171' /* red-400 */,
+                                          borderLeftColor: '#facc15' /* yellow-400 */,
+                                          borderRightColor: '#f87171' /* red-400 */,
+                                          borderTopColor: '#34d399' /* green-400 */,
+                                          transform: 'rotate(135deg)',
+                                      }}
+                                  ></div>
+                                   <div
+                                      className="absolute left-0 top-0 w-full h-[200%] rounded-full border-[30px] box-border"
+                                      style={{
+                                          borderBottomColor: 'transparent',
+                                          borderLeftColor: 'transparent',
+                                          borderRightColor: '#60a5fa' /* blue-400 */,
+                                          borderTopColor: '#60a5fa' /* blue-400 */,
+                                          transform: 'rotate(-45deg)',
+                                      }}
+                                  ></div>
+                              </div>
+                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-foreground z-10"></div>
+                              <div
+                                  className="absolute bottom-1/2 left-1/2 w-1 h-1/2 transition-transform duration-500 origin-bottom"
+                                  style={{ transform: `translateX(-50%) rotate(${bmiNeedleRotation}deg)` }}
+                              >
+                                  <div className="w-full h-[80%] bg-foreground rounded-t-full"></div>
+                              </div>
+                              <div className="absolute bottom-[25%] text-center w-full">
+                                  <p className="text-sm text-muted-foreground">Your BMI</p>
+                                  <p className="text-4xl font-bold">{bmi.toFixed(1)}</p>
+                                  <p className="text-lg font-semibold text-primary">({bmiCategory})</p>
+                              </div>
+                              
+                              <div className="absolute w-full bottom-[45%] text-xs text-muted-foreground">
+                                <span className="absolute left-0 -translate-x-1/2 transform -rotate-45">15</span>
+                                <span className="absolute left-[15%] -translate-x-1/2 transform -rotate-45">18.5</span>
+                                <span className="absolute left-1/2 -translate-x-1/2 transform">25</span>
+                                <span className="absolute right-[15%] translate-x-1/2 transform rotate-45">30</span>
+                                <span className="absolute right-0 translate-x-1/2 transform rotate-45">40</span>
+                              </div>
                             </div>
                             
                             <div className="mt-8 text-sm text-center w-full space-y-2">
