@@ -489,9 +489,12 @@ export default function EmiCalculatorPage() {
                           <ChartTooltipContent
                             indicator="dot"
                             formatter={(value, name) => (
-                              <span style={{color: chartConfig[name as keyof typeof chartConfig]?.color}}>
-                                {chartConfig[name as keyof typeof chartConfig]?.label}: {formatCurrency(value as number)}
-                              </span>
+                              <div className="flex flex-col items-start gap-1">
+                                <span className="font-semibold" style={{color: chartConfig[name as keyof typeof chartConfig]?.color}}>
+                                  {chartConfig[name as keyof typeof chartConfig]?.label}
+                                </span>
+                                <span className="text-sm text-muted-foreground">{formatCurrency(value as number)}</span>
+                              </div>
                             )}
                           />
                         }

@@ -290,7 +290,7 @@ const ChartLegendContent = React.forwardRef<
           const itemConfig = getPayloadConfigFromPayload(
             config,
             item,
-            item.value
+            key as string
           );
 
           return (
