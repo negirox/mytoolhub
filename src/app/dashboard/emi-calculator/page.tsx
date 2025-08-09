@@ -82,83 +82,80 @@ export default function EmiCalculatorPage() {
 
     let balance = p;
     let totalInterestPaid = 0;
-    let totalExtraPayments = 0;
     const schedule: AmortizationData[] = [];
     let cumulativeInterest = 0;
     let cumulativePrincipal = 0;
-    let cumulativeExtraPayment = 0;
 
-    const yearlyData: { [key: number]: Omit<AmortizationData, 'year' | 'remainingBalance'> } = {};
+    const yearlyData: {
+      [key: number]: Omit<AmortizationData, 'year' | 'remainingBalance'>;
+    } = {};
 
     for (let month = 1; month <= n && balance > 0; month++) {
       const interestForMonth = balance * r;
-      const principalForMonth = emiValue - interestForMonth;
+      let principalForMonth = emiValue - interestForMonth;
 
-      let actualPrincipalPaid = principalForMonth;
       let extraPaymentForMonth = 0;
-
       if (prepaymentFrequency !== 'none') {
-        if (prepaymentFrequency === 'monthly') {
-          extraPaymentForMonth = extra;
-        } else if (
-          prepaymentFrequency === 'yearly' &&
-          month % 12 === 0
-        ) {
-          extraPaymentForMonth = extra;
-        } else if (
-          prepaymentFrequency === 'quarterly' &&
-          month % 3 === 0
-        ) {
+        const freqMap = { monthly: 1, quarterly: 3, yearly: 12 };
+        if (month % freqMap[prepaymentFrequency] === 0) {
           extraPaymentForMonth = extra;
         }
       }
-      
-      const totalPaymentForMonth = principalForMonth + interestForMonth + extraPaymentForMonth;
-      if(balance < totalPaymentForMonth) {
-        actualPrincipalPaid = balance;
+
+      if (balance < emiValue + extraPaymentForMonth) {
+        principalForMonth = balance - interestForMonth;
+        extraPaymentForMonth = 0;
         balance = 0;
       } else {
-        balance -= (principalForMonth + extraPaymentForMonth);
+        balance -= principalForMonth + extraPaymentForMonth;
       }
-
+      
       totalInterestPaid += interestForMonth;
-      totalExtraPayments += extraPaymentForMonth;
 
       const year = Math.ceil(month / 12);
       if (!yearlyData[year]) {
-        yearlyData[year] = { principal: 0, interest: 0, extraPayment: 0, totalInterest: 0, totalPayment: 0 };
+        yearlyData[year] = {
+          principal: 0,
+          interest: 0,
+          extraPayment: 0,
+          totalInterest: 0,
+          totalPayment: 0,
+        };
       }
-      yearlyData[year].principal += actualPrincipalPaid;
+      yearlyData[year].principal += principalForMonth;
       yearlyData[year].interest += interestForMonth;
       yearlyData[year].extraPayment += extraPaymentForMonth;
     }
 
-     Object.keys(yearlyData).forEach(yearStr => {
-        const year = parseInt(yearStr);
-        const data = yearlyData[year];
-        cumulativePrincipal += data.principal + data.extraPayment;
-        cumulativeInterest += data.interest;
-        schedule.push({
-            year: year,
-            principal: cumulativePrincipal,
-            interest: cumulativeInterest,
-            extraPayment: data.extraPayment,
-            remainingBalance: p - cumulativePrincipal,
-            totalInterest: cumulativeInterest,
-            totalPayment: cumulativePrincipal + cumulativeInterest
-        });
-    });
+    let runningBalance = p;
+    Object.keys(yearlyData).forEach((yearStr) => {
+      const year = parseInt(yearStr);
+      const data = yearlyData[year];
+      const yearlyPrincipal = data.principal + data.extraPayment;
+      
+      cumulativePrincipal += yearlyPrincipal;
+      cumulativeInterest += data.interest;
+      runningBalance -= yearlyPrincipal + data.interest;
 
+      schedule.push({
+        year: year,
+        principal: cumulativePrincipal,
+        interest: cumulativeInterest,
+        extraPayment: data.extraPayment,
+        remainingBalance: p - cumulativePrincipal,
+        totalInterest: cumulativeInterest,
+        totalPayment: cumulativePrincipal + cumulativeInterest,
+      });
+    });
 
     setTotalInterest(totalInterestPaid);
     setTotalPayment(p + totalInterestPaid);
     setAmortizationData(schedule);
   };
-  
+
   useEffect(() => {
     calculateEmi();
-  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency])
-
+  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency]);
 
   const chartConfig = {
     principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
@@ -200,150 +197,219 @@ export default function EmiCalculatorPage() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="principal">Loan Amount (₹)</Label>
-                  <Input
-                    id="principal"
-                    type="number"
-                    value={principal}
-                    onChange={(e) => setPrincipal(e.target.value)}
-                    placeholder="e.g., 10,00,000"
-                  />
-                  <Slider
-                    value={[parseFloat(principal)]}
-                    onValueChange={(value) => setPrincipal(String(value[0]))}
-                    min={100000}
-                    max={20000000}
-                    step={100000}
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="principal">Loan Amount (₹)</Label>
+                    <Input
+                      id="principal"
+                      type="number"
+                      value={principal}
+                      onChange={(e) => setPrincipal(e.target.value)}
+                      placeholder="e.g., 10,00,000"
+                    />
+                    <Slider
+                      value={[parseFloat(principal)]}
+                      onValueChange={(value) => setPrincipal(String(value[0]))}
+                      min={100000}
+                      max={20000000}
+                      step={100000}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="interest">Interest Rate (% p.a.)</Label>
+                    <Input
+                      id="interest"
+                      type="number"
+                      value={interestRate}
+                      onChange={(e) => setInterestRate(e.target.value)}
+                      placeholder="e.g., 8.5"
+                      step="0.1"
+                    />
+                    <Slider
+                      value={[parseFloat(interestRate)]}
+                      onValueChange={(value) =>
+                        setInterestRate(String(value[0]))
+                      }
+                      max={20}
+                      step={0.1}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="tenure">Loan Tenure (Years)</Label>
+                    <Input
+                      id="tenure"
+                      type="number"
+                      value={tenure}
+                      onChange={(e) => setTenure(e.target.value)}
+                      placeholder="e.g., 20"
+                    />
+                    <Slider
+                      value={[parseFloat(tenure)]}
+                      onValueChange={(value) => setTenure(String(value[0]))}
+                      max={30}
+                      step={1}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="interest">Interest Rate (% p.a.)</Label>
-                  <Input
-                    id="interest"
-                    type="number"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(e.target.value)}
-                    placeholder="e.g., 8.5"
-                    step="0.1"
-                  />
-                  <Slider
-                    value={[parseFloat(interestRate)]}
-                    onValueChange={(value) => setInterestRate(String(value[0]))}
-                    max={20}
-                    step={0.1}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tenure">Loan Tenure (Years)</Label>
-                  <Input
-                    id="tenure"
-                    type="number"
-                    value={tenure}
-                    onChange={(e) => setTenure(e.target.value)}
-                    placeholder="e.g., 20"
-                  />
-                  <Slider
-                    value={[parseFloat(tenure)]}
-                    onValueChange={(value) => setTenure(String(value[0]))}
-                    max={30}
-                    step={1}
-                  />
+
+                <div className="flex items-center justify-center">
+                  {emi !== null &&
+                    totalInterest !== null &&
+                    totalPayment !== null && (
+                      <div className="grid grid-cols-1 gap-4 text-center">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Monthly EMI
+                          </p>
+                          <p className="text-2xl font-bold text-primary">
+                            {new Intl.NumberFormat('en-IN', {
+                              style: 'currency',
+                              currency: 'INR',
+                              maximumFractionDigits: 0,
+                            }).format(emi)}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Total Interest
+                          </p>
+                          <p className="text-2xl font-bold">
+                            {totalInterestFormatted}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Total Payment (Principal + Interest)
+                          </p>
+                          <p className="text-2xl font-bold">
+                            {totalPaymentFormatted}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                 </div>
               </div>
-              
-              <Accordion type="single" collapsible className="w-full mt-4">
+
+              <Accordion type="single" collapsible className="w-full mt-6">
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>Advanced Options (Prepayment)</AccordionTrigger>
+                  <AccordionTrigger>
+                    Advanced Options (Prepayment)
+                  </AccordionTrigger>
                   <AccordionContent>
-                     <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                           <Label htmlFor="prepayment-freq">Prepayment Frequency</Label>
-                           <Select value={prepaymentFrequency} onValueChange={(val) => setPrepaymentFrequency(val as PrepaymentFrequency)}>
-                              <SelectTrigger>
-                                 <SelectValue placeholder="Select frequency" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                 <SelectItem value="none">None</SelectItem>
-                                 <SelectItem value="monthly">Monthly</SelectItem>
-                                 <SelectItem value="quarterly">Quarterly</SelectItem>
-                                 <SelectItem value="yearly">Yearly</SelectItem>
-                              </SelectContent>
-                           </Select>
-                        </div>
-                        <div className="space-y-2">
-                           <Label htmlFor="prepayment-amount">Prepayment Amount (₹)</Label>
-                           <Input id="prepayment-amount" type="number" value={prepaymentAmount} onChange={(e) => setPrepaymentAmount(e.target.value)} placeholder="e.g. 10000" disabled={prepaymentFrequency === 'none'}/>
-                        </div>
-                     </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="prepayment-freq">
+                          Prepayment Frequency
+                        </Label>
+                        <Select
+                          value={prepaymentFrequency}
+                          onValueChange={(val) =>
+                            setPrepaymentFrequency(val as PrepaymentFrequency)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select frequency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                            <SelectItem value="quarterly">
+                              Quarterly
+                            </SelectItem>
+                            <SelectItem value="yearly">Yearly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="prepayment-amount">
+                          Prepayment Amount (₹)
+                        </Label>
+                        <Input
+                          id="prepayment-amount"
+                          type="number"
+                          value={prepaymentAmount}
+                          onChange={(e) => setPrepaymentAmount(e.target.value)}
+                          placeholder="e.g. 10000"
+                          disabled={prepaymentFrequency === 'none'}
+                        />
+                      </div>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-
-              {emi !== null && (
-                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <Card className="p-4">
-                        <CardHeader className="p-2 pt-0">
-                            <CardTitle className="text-sm font-medium">Monthly EMI</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-2 pt-0">
-                             <p className="text-2xl font-bold text-primary">
-                                {new Intl.NumberFormat('en-IN', {
-                                    style: 'currency',
-                                    currency: 'INR',
-                                    maximumFractionDigits: 0,
-                                }).format(emi)}
-                             </p>
-                        </CardContent>
-                    </Card>
-                    <Card className="p-4">
-                        <CardHeader className="p-2 pt-0">
-                            <CardTitle className="text-sm font-medium">Total Interest</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-2 pt-0">
-                             <p className="text-2xl font-bold">{totalInterestFormatted}</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="p-4">
-                        <CardHeader className="p-2 pt-0">
-                            <CardTitle className="text-sm font-medium">Total Payment</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-2 pt-0">
-                             <p className="text-2xl font-bold">{totalPaymentFormatted}</p>
-                        </CardContent>
-                    </Card>
-                </div>
-              )}
             </CardContent>
           </Card>
-          
-          {amortizationData.length > 0 && (
-             <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Loan Amortization</CardTitle>
-                    <CardDescription>Breakdown of your payments over the loan tenure.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-                         <AreaChart accessibilityLayer data={amortizationData} margin={{ left: 12, right: 12 }}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis dataKey="year" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => `Year ${value}`} />
-                             <YAxis tickFormatter={(value) => `₹${value / 100000}L`} />
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" formatter={(value, name) => (
-                                <div className="flex flex-col">
-                                    <span className="capitalize">{name}</span>
-                                    <span className="font-bold">{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value as number)}</span>
-                                </div>
-                            )}/>} />
-                             <ChartLegend content={<ChartLegendContent />} />
-                            <Area dataKey="principal" type="natural" fill="var(--color-principal)" fillOpacity={0.4} stroke="var(--color-principal)" stackId="a" />
-                            <Area dataKey="interest" type="natural" fill="var(--color-interest)" fillOpacity={0.4} stroke="var(--color-interest)" stackId="a" />
-                         </AreaChart>
-                    </ChartContainer>
-                </CardContent>
-             </Card>
-          )}
 
+          {amortizationData.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-headline">
+                  Loan Amortization
+                </CardTitle>
+                <CardDescription>
+                  Breakdown of your payments over the loan tenure.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={chartConfig}
+                  className="min-h-[300px] w-full"
+                >
+                  <AreaChart
+                    accessibilityLayer
+                    data={amortizationData}
+                    margin={{ left: 12, right: 12 }}
+                  >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="year"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      tickFormatter={(value) => `Year ${value}`}
+                    />
+                    <YAxis
+                      tickFormatter={(value) => `₹${value / 100000}L`}
+                    />
+                    <ChartTooltip
+                      cursor={false}
+                      content={
+                        <ChartTooltipContent
+                          indicator="dot"
+                          formatter={(value, name) => (
+                            <span>
+                              {new Intl.NumberFormat('en-IN', {
+                                style: 'currency',
+                                currency: 'INR',
+                                maximumFractionDigits: 0,
+                              }).format(value as number)}
+                            </span>
+                          )}
+                        />
+                      }
+                    />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Area
+                      dataKey="principal"
+                      type="natural"
+                      fill="var(--color-principal)"
+                      fillOpacity={0.4}
+                      stroke="var(--color-principal)"
+                      stackId="a"
+                    />
+                    <Area
+                      dataKey="interest"
+                      type="natural"
+                      fill="var(--color-interest)"
+                      fillOpacity={0.4}
+                      stroke="var(--color-interest)"
+                      stackId="a"
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
     </>
