@@ -23,6 +23,9 @@ import {
   CartesianGrid,
   XAxis,
   YAxis,
+  BarChart,
+  Bar,
+  Line,
 } from 'recharts';
 import {
   ChartContainer,
@@ -389,7 +392,7 @@ export default function HomeLoanEmiCalculatorPage() {
       label: 'Taxes, Insurance & Maintenance',
       color: 'hsl(var(--chart-3))',
     },
-    balance: { label: 'Balance', color: 'hsl(var(--chart-4))' },
+    balance: { label: 'Balance', color: 'hsl(var(--chart-6))' },
   };
 
   return (
@@ -798,7 +801,7 @@ export default function HomeLoanEmiCalculatorPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">
-                  Home Loan Payment Schedule
+                  Balance and Interest Paid by Year
                 </CardTitle>
                 <CardDescription>
                   Yearly breakdown of your loan repayment.
@@ -809,7 +812,7 @@ export default function HomeLoanEmiCalculatorPage() {
                   config={chartConfig}
                   className="min-h-[400px] w-full"
                 >
-                  <AreaChart
+                  <BarChart
                     accessibilityLayer
                     data={amortizationSchedule}
                     margin={{ left: 12, right: 12, top: 20 }}
@@ -823,6 +826,12 @@ export default function HomeLoanEmiCalculatorPage() {
                       tickFormatter={(value) => `Year ${value}`}
                     />
                     <YAxis
+                      yAxisId="left"
+                      tickFormatter={(value) => formatCurrency(value as number)}
+                    />
+                     <YAxis
+                      yAxisId="right"
+                      orientation="right"
                       tickFormatter={(value) => formatCurrency(value as number)}
                     />
                     <ChartTooltip
@@ -830,43 +839,9 @@ export default function HomeLoanEmiCalculatorPage() {
                       content={<ChartTooltipContent indicator="dot" />}
                     />
                     <ChartLegend content={<ChartLegendContent />} />
-                    <Area
-                      dataKey="principal"
-                      type="natural"
-                      fill="var(--color-principal)"
-                      fillOpacity={0.7}
-                      stroke="var(--color-principal)"
-                      stackId="a"
-                      name="Principal"
-                    />
-                    <Area
-                      dataKey="interest"
-                      type="natural"
-                      fill="var(--color-interest)"
-                      fillOpacity={0.7}
-                      stroke="var(--color-interest)"
-                      stackId="a"
-                      name="Interest"
-                    />
-                    <Area
-                      dataKey="prepayments"
-                      type="natural"
-                      fill="var(--color-prepayments)"
-                      fillOpacity={0.7}
-                      stroke="var(--color-prepayments)"
-                      stackId="a"
-                      name="Prepayments"
-                    />
-                    <Area
-                      dataKey="taxesAndMaintenance"
-                      type="natural"
-                      fill="var(--color-taxesAndMaintenance)"
-                      fillOpacity={0.7}
-                      stroke="var(--color-taxesAndMaintenance)"
-                      stackId="a"
-                      name="Taxes, Insurance & Maintenance"
-                    />
-                  </AreaChart>
+                    <Bar dataKey="balance" fill="var(--color-balance)" yAxisId="left" name="Balance" radius={4} />
+                    <Line type="monotone" dataKey="interest" stroke="var(--color-interest)" yAxisId="right" name="Interest Paid" strokeWidth={2} dot={false} />
+                  </BarChart>
                 </ChartContainer>
 
                 <div className="mt-8">
