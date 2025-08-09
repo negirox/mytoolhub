@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Pie, PieChart, Cell, Tooltip } from 'recharts';
+import { Pie, PieChart, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 type UnitSystem = 'metric' | 'imperial';
 
@@ -79,7 +79,7 @@ export default function BmiCalculatorPage() {
       const inches = parseFloat(heightIn);
       if (weight > 0 && (feet > 0 || inches > 0)) {
         weightNum = weight * 0.453592; // lbs to kg
-        heightNumMeters = (feet * 12 + (inches || 0)) * 0.0254; // ft+in to meters
+        heightNumMeters = ((feet || 0) * 12 + (inches || 0)) * 0.0254; // ft+in to meters
       }
     }
 
@@ -231,52 +231,55 @@ export default function BmiCalculatorPage() {
                         </Button>
                     </div>
                      {bmi !== null && (
-                        <div className="flex flex-col items-center justify-center rounded-lg border p-6">
-                            <div className="relative w-full max-w-[300px] aspect-square">
-                               <PieChart width={300} height={170}>
-                                <Pie
-                                    data={gaugeData}
-                                    dataKey="value"
-                                    cx="50%"
-                                    cy="100%"
-                                    startAngle={180}
-                                    endAngle={0}
-                                    innerRadius={70}
-                                    outerRadius={100}
-                                    paddingAngle={2}
-                                    stroke="none"
+                        <div className="flex flex-col items-center justify-center rounded-lg border p-4 md:p-6 min-h-[350px]">
+                            <div className="relative w-full max-w-xs h-48">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={gaugeData}
+                                            dataKey="value"
+                                            cx="50%"
+                                            cy="100%"
+                                            startAngle={180}
+                                            endAngle={0}
+                                            innerRadius="70%"
+                                            outerRadius="100%"
+                                            paddingAngle={2}
+                                            stroke="none"
+                                        >
+                                            {gaugeData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip
+                                            contentStyle={{ display: 'none' }}
+                                            trigger="none"
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                <div
+                                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full"
                                 >
-                                    {gaugeData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{ display: 'none' }}
-                                    trigger="none"
-                                />
-                               </PieChart>
-                               <div className="absolute w-full" style={{ bottom: '90px' }}>
-                                 <div
-                                    className="absolute bottom-0 left-1/2 w-1 h-[100px] transition-transform duration-500 origin-bottom"
-                                    style={{ transform: `translateX(-50%) rotate(${bmiNeedleRotation-90}deg)` }}
-                                >
-                                    <div className="w-full h-full bg-foreground rounded-t-full" style={{background: 'hsl(var(--foreground))'}}></div>
+                                    <div
+                                        className="absolute bottom-1/2 left-1/2 w-0.5 h-[calc(50%-1rem)] origin-bottom transition-transform duration-500"
+                                        style={{ transform: `rotate(${bmiNeedleRotation-90}deg)` }}
+                                    >
+                                        <div className="w-full h-full bg-foreground rounded-t-full"></div>
+                                    </div>
+                                    <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 rounded-full bg-foreground z-10 border-2 border-background"></div>
                                 </div>
-                                 <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-foreground z-10 border-2 border-background"></div>
-                               </div>
-
-                                <div className="absolute bottom-[10px] text-center w-full">
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
                                     <p className="text-sm text-muted-foreground">Your BMI</p>
                                     <p className="text-4xl font-bold" style={{color: bmiColor}}>{bmi.toFixed(1)}</p>
                                     <p className="text-lg font-semibold" style={{color: bmiColor}}>({bmiCategory})</p>
                                 </div>
 
-                                <div className="absolute w-full bottom-[50px] text-xs text-muted-foreground">
-                                    <span className="absolute left-[5%]">15</span>
-                                    <span className="absolute left-[24%]">18.5</span>
+                                <div className="absolute bottom-1/4 w-full px-2 text-xs text-muted-foreground">
+                                    <span className="absolute left-[8%]">15</span>
+                                    <span className="absolute left-[26%]">18.5</span>
                                     <span className="absolute left-1/2 -translate-x-1/2">25</span>
-                                    <span className="absolute right-[27%]">30</span>
-                                    <span className="absolute right-[5%]">40</span>
+                                    <span className="absolute right-[28%]">30</span>
+                                    <span className="absolute right-[8%]">40</span>
                                 </div>
                             </div>
                             
@@ -303,5 +306,3 @@ export default function BmiCalculatorPage() {
     </>
   );
 }
-
-    
