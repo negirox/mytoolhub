@@ -50,8 +50,22 @@ import {
   PieChart,
   Cell,
 } from 'recharts';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
+interface MonthlyAmortizationData {
+  month: number;
+  principal: number;
+  interest: number;
+  extraPayment: number;
+  totalPayment: number;
+  balance: number;
+}
 interface AmortizationData {
   year: number;
   principal: number; // yearly principal
@@ -60,6 +74,7 @@ interface AmortizationData {
   extraPayment: number; // yearly extra payment
   balance: number;
   loanPaidToDate: number;
+  monthlyData: MonthlyAmortizationData[];
 }
 
 const formatCurrency = (value: number) => {
@@ -115,15 +130,12 @@ export default function EmiCalculatorPage() {
     let balance = p;
     let totalInterestPaid = 0;
     let totalPrincipalPaid = 0;
-    const schedule: AmortizationData[] = [];
-
-    const yearlyData: { [key: number]: Omit<AmortizationData, 'year' | 'balance' | 'loanPaidToDate'> } = {};
+    
+    const yearlyData: { [key: number]: Omit<AmortizationData, 'year' | 'balance' | 'loanPaidToDate'> & {monthlyData: MonthlyAmortizationData[]} } = {};
 
     let originalMonths = n;
-    let monthsPaid = 0;
 
     for (let month = 1; month <= originalMonths && balance > 0; month++) {
-      monthsPaid++;
       const interestForMonth = balance * r;
       let principalForMonth = emiValue - interestForMonth;
 
@@ -135,10 +147,16 @@ export default function EmiCalculatorPage() {
         }
       }
       
-      if (balance <= (emiValue + extraPaymentForMonth)) {
+      let currentMonthPayment = emiValue + extraPaymentForMonth;
+      if (balance < principalForMonth) {
         principalForMonth = balance;
-        extraPaymentForMonth = 0;
-        balance = 0;
+        currentMonthPayment = balance + interestForMonth;
+      }
+      if (balance <= (principalForMonth + extraPaymentForMonth)) {
+         extraPaymentForMonth = Math.max(0, balance - principalForMonth);
+         principalForMonth = Math.min(principalForMonth, balance);
+         currentMonthPayment = principalForMonth + interestForMonth + extraPaymentForMonth;
+         balance = 0;
       } else {
          balance -= (principalForMonth + extraPaymentForMonth);
       }
@@ -153,31 +171,39 @@ export default function EmiCalculatorPage() {
           interest: 0,
           totalPayment: 0,
           extraPayment: 0,
+          monthlyData: []
         };
       }
       yearlyData[year].principal += principalForMonth;
       yearlyData[year].interest += interestForMonth;
-      yearlyData[year].totalPayment += principalForMonth + interestForMonth + extraPaymentForMonth;
+      yearlyData[year].totalPayment += currentMonthPayment;
       yearlyData[year].extraPayment += extraPaymentForMonth;
+      yearlyData[year].monthlyData.push({
+          month: month,
+          principal: principalForMonth,
+          interest: interestForMonth,
+          extraPayment: extraPaymentForMonth,
+          totalPayment: currentMonthPayment,
+          balance: balance
+      });
     }
 
-    let runningBalance = p;
+    const schedule: AmortizationData[] = [];
     let cumulativePaid = 0;
     Object.keys(yearlyData).forEach((yearStr) => {
       const year = parseInt(yearStr);
       const data = yearlyData[year];
-      const yearlyPrincipalAndExtra = data.principal + data.extraPayment;
-      runningBalance -= yearlyPrincipalAndExtra + data.interest;
-      cumulativePaid += yearlyPrincipalAndExtra;
+      cumulativePaid += data.principal + data.extraPayment;
 
       schedule.push({
         year: year,
         principal: data.principal,
         interest: data.interest,
         totalPayment: data.totalPayment,
-        balance: Math.max(0, p - cumulativePaid),
+        balance: data.monthlyData[data.monthlyData.length-1].balance,
         loanPaidToDate: (cumulativePaid / p) * 100,
         extraPayment: data.extraPayment,
+        monthlyData: data.monthlyData,
       });
     });
 
@@ -189,6 +215,84 @@ export default function EmiCalculatorPage() {
   useEffect(() => {
     calculateEmi();
   }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency]);
+  
+  const AmortizationRow = ({ row }: { row: AmortizationData }) => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    return (
+      <>
+        <TableRow className="bg-muted/20">
+          <TableCell>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+              className="size-6"
+            >
+              {isOpen ? (
+                <ChevronDown className="size-4" />
+              ) : (
+                <ChevronRight className="size-4" />
+              )}
+            </Button>
+            {row.year}
+          </TableCell>
+          <TableCell>{formatCurrency(row.principal)}</TableCell>
+          <TableCell>{formatCurrency(row.interest)}</TableCell>
+          <TableCell>{formatCurrency(row.extraPayment)}</TableCell>
+          <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+          <TableCell>{formatCurrency(row.balance)}</TableCell>
+          <TableCell className="text-right">
+            {row.loanPaidToDate.toFixed(2)}%
+          </TableCell>
+        </TableRow>
+        <Collapsible open={isOpen} asChild>
+          <CollapsibleContent asChild>
+            <tr className="bg-background">
+              <TableCell colSpan={7} className="p-0">
+                <div className="p-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Month</TableHead>
+                        <TableHead>Principal</TableHead>
+                        <TableHead>Interest</TableHead>
+                        <TableHead>Extra Payment</TableHead>
+                        <TableHead>Total Payment</TableHead>
+                        <TableHead>Ending Balance</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {row.monthlyData.map((monthData) => (
+                        <TableRow key={monthData.month}>
+                          <TableCell>{monthData.month}</TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.principal)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.interest)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.extraPayment)}
+                          </TableCell>
+                           <TableCell>
+                            {formatCurrency(monthData.totalPayment)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.balance)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TableCell>
+            </tr>
+          </CollapsibleContent>
+        </Collapsible>
+      </>
+    );
+  };
 
   const chartConfig = {
     principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
@@ -365,8 +469,7 @@ export default function EmiCalculatorPage() {
                     <AreaChart
                       accessibilityLayer
                       data={amortizationData}
-                      margin={{ left: 12, right: 12 }}
-                      stackOffset="expand"
+                      margin={{ left: 12, right: 12, top: 20 }}
                     >
                       <CartesianGrid vertical={false} />
                       <XAxis
@@ -377,7 +480,8 @@ export default function EmiCalculatorPage() {
                         tickFormatter={(value) => `Year ${value}`}
                       />
                       <YAxis
-                        tickFormatter={(value) => `${Math.round(value * 100)}%`}
+                        tickFormatter={(value) => formatCurrency(value)}
+                        
                       />
                       <ChartTooltip
                         cursor={false}
@@ -400,6 +504,7 @@ export default function EmiCalculatorPage() {
                         fillOpacity={0.7}
                         stroke="var(--color-principal)"
                         stackId="a"
+                        name="Principal"
                       />
                       <Area
                         dataKey="interest"
@@ -408,6 +513,7 @@ export default function EmiCalculatorPage() {
                         fillOpacity={0.7}
                         stroke="var(--color-interest)"
                         stackId="a"
+                        name="Interest"
                       />
                        {prepaymentFrequency !== 'none' && parseFloat(prepaymentAmount) > 0 && (
                           <Area
@@ -417,6 +523,7 @@ export default function EmiCalculatorPage() {
                             fillOpacity={0.7}
                             stroke="var(--color-extraPayment)"
                             stackId="a"
+                            name="Extra Payment"
                           />
                         )}
                     </AreaChart>
@@ -483,22 +590,14 @@ export default function EmiCalculatorPage() {
                       <TableHead>Principal (A)</TableHead>
                       <TableHead>Interest (B)</TableHead>
                       <TableHead>Extra Payments</TableHead>
-                      <TableHead>Total Payment (A + B)</TableHead>
+                      <TableHead>Total Payment (A + B + Extra)</TableHead>
                       <TableHead>Balance</TableHead>
                       <TableHead className="text-right">Loan Paid To Date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {amortizationData.map((row) => (
-                      <TableRow key={row.year}>
-                        <TableCell>{row.year}</TableCell>
-                        <TableCell>{formatCurrency(row.principal)}</TableCell>
-                        <TableCell>{formatCurrency(row.interest)}</TableCell>
-                        <TableCell>{formatCurrency(row.extraPayment)}</TableCell>
-                        <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
-                        <TableCell>{formatCurrency(row.balance)}</TableCell>
-                        <TableCell className="text-right">{row.loanPaidToDate.toFixed(2)}%</TableCell>
-                      </TableRow>
+                      <AmortizationRow key={row.year} row={row} />
                     ))}
                   </TableBody>
                 </Table>
