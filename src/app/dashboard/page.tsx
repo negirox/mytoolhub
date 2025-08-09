@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -84,18 +85,16 @@ export default function DashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle className="font-headline">
-                Welcome to MyToolHub
+                Welcome to Your All-in-One Tool Hub
               </CardTitle>
               <CardDescription>
-                Your central place for powerful, client-side utilities. Select a
-                tool from the sidebar or the list below to get started.
+                Unlock a suite of powerful, free online calculators and converters designed for your everyday needs. From health and fitness to finance and general utility, all our tools are fast, secure, and operate entirely on your device for maximum privacy.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col md:flex-row gap-6 items-center">
               <div className="flex-1">
                 <p>
-                  We're constantly adding new tools to help you with your daily
-                  tasks. Stay tuned for more!
+                  Whether you're calculating your BMI, planning your finances with our EMI and Home Loan calculators, or converting units on the fly, MyToolHub has you covered. Each tool is crafted to be intuitive and mobile-friendly. Explore our collection below and stay tuned as we continuously expand our toolkit!
                 </p>
               </div>
               <div className="flex-shrink-0">
