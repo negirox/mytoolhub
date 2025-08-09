@@ -81,7 +81,7 @@ export default function BmiCalculatorPage() {
                   />
                 </div>
               </div>
-              <Button onClick={calculateBmi} className="mt-4">
+              <Button onClick={calculateBmi} className="mt-4 w-full md:w-auto">
                 Calculate BMI
               </Button>
               {bmi !== null && (

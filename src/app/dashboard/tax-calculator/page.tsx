@@ -387,7 +387,7 @@ export default function TaxCalculatorPage() {
                 </AccordionItem>
               </Accordion>
 
-              <Button onClick={calculateTax} className="mt-4">
+              <Button onClick={calculateTax} className="mt-4 w-full md:w-auto">
                 Calculate Tax
               </Button>
 

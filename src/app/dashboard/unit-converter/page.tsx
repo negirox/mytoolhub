@@ -107,7 +107,7 @@ export default function UnitConverterPage() {
               onValueChange={handleCategoryChange}
               className="w-full"
             >
-              <TabsList>
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="length">Length</TabsTrigger>
                 <TabsTrigger value="weight">Weight</TabsTrigger>
                 <TabsTrigger value="temperature">Temperature</TabsTrigger>
