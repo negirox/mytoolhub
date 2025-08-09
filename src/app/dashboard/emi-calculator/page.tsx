@@ -26,24 +26,49 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Pie,
+  PieChart,
+  Cell,
+} from 'recharts';
 
 type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
 interface AmortizationData {
   year: number;
-  principal: number;
-  interest: number;
-  extraPayment: number;
-  remainingBalance: number;
-  totalInterest: number;
-  totalPayment: number;
+  principal: number; // yearly principal
+  interest: number; // yearly interest
+  totalPayment: number; // yearly total payment
+  extraPayment: number; // yearly extra payment
+  balance: number;
+  loanPaidToDate: number;
 }
+
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(value);
+};
 
 export default function EmiCalculatorPage() {
   const [principal, setPrincipal] = useState('1000000');
@@ -69,12 +94,19 @@ export default function EmiCalculatorPage() {
     const n = parseFloat(tenure) * 12;
     const extra = parseFloat(prepaymentAmount) || 0;
 
-    if (p <= 0 || r <= 0 || n <= 0) {
+    if (p <= 0 || r < 0 || n <= 0) {
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
       setAmortizationData([]);
       return;
+    }
+    
+    if (r === 0) {
+        const emiValue = p / n;
+        setEmi(emiValue);
+        // ... handle zero interest rate amortization if needed
+        return;
     }
 
     const emiValue = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
@@ -82,69 +114,70 @@ export default function EmiCalculatorPage() {
 
     let balance = p;
     let totalInterestPaid = 0;
+    let totalPrincipalPaid = 0;
     const schedule: AmortizationData[] = [];
-    let cumulativeInterest = 0;
-    let cumulativePrincipal = 0;
 
-    const yearlyData: {
-      [key: number]: Omit<AmortizationData, 'year' | 'remainingBalance'>;
-    } = {};
+    const yearlyData: { [key: number]: Omit<AmortizationData, 'year' | 'balance' | 'loanPaidToDate'> } = {};
 
-    for (let month = 1; month <= n && balance > 0; month++) {
+    let originalMonths = n;
+    let monthsPaid = 0;
+
+    for (let month = 1; month <= originalMonths && balance > 0; month++) {
+      monthsPaid++;
       const interestForMonth = balance * r;
       let principalForMonth = emiValue - interestForMonth;
 
       let extraPaymentForMonth = 0;
-      if (prepaymentFrequency !== 'none') {
+      if (prepaymentFrequency !== 'none' && extra > 0) {
         const freqMap = { monthly: 1, quarterly: 3, yearly: 12 };
         if (month % freqMap[prepaymentFrequency] === 0) {
-          extraPaymentForMonth = extra;
+          extraPaymentForMonth = Math.min(extra, balance - principalForMonth);
         }
       }
-
-      if (balance < emiValue + extraPaymentForMonth) {
-        principalForMonth = balance - interestForMonth;
+      
+      if (balance <= (emiValue + extraPaymentForMonth)) {
+        principalForMonth = balance;
         extraPaymentForMonth = 0;
         balance = 0;
       } else {
-        balance -= principalForMonth + extraPaymentForMonth;
+         balance -= (principalForMonth + extraPaymentForMonth);
       }
-      
-      totalInterestPaid += interestForMonth;
 
+      totalInterestPaid += interestForMonth;
+      totalPrincipalPaid += principalForMonth + extraPaymentForMonth;
+      
       const year = Math.ceil(month / 12);
       if (!yearlyData[year]) {
         yearlyData[year] = {
           principal: 0,
           interest: 0,
-          extraPayment: 0,
-          totalInterest: 0,
           totalPayment: 0,
+          extraPayment: 0,
         };
       }
       yearlyData[year].principal += principalForMonth;
       yearlyData[year].interest += interestForMonth;
+      yearlyData[year].totalPayment += principalForMonth + interestForMonth + extraPaymentForMonth;
       yearlyData[year].extraPayment += extraPaymentForMonth;
     }
 
     let runningBalance = p;
+    let cumulativePaid = 0;
     Object.keys(yearlyData).forEach((yearStr) => {
       const year = parseInt(yearStr);
       const data = yearlyData[year];
-      const yearlyPrincipal = data.principal + data.extraPayment;
-      
-      cumulativePrincipal += yearlyPrincipal;
-      cumulativeInterest += data.interest;
-      runningBalance -= yearlyPrincipal + data.interest;
+      const yearlyPrincipalAndExtra = data.principal + data.extraPayment;
+      runningBalance -= yearlyPrincipalAndExtra + data.interest;
+      cumulativePaid += yearlyPrincipalAndExtra;
 
       schedule.push({
         year: year,
-        principal: cumulativePrincipal,
-        interest: cumulativeInterest,
+        principal: data.principal,
+        interest: data.interest,
+        totalPayment: data.totalPayment,
+        balance: Math.max(0, p - cumulativePaid),
+        loanPaidToDate: (cumulativePaid / p) * 100,
         extraPayment: data.extraPayment,
-        remainingBalance: p - cumulativePrincipal,
-        totalInterest: cumulativeInterest,
-        totalPayment: cumulativePrincipal + cumulativeInterest,
       });
     });
 
@@ -160,23 +193,14 @@ export default function EmiCalculatorPage() {
   const chartConfig = {
     principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
     interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
+    extraPayment: { label: 'Extra Payment', color: 'hsl(var(--chart-3))' }
   };
+  
+  const pieChartData = useMemo(() => ([
+    { name: 'Principal Amount', value: parseFloat(principal) || 0, fill: 'hsl(var(--chart-2))' },
+    { name: 'Total Interest', value: totalInterest || 0, fill: 'hsl(var(--chart-1))' }
+  ]), [principal, totalInterest]);
 
-  const totalInterestFormatted = useMemo(() => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(totalInterest || 0);
-  }, [totalInterest]);
-
-  const totalPaymentFormatted = useMemo(() => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(totalPayment || 0);
-  }, [totalPayment]);
 
   return (
     <>
@@ -252,40 +276,22 @@ export default function EmiCalculatorPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center">
-                  {emi !== null &&
-                    totalInterest !== null &&
-                    totalPayment !== null && (
-                      <div className="grid grid-cols-1 gap-4 text-center">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            Monthly EMI
-                          </p>
-                          <p className="text-2xl font-bold text-primary">
-                            {new Intl.NumberFormat('en-IN', {
-                              style: 'currency',
-                              currency: 'INR',
-                              maximumFractionDigits: 0,
-                            }).format(emi)}
-                          </p>
+                <div className="flex flex-col items-center justify-center gap-4">
+                    {emi !== null && totalInterest !== null && totalPayment !== null && (
+                        <div className="grid grid-cols-1 gap-4 text-center w-full">
+                           <div className="space-y-1 rounded-lg border p-4">
+                              <p className="text-sm font-medium text-muted-foreground">Monthly EMI</p>
+                              <p className="text-2xl font-bold text-primary">{formatCurrency(emi)}</p>
+                            </div>
+                            <div className="space-y-1 rounded-lg border p-4">
+                              <p className="text-sm font-medium text-muted-foreground">Total Interest</p>
+                              <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
+                            </div>
+                            <div className="space-y-1 rounded-lg border p-4">
+                              <p className="text-sm font-medium text-muted-foreground">Total Payment (Principal + Interest)</p>
+                              <p className="text-2xl font-bold">{formatCurrency(totalPayment)}</p>
+                            </div>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            Total Interest
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {totalInterestFormatted}
-                          </p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            Total Payment (Principal + Interest)
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {totalPaymentFormatted}
-                          </p>
-                        </div>
-                      </div>
                     )}
                 </div>
               </div>
@@ -341,75 +347,164 @@ export default function EmiCalculatorPage() {
           </Card>
 
           {amortizationData.length > 0 && (
+            <div className="grid gap-6 lg:grid-cols-5">
+              <Card className="lg:col-span-3">
+                <CardHeader>
+                  <CardTitle className="font-headline">
+                    Loan Amortization
+                  </CardTitle>
+                  <CardDescription>
+                    Breakdown of your payments over the loan tenure.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer
+                    config={chartConfig}
+                    className="min-h-[300px] w-full"
+                  >
+                    <AreaChart
+                      accessibilityLayer
+                      data={amortizationData}
+                      margin={{ left: 12, right: 12 }}
+                      stackOffset="expand"
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="year"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        tickFormatter={(value) => `Year ${value}`}
+                      />
+                      <YAxis
+                        tickFormatter={(value) => `${Math.round(value * 100)}%`}
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={
+                          <ChartTooltipContent
+                            indicator="dot"
+                            formatter={(value, name) => (
+                              <span style={{color: chartConfig[name as keyof typeof chartConfig]?.color}}>
+                                {chartConfig[name as keyof typeof chartConfig]?.label}: {formatCurrency(value as number)}
+                              </span>
+                            )}
+                          />
+                        }
+                      />
+                      <ChartLegend content={<ChartLegendContent />} />
+                      <Area
+                        dataKey="principal"
+                        type="natural"
+                        fill="var(--color-principal)"
+                        fillOpacity={0.7}
+                        stroke="var(--color-principal)"
+                        stackId="a"
+                      />
+                      <Area
+                        dataKey="interest"
+                        type="natural"
+                        fill="var(--color-interest)"
+                        fillOpacity={0.7}
+                        stroke="var(--color-interest)"
+                        stackId="a"
+                      />
+                       {prepaymentFrequency !== 'none' && parseFloat(prepaymentAmount) > 0 && (
+                          <Area
+                            dataKey="extraPayment"
+                            type="natural"
+                            fill="var(--color-extraPayment)"
+                            fillOpacity={0.7}
+                            stroke="var(--color-extraPayment)"
+                            stackId="a"
+                          />
+                        )}
+                    </AreaChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+              <Card className="lg:col-span-2">
+                 <CardHeader>
+                  <CardTitle className="font-headline">
+                    Payment Breakdown
+                  </CardTitle>
+                  <CardDescription>
+                    Principal vs. Interest
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                       <PieChart>
+                          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                          <Pie
+                            data={pieChartData}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            labelLine={false}
+                            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                                const RADIAN = Math.PI / 180;
+                                const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                return (
+                                <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                                    {`${(percent * 100).toFixed(0)}%`}
+                                </text>
+                                );
+                            }}
+                          >
+                            {pieChartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <ChartLegend
+                            content={<ChartLegendContent nameKey="name" />}
+                           />
+                       </PieChart>
+                    </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+           {amortizationData.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="font-headline">
-                  Loan Amortization
-                </CardTitle>
-                <CardDescription>
-                  Breakdown of your payments over the loan tenure.
-                </CardDescription>
+                <CardTitle className="font-headline">Amortization Schedule</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChartContainer
-                  config={chartConfig}
-                  className="min-h-[300px] w-full"
-                >
-                  <AreaChart
-                    accessibilityLayer
-                    data={amortizationData}
-                    margin={{ left: 12, right: 12 }}
-                  >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="year"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      tickFormatter={(value) => `Year ${value}`}
-                    />
-                    <YAxis
-                      tickFormatter={(value) => `₹${value / 100000}L`}
-                    />
-                    <ChartTooltip
-                      cursor={false}
-                      content={
-                        <ChartTooltipContent
-                          indicator="dot"
-                          formatter={(value, name) => (
-                            <span>
-                              {new Intl.NumberFormat('en-IN', {
-                                style: 'currency',
-                                currency: 'INR',
-                                maximumFractionDigits: 0,
-                              }).format(value as number)}
-                            </span>
-                          )}
-                        />
-                      }
-                    />
-                    <ChartLegend content={<ChartLegendContent />} />
-                    <Area
-                      dataKey="principal"
-                      type="natural"
-                      fill="var(--color-principal)"
-                      fillOpacity={0.4}
-                      stroke="var(--color-principal)"
-                      stackId="a"
-                    />
-                    <Area
-                      dataKey="interest"
-                      type="natural"
-                      fill="var(--color-interest)"
-                      fillOpacity={0.4}
-                      stroke="var(--color-interest)"
-                      stackId="a"
-                    />
-                  </AreaChart>
-                </ChartContainer>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Year</TableHead>
+                      <TableHead>Principal (A)</TableHead>
+                      <TableHead>Interest (B)</TableHead>
+                      <TableHead>Extra Payments</TableHead>
+                      <TableHead>Total Payment (A + B)</TableHead>
+                      <TableHead>Balance</TableHead>
+                      <TableHead className="text-right">Loan Paid To Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {amortizationData.map((row) => (
+                      <TableRow key={row.year}>
+                        <TableCell>{row.year}</TableCell>
+                        <TableCell>{formatCurrency(row.principal)}</TableCell>
+                        <TableCell>{formatCurrency(row.interest)}</TableCell>
+                        <TableCell>{formatCurrency(row.extraPayment)}</TableCell>
+                        <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+                        <TableCell>{formatCurrency(row.balance)}</TableCell>
+                        <TableCell className="text-right">{row.loanPaidToDate.toFixed(2)}%</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
-          )}
+           )}
         </div>
       </main>
     </>
