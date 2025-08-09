@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import {
   Calculator,
+  EggFried,
   HardHat,
   Home,
   Landmark,
@@ -20,6 +22,7 @@ import {
   Menu,
   Percent,
   Ruler,
+  Scale,
   Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -72,8 +75,44 @@ export default function DashboardLayout({
                 isActive={pathname === '/dashboard/bmi-calculator'}
               >
                 <Link href="/dashboard/bmi-calculator">
-                  <Calculator />
+                  <Scale />
                   <span>BMI Calculator</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Calorie Calculator"
+                isActive={pathname === '/dashboard/calorie-calculator'}
+              >
+                <Link href="/dashboard/calorie-calculator">
+                  <Calculator />
+                  <span>Calorie Calculator</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Protein Calculator"
+                isActive={pathname === '/dashboard/protein-calculator'}
+              >
+                <Link href="/dashboard/protein-calculator">
+                  <EggFried />
+                  <span>Protein Calculator</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Fat Intake Calculator"
+                isActive={pathname === '/dashboard/fat-intake-calculator'}
+              >
+                <Link href="/dashboard/fat-intake-calculator">
+                  <Percent />
+                  <span>Fat Intake Calculator</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

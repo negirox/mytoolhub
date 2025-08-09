@@ -8,14 +8,32 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Home, Landmark, Percent, Ruler, Wallet } from 'lucide-react';
+import { ArrowRight, Calculator, EggFried, Home, Landmark, Percent, Ruler, Scale, Wallet } from 'lucide-react';
 
 const tools = [
   {
     title: 'BMI Calculator',
     description: 'Calculate your Body Mass Index.',
     href: '/dashboard/bmi-calculator',
+    icon: <Scale className="size-8" />,
+  },
+  {
+    title: 'Calorie Calculator',
+    description: 'Estimate your daily calorie needs for maintenance, fat loss, or muscle gain.',
+    href: '/dashboard/calorie-calculator',
     icon: <Calculator className="size-8" />,
+  },
+   {
+    title: 'Protein Calculator',
+    description: 'Calculate your optimal daily protein intake based on your goals.',
+    href: '/dashboard/protein-calculator',
+    icon: <EggFried className="size-8" />,
+  },
+   {
+    title: 'Fat Intake Calculator',
+    description: 'Determine your recommended daily fat intake for a balanced diet.',
+    href: '/dashboard/fat-intake-calculator',
+    icon: <Percent className="size-8" />,
   },
   {
     title: 'EMI Calculator',
