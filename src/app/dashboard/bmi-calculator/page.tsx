@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
 
 type UnitSystem = 'metric' | 'imperial';
 
@@ -278,6 +280,45 @@ export default function BmiCalculatorPage() {
               </Tabs>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>What is Body Mass Index (BMI)?</AccordionTrigger>
+                  <AccordionContent>
+                    Body Mass Index (BMI) is a measure that uses your height and weight to work out if your weight is healthy. The BMI calculation divides an adult's weight in kilograms by their height in metres squared. It is the most widely used measure for assessing weight status.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>How is BMI interpreted for adults?</AccordionTrigger>
+                  <AccordionContent>
+                    For most adults, an ideal BMI is in the 18.5 to 24.9 range. A BMI below 18.5 is considered underweight. A BMI between 25 and 29.9 is considered overweight, and a BMI of 30 or above is considered obese.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>Is BMI accurate for everyone?</AccordionTrigger>
+                  <AccordionContent>
+                    While BMI is a useful screening tool, it does not tell the whole story. It does not distinguish between fat and muscle mass, which is denser. Therefore, very muscular individuals, like athletes, may have a high BMI without having excess body fat. It's also not the best measure for children, teenagers, pregnant women, or the elderly.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>What are the limitations of using BMI?</AccordionTrigger>
+                  <AccordionContent>
+                    The main limitations are that it doesn't account for body composition (fat vs. muscle), body fat distribution, or ethnic differences in body composition. It should be used as one part of a larger health assessment, alongside other measures like waist circumference, blood pressure, and cholesterol levels.
+                  </AccordionContent>
+                </AccordionItem>
+                 <AccordionItem value="item-5">
+                  <AccordionTrigger>How can I achieve a healthy BMI?</AccordionTrigger>
+                  <AccordionContent>
+                    Achieving a healthy BMI involves a balanced diet and regular physical activity. Focus on eating a variety of nutrient-dense foods, controlling portion sizes, and reducing your intake of processed foods, sugary drinks, and unhealthy fats. Combine this with regular exercise, including both aerobic activities and strength training.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+           </Card>
         </div>
       </main>
     </>
