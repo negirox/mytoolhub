@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -36,7 +37,7 @@ const tools = [
   },
   {
     title: 'Unit Converter',
-    description: 'Convert between different units of measurement.',
+    description: 'Convert length, weight, area, volume, and more.',
     href: '/dashboard/unit-converter',
     icon: <Ruler className="size-8" />,
   },
