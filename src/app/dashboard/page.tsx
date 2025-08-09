@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight, Calculator, EggFried, Home, Landmark, Percent, Ruler, Scale, Wallet } from 'lucide-react';
+import { Clock } from '@/components/ui/clock';
 
 const tools = [
   {
@@ -85,11 +86,16 @@ export default function DashboardPage() {
                 tool from the sidebar or the list below to get started.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p>
-                We're constantly adding new tools to help you with your daily
-                tasks. Stay tuned for more!
-              </p>
+            <CardContent className="flex flex-col md:flex-row gap-6 items-center">
+              <div className="flex-1">
+                <p>
+                  We're constantly adding new tools to help you with your daily
+                  tasks. Stay tuned for more!
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <Clock />
+              </div>
             </CardContent>
           </Card>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
