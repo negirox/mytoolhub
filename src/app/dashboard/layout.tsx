@@ -14,6 +14,7 @@ import {
 import {
   Calculator,
   HardHat,
+  Home,
   Landmark,
   LayoutDashboard,
   Menu,
@@ -88,6 +89,18 @@ export default function DashboardLayout({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Home Loan Calculator"
+                isActive={pathname === '/dashboard/home-loan-emi-calculator'}
+              >
+                <Link href="/dashboard/home-loan-emi-calculator">
+                  <Home />
+                  <span>Home Loan Calculator</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
@@ -128,7 +141,7 @@ export default function DashboardLayout({
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6 md:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
           <Logo />
           <SidebarTrigger>
             <Menu />

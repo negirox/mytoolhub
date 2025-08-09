@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Landmark, Percent, Ruler, Wallet } from 'lucide-react';
+import { ArrowRight, Calculator, Home, Landmark, Percent, Ruler, Wallet } from 'lucide-react';
 
 const tools = [
   {
@@ -18,9 +18,15 @@ const tools = [
   },
   {
     title: 'EMI Calculator',
-    description: 'Calculate your Equated Monthly Installment.',
+    description: 'Calculate your Equated Monthly Installment for any loan.',
     href: '/dashboard/emi-calculator',
     icon: <Landmark className="size-8" />,
+  },
+   {
+    title: 'Home Loan Calculator',
+    description: 'Detailed home loan EMI and expense calculator.',
+    href: '/dashboard/home-loan-emi-calculator',
+    icon: <Home className="size-8" />,
   },
   {
     title: 'Currency Converter',
