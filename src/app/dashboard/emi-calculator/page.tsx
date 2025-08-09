@@ -57,6 +57,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
 interface MonthlyAmortizationData {
@@ -222,7 +223,7 @@ export default function EmiCalculatorPage() {
   
     return (
       <>
-        <TableRow className="bg-muted/20">
+        <TableRow className="bg-muted/50 hover:bg-muted">
           <TableCell>
             <Button
               variant="ghost"
@@ -308,7 +309,7 @@ export default function EmiCalculatorPage() {
 
 
   return (
-    <>
+    <TooltipProvider>
       <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">EMI Calculator</h1>
       </header>
@@ -403,9 +404,16 @@ export default function EmiCalculatorPage() {
 
               <Accordion type="single" collapsible className="w-full mt-6">
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>
-                    Advanced Options (Prepayment)
-                  </AccordionTrigger>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <AccordionTrigger>
+                                Advanced Options (Prepayment)
+                            </AccordionTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Make extra payments to pay off your loan faster and save on interest.</p>
+                        </TooltipContent>
+                    </Tooltip>
                   <AccordionContent>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-2">
@@ -649,6 +657,6 @@ export default function EmiCalculatorPage() {
            </Card>
         </div>
       </main>
-    </>
+    </TooltipProvider>
   );
 }
