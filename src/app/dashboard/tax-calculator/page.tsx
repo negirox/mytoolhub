@@ -37,6 +37,13 @@ import {
 } from '@/components/ui/accordion';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import { Pie, PieChart, Cell, Tooltip } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
 
 type TaxRegime = 'new' | 'old';
 type TaxBracket = {
@@ -181,6 +188,7 @@ export default function TaxCalculatorPage() {
   const [taxBreakdown, setTaxBreakdown] = useState<TaxBracket[]>([]);
   const [taxableIncome, setTaxableIncome] = useState<number | null>(null);
   const [cess, setCess] = useState<number | null>(null);
+  const [incomeTax, setIncomeTax] = useState<number | null>(null);
 
   // Detailed deductions state
   const [standardDeduction, setStandardDeduction] = useState('50000');
@@ -241,12 +249,27 @@ export default function TaxCalculatorPage() {
         ? calculateNewRegimeTax(finalTaxableIncome)
         : calculateOldRegimeTax(finalTaxableIncome);
 
+    setIncomeTax(result.tax);
     setTotalTax(result.totalTax);
     setTaxBreakdown(result.breakdown);
     setCess(result.cess);
   };
 
   const isOldRegime = taxRegime === 'old';
+
+  const chartConfig = {
+      incomeTax: { label: 'Income Tax', color: 'hsl(var(--chart-1))' },
+      cess: { label: 'Cess (4%)', color: 'hsl(var(--chart-2))' },
+  };
+
+  const taxPieChartData = useMemo(() => {
+    if (incomeTax === null || cess === null) return [];
+    return [
+      { name: 'incomeTax', value: incomeTax, fill: 'var(--color-incomeTax)' },
+      { name: 'cess', value: cess, fill: 'var(--color-cess)' },
+    ].filter(item => item.value > 0);
+  }, [incomeTax, cess]);
+
 
   return (
     <>
@@ -395,7 +418,7 @@ export default function TaxCalculatorPage() {
               {totalTax !== null &&
                 taxableIncome !== null &&
                 cess !== null && (
-                  <div className="mt-6">
+                  <div className="mt-6 grid gap-6 md:grid-cols-2">
                     <Card>
                       <CardHeader>
                         <CardTitle>Calculation Results</CardTitle>
@@ -460,6 +483,25 @@ export default function TaxCalculatorPage() {
                         </div>
                       </CardContent>
                     </Card>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Tax Components</CardTitle>
+                        <CardDescription>Visual breakdown of your total tax.</CardDescription>
+                      </CardHeader>
+                      <CardContent className="flex items-center justify-center">
+                          <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm">
+                              <PieChart>
+                                  <Tooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
+                                  <Pie data={taxPieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100} labelLine={false} label>
+                                    {taxPieChartData.map((entry) => (
+                                        <Cell key={entry.name} fill={entry.fill} />
+                                    ))}
+                                  </Pie>
+                                  <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                              </PieChart>
+                          </ChartContainer>
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
             </CardContent>
@@ -474,8 +516,80 @@ export default function TaxCalculatorPage() {
                 </p>
             </CardFooter>
           </Card>
+          
+          <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is the difference between the Old and New Tax Regime?</AccordionTrigger>
+                        <AccordionContent>
+                        The Old Tax Regime allows you to claim various deductions and exemptions (like HRA, 80C, 80D), which can reduce your taxable income. The New Tax Regime offers lower tax rates but does not allow you to claim most of these deductions. The new regime is the default option, but you can choose to opt for the old one.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is Standard Deduction?</AccordionTrigger>
+                        <AccordionContent>
+                        Standard Deduction is a flat deduction of ₹50,000 that can be claimed by salaried individuals and pensioners. It is available under both the Old and New (since FY 2023-24) tax regimes, reducing your taxable income.
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is Section 80C?</AccordionTrigger>
+                        <AccordionContent>
+                        Under the Old Tax Regime, Section 80C allows you to claim deductions up to ₹1.5 lakh for investments in specific instruments like Public Provident Fund (PPF), Employees' Provident Fund (EPF), Equity Linked Savings Scheme (ELSS), and more. This is not available in the New Regime.
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is a tax rebate under Section 87A?</AccordionTrigger>
+                        <AccordionContent>
+                        A tax rebate is a relief offered to taxpayers with income below a certain limit. In the New Regime, if your taxable income is up to ₹7,00,000, you pay zero tax due to this rebate. In the Old Regime, the rebate is available for taxable income up to ₹5,00,000.
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is Health and Education Cess?</AccordionTrigger>
+                        <AccordionContent>
+                        It is an additional tax levied on the amount of income tax you pay. The current rate is 4%. The purpose of this cess is to fund health and education initiatives in the country. It is applied to your final calculated income tax.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-6" className="bg-pink-50 dark:bg-pink-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>Can I switch between the two regimes every year?</AccordionTrigger>
+                        <AccordionContent>
+                        Salaried individuals without business income can choose between the Old and New regimes each financial year. However, individuals with business or professional income can only switch from the Old to the New regime once, and cannot switch back.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-7" className="bg-red-50 dark:bg-red-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is taxable income?</AccordionTrigger>
+                        <AccordionContent>
+                        Taxable income is the portion of your gross income on which tax is levied. It is calculated by subtracting eligible deductions and exemptions from your gross annual income. Your tax liability is calculated based on this final taxable income figure.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-8" className="bg-teal-50 dark:bg-teal-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>How is House Rent Allowance (HRA) calculated?</AccordionTrigger>
+                        <AccordionContent>
+                        The HRA exemption you can claim under the Old Regime is the minimum of: 1) Actual HRA received, 2) 50% of basic salary for metro cities (40% for non-metro), or 3) Actual rent paid minus 10% of basic salary. This calculator accepts the final calculated HRA exemption amount.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-9" className="bg-orange-50 dark:bg-orange-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>What is Section 80D for medical insurance?</AccordionTrigger>
+                        <AccordionContent>
+                        Under the Old Regime, you can claim a deduction for health insurance premiums paid for yourself, your family, and your parents. The limit is ₹25,000 for self/family and an additional ₹25,000 for parents (or ₹50,000 if they are senior citizens).
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-10" className="bg-cyan-50 dark:bg-cyan-900/20 rounded-lg px-4 mb-2">
+                        <AccordionTrigger>Should I choose the Old or New Tax Regime?</AccordionTrigger>
+                        <AccordionContent>
+                        The choice depends on your financial situation. If you make significant investments in tax-saving instruments and claim deductions like HRA, the Old Regime might be more beneficial. If you have fewer deductions, the lower tax rates of the New Regime might result in a lower tax outgo. It's best to calculate your tax under both regimes to see which is better for you.
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </CardContent>
+           </Card>
         </div>
       </main>
     </>
   );
 }
+
+    
