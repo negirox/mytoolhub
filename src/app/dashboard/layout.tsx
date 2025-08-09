@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import {
   Calculator,
+  CreditCard,
   EggFried,
   HardHat,
   Home,
@@ -137,6 +138,18 @@ export default function DashboardLayout({
                 <Link href="/dashboard/home-loan-emi-calculator">
                   <Home />
                   <span>Home Loan Calculator</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Credit Card EMI Calculator"
+                isActive={pathname === '/dashboard/credit-card-emi-calculator'}
+              >
+                <Link href="/dashboard/credit-card-emi-calculator">
+                  <CreditCard />
+                  <span>Credit Card EMI</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
