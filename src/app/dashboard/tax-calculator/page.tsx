@@ -443,7 +443,7 @@ export default function TaxCalculatorPage() {
                               </TableHeader>
                               <TableBody>
                                 {taxBreakdown.map((bracket, index) => (
-                                  <TableRow key={index}>
+                                  <TableRow key={index} className="hover:bg-muted/50">
                                     <TableCell>{bracket.slab}</TableCell>
                                     <TableCell>{bracket.rate}</TableCell>
                                     <TableCell className="text-right">

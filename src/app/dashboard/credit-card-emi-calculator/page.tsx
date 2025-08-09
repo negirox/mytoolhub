@@ -187,7 +187,7 @@ export default function CreditCardEmiCalculatorPage() {
   
     return (
       <>
-        <TableRow className="bg-muted/20">
+        <TableRow className="bg-muted/50 hover:bg-muted">
           <TableCell>
             <Button
               variant="ghost"
