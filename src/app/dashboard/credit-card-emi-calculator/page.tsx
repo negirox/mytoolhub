@@ -40,7 +40,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const GST_RATE = 0.18; // 18% GST
 
@@ -277,7 +278,7 @@ export default function CreditCardEmiCalculatorPage() {
 
 
   return (
-    <>
+    <TooltipProvider>
       <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">
           Credit Card EMI Calculator
@@ -311,7 +312,12 @@ export default function CreditCardEmiCalculatorPage() {
                     <Input id="tenure" type="number" value={tenure} onChange={(e) => setTenure(e.target.value)} />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="fees">Processing Fees (pre-GST) (₹)</Label>
+                    <Label htmlFor="fees" className="flex items-center gap-1">Processing Fees (pre-GST) (₹) 
+                        <Tooltip>
+                            <TooltipTrigger asChild><Info className="size-3" /></TooltipTrigger>
+                            <TooltipContent><p>One-time fee charged by the bank, before GST is applied.</p></TooltipContent>
+                        </Tooltip>
+                    </Label>
                     <Input id="fees" type="number" value={fees} onChange={(e) => setFees(e.target.value)} />
                   </div>
                   <Button onClick={calculateEmi} className="w-full md:w-auto">Recalculate</Button>
@@ -376,7 +382,7 @@ export default function CreditCardEmiCalculatorPage() {
                                 <Cell key={entry.name} fill={entry.fill} />
                             ))}
                           </Pie>
-                          <ChartLegend content={<ChartLegendContent nameKey="name" formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                          <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
                       </PieChart>
                   </ChartContainer>
               </CardContent>
@@ -457,6 +463,6 @@ export default function CreditCardEmiCalculatorPage() {
            </Card>
         </div>
       </main>
-    </>
+    </TooltipProvider>
   );
 }

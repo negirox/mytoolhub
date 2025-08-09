@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 type UnitSystem = 'metric' | 'imperial';
 
@@ -122,7 +123,7 @@ export default function BmiCalculatorPage() {
   
 
   return (
-    <>
+    <TooltipProvider>
       <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">BMI Calculator</h1>
       </header>
@@ -236,10 +237,24 @@ export default function BmiCalculatorPage() {
                                     <p>Healthy weight for the height: <span className="font-semibold">{healthyWeightRange[0].toFixed(1)} {unitSystem === 'metric' ? 'kgs' : 'lbs'} - {healthyWeightRange[1].toFixed(1)} {unitSystem === 'metric' ? 'kgs' : 'lbs'}</span></p>
                                 )}
                                 {bmiPrime && (
-                                    <p>BMI Prime: <span className="font-semibold">{bmiPrime.toFixed(2)}</span></p>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <p className='underline-dashed'>BMI Prime: <span className="font-semibold">{bmiPrime.toFixed(2)}</span></p>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p className='max-w-xs'>BMI Prime is the ratio of actual BMI to the upper limit of normal BMI (25). A value > 1.0 is overweight.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 )}
                                 {ponderalIndex && (
-                                    <p>Ponderal Index: <span className="font-semibold">{ponderalIndex.toFixed(1)} kg/m³</span></p>
+                                     <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <p className='underline-dashed'>Ponderal Index: <span className="font-semibold">{ponderalIndex.toFixed(1)} kg/m³</span></p>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                             <p className='max-w-xs'>The Ponderal Index is a measure of leanness. It is similar to BMI but is considered more accurate for very tall or short individuals.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 )}
                             </div>
                         </div>
@@ -320,6 +335,6 @@ export default function BmiCalculatorPage() {
            </Card>
         </div>
       </main>
-    </>
+    </TooltipProvider>
   );
 }

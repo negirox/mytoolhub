@@ -144,7 +144,7 @@ export default function DashboardLayout({
              <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                tooltip="Credit Card EMI Calculator"
+                tooltip="Credit Card EMI"
                 isActive={pathname === '/dashboard/credit-card-emi-calculator'}
               >
                 <Link href="/dashboard/credit-card-emi-calculator">
