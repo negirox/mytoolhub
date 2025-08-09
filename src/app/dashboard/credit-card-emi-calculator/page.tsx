@@ -19,6 +19,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  Pie,
+  PieChart,
+  Cell,
+} from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+
 
 const GST_RATE = 0.18; // 18% GST
 
@@ -62,7 +75,7 @@ export default function CreditCardEmiCalculatorPage() {
     const processingFeeWithGst = procFees * (1 + GST_RATE);
     const gstOnInterestComponent = totalInterest * GST_RATE;
 
-    const totalCost = p + totalInterest + processingFeeWithGst;
+    const totalCost = p + totalInterest + processingFeeWithGst + gstOnInterestComponent;
 
     // APR Calculation (approximate)
     // Formula: ( (Total Interest + Fees) / Principal ) * ( 1 / Tenure in Years ) * 100
@@ -84,6 +97,23 @@ export default function CreditCardEmiCalculatorPage() {
   useEffect(() => {
     calculateEmi();
   }, [amount, rate, tenure, fees]);
+  
+  const chartConfig = {
+      principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
+      interest: { label: 'Total Interest', color: 'hsl(var(--chart-1))' },
+      fees: { label: 'Total Fees & GST', color: 'hsl(var(--chart-5))' },
+  };
+
+  const pieChartData = useMemo(() => {
+      const principalAmount = parseFloat(amount) || 0;
+      const totalFees = results.processingFeeGst + results.gstOnInterest;
+      return [
+        { name: 'principal', value: principalAmount, fill: 'var(--color-principal)' },
+        { name: 'interest', value: results.totalInterest, fill: 'var(--color-interest)' },
+        { name: 'fees', value: totalFees, fill: 'var(--color-fees)' },
+      ];
+  }, [amount, results]);
+
 
   return (
     <>
@@ -104,7 +134,7 @@ export default function CreditCardEmiCalculatorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-8 lg:grid-cols-2">
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Credit Card Loan Details</h3>
                    <div className="space-y-2">
@@ -136,7 +166,7 @@ export default function CreditCardEmiCalculatorPage() {
                                 <span className="text-muted-foreground">Annual Percentage Rate (APR)†</span>
                                 <span className="text-lg font-semibold">{results.apr.toFixed(2)} %</span>
                             </div>
-                            <p className="text-xs text-muted-foreground pt-2">†APR calculation excludes GST</p>
+                            <p className="text-xs text-muted-foreground pt-2">†APR calculation excludes GST on interest component for standard representation.</p>
                         </CardContent>
                     </Card>
                      <Card>
@@ -161,7 +191,7 @@ export default function CreditCardEmiCalculatorPage() {
                              <span className="font-medium">{formatCurrency(results.gstOnInterest)}</span>
                            </div>
                            <div className="flex justify-between text-base font-bold border-t pt-2 mt-2">
-                             <span>Total of all Payments</span>
+                             <span>Total Cost</span>
                              <span className="text-primary">{formatCurrency(results.totalPayments)}</span>
                            </div>
                         </CardContent>
@@ -171,6 +201,26 @@ export default function CreditCardEmiCalculatorPage() {
             </CardContent>
           </Card>
           
+          <Card>
+              <CardHeader>
+                <CardTitle className="font-headline">Cost Breakdown</CardTitle>
+                <CardDescription>A visual breakdown of your total payment.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex items-center justify-center">
+                  <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
+                      <PieChart>
+                          <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
+                          <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100}>
+                            {pieChartData.map((entry) => (
+                                <Cell key={entry.name} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <ChartLegend content={<ChartLegendContent nameKey="name" formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                      </PieChart>
+                  </ChartContainer>
+              </CardContent>
+            </Card>
+
            <Card>
             <CardHeader>
                 <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
