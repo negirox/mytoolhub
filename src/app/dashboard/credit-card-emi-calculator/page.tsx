@@ -19,11 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import {
-  Pie,
-  PieChart,
-  Cell,
-} from 'recharts';
+import { Pie, PieChart, Cell } from 'recharts';
 import {
   ChartContainer,
   ChartTooltip,
@@ -31,7 +27,20 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 const GST_RATE = 0.18; // 18% GST
 
@@ -42,6 +51,26 @@ const formatCurrency = (value: number) => {
     maximumFractionDigits: 0,
   }).format(value);
 };
+
+interface MonthlyAmortizationData {
+  month: number;
+  principal: number;
+  interest: number;
+  gstOnInterest: number;
+  totalPayment: number;
+  balance: number;
+}
+
+interface AmortizationYear {
+  year: number;
+  principal: number;
+  interest: number;
+  gstOnInterest: number;
+  totalPayment: number;
+  balance: number;
+  loanPaidToDate: number;
+  monthlyData: MonthlyAmortizationData[];
+}
 
 export default function CreditCardEmiCalculatorPage() {
   const [amount, setAmount] = useState('15000');
@@ -58,6 +87,8 @@ export default function CreditCardEmiCalculatorPage() {
     totalPayments: 0,
   });
 
+  const [amortizationSchedule, setAmortizationSchedule] = useState<AmortizationYear[]>([]);
+
   const calculateEmi = () => {
     const p = parseFloat(amount);
     const r = parseFloat(rate) / 12 / 100; // Monthly interest rate
@@ -65,38 +96,168 @@ export default function CreditCardEmiCalculatorPage() {
     const procFees = parseFloat(fees) || 0;
 
     if (isNaN(p) || isNaN(r) || isNaN(n) || p <= 0 || r < 0 || n <= 0) {
+      setAmortizationSchedule([]);
       return;
     }
 
-    const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-    const totalPaymentWithoutFees = emi * n;
-    const totalInterest = totalPaymentWithoutFees - p;
+    const emiPrincipalAndInterest = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
     
+    let balance = p;
+    let totalInterest = 0;
+    let totalGstOnInterest = 0;
+    const yearlyData: { [key: number]: Omit<AmortizationYear, 'year' | 'balance' | 'loanPaidToDate'> & {monthlyData: MonthlyAmortizationData[]} } = {};
+
+    for (let month = 1; month <= n; month++) {
+      const interestForMonth = balance * r;
+      let principalForMonth = emiPrincipalAndInterest - interestForMonth;
+      const gstForMonth = interestForMonth * GST_RATE;
+      
+      if (balance <= principalForMonth) {
+          principalForMonth = balance;
+      }
+      balance -= principalForMonth;
+      
+      totalInterest += interestForMonth;
+      totalGstOnInterest += gstForMonth;
+
+      const year = Math.ceil(month / 12);
+      if (!yearlyData[year]) {
+          yearlyData[year] = { principal: 0, interest: 0, gstOnInterest: 0, totalPayment: 0, monthlyData: [] };
+      }
+      
+      yearlyData[year].principal += principalForMonth;
+      yearlyData[year].interest += interestForMonth;
+      yearlyData[year].gstOnInterest += gstForMonth;
+      yearlyData[year].totalPayment += principalForMonth + interestForMonth + gstForMonth;
+      
+      yearlyData[year].monthlyData.push({
+          month: month,
+          principal: principalForMonth,
+          interest: interestForMonth,
+          gstOnInterest: gstForMonth,
+          totalPayment: principalForMonth + interestForMonth + gstForMonth,
+          balance: balance
+      });
+    }
+
+    let cumulativePaid = 0;
+    const schedule: AmortizationYear[] = Object.keys(yearlyData).map((yearStr) => {
+        const year = parseInt(yearStr);
+        const data = yearlyData[year];
+        cumulativePaid += data.principal;
+        return {
+            year,
+            principal: data.principal,
+            interest: data.interest,
+            gstOnInterest: data.gstOnInterest,
+            totalPayment: data.totalPayment,
+            balance: data.monthlyData[data.monthlyData.length-1].balance,
+            loanPaidToDate: (cumulativePaid / p) * 100,
+            monthlyData: data.monthlyData,
+        };
+    });
+    setAmortizationSchedule(schedule);
+
     const processingFeeWithGst = procFees * (1 + GST_RATE);
-    const gstOnInterestComponent = totalInterest * GST_RATE;
-
-    const totalCost = p + totalInterest + processingFeeWithGst + gstOnInterestComponent;
-
-    // APR Calculation (approximate)
-    // Formula: ( (Total Interest + Fees) / Principal ) * ( 1 / Tenure in Years ) * 100
-    const totalFeesAndInterest = totalInterest + procFees; // Using pre-GST fees for standard APR
+    const monthlyEmi = emiPrincipalAndInterest + (totalGstOnInterest / n);
+    const totalPayments = p + totalInterest + totalGstOnInterest + processingFeeWithGst;
+    
+    // APR Calculation
+    const totalFeesAndInterest = totalInterest + procFees;
     const tenureInYears = n / 12;
     const apr = (totalFeesAndInterest / p) * (1 / tenureInYears) * 100;
 
-
     setResults({
-      monthlyEmi: emi,
+      monthlyEmi: monthlyEmi,
       apr: apr,
       processingFeeGst: processingFeeWithGst,
       totalInterest: totalInterest,
-      gstOnInterest: gstOnInterestComponent,
-      totalPayments: totalCost,
+      gstOnInterest: totalGstOnInterest,
+      totalPayments: totalPayments,
     });
   };
   
   useEffect(() => {
     calculateEmi();
   }, [amount, rate, tenure, fees]);
+
+  const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    return (
+      <>
+        <TableRow className="bg-muted/20">
+          <TableCell>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+              className="size-6"
+            >
+              {isOpen ? (
+                <ChevronDown className="size-4" />
+              ) : (
+                <ChevronRight className="size-4" />
+              )}
+            </Button>
+            {row.year}
+          </TableCell>
+          <TableCell>{formatCurrency(row.principal)}</TableCell>
+          <TableCell>{formatCurrency(row.interest)}</TableCell>
+          <TableCell>{formatCurrency(row.gstOnInterest)}</TableCell>
+          <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+          <TableCell>{formatCurrency(row.balance)}</TableCell>
+          <TableCell className="text-right">
+            {row.loanPaidToDate.toFixed(2)}%
+          </TableCell>
+        </TableRow>
+        <Collapsible open={isOpen} asChild>
+          <CollapsibleContent asChild>
+            <tr className="bg-background">
+              <TableCell colSpan={7} className="p-0">
+                <div className="p-4 overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Month</TableHead>
+                        <TableHead>Principal</TableHead>
+                        <TableHead>Interest</TableHead>
+                        <TableHead>GST on Interest</TableHead>
+                        <TableHead>Total Payment</TableHead>
+                        <TableHead>Ending Balance</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {row.monthlyData.map((monthData) => (
+                        <TableRow key={monthData.month}>
+                          <TableCell>{monthData.month}</TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.principal)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.interest)}
+                          </TableCell>
+                           <TableCell>
+                            {formatCurrency(monthData.gstOnInterest)}
+                          </TableCell>
+                           <TableCell>
+                            {formatCurrency(monthData.totalPayment)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.balance)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TableCell>
+            </tr>
+          </CollapsibleContent>
+        </Collapsible>
+      </>
+    );
+  };
   
   const chartConfig = {
       principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
@@ -159,7 +320,7 @@ export default function CreditCardEmiCalculatorPage() {
                     <Card className="bg-muted/50">
                         <CardContent className="p-6 space-y-4">
                             <div className="flex justify-between items-baseline">
-                                <span className="text-muted-foreground">Monthly EMI</span>
+                                <span className="text-muted-foreground">Monthly EMI (incl. GST on Interest)</span>
                                 <span className="text-2xl font-bold text-primary">{formatCurrency(results.monthlyEmi)}</span>
                             </div>
                              <div className="flex justify-between items-baseline">
@@ -220,6 +381,35 @@ export default function CreditCardEmiCalculatorPage() {
                   </ChartContainer>
               </CardContent>
             </Card>
+
+            {amortizationSchedule.length > 0 && (
+                <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline">Amortization Schedule</CardTitle>
+                    <CardDescription>Yearly and monthly breakdown of your EMI payments.</CardDescription>
+                </CardHeader>
+                <CardContent className="overflow-x-auto">
+                    <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead className="w-[100px]">Year</TableHead>
+                        <TableHead>Principal (A)</TableHead>
+                        <TableHead>Interest (B)</TableHead>
+                        <TableHead>GST on Interest (C)</TableHead>
+                        <TableHead>Total Payment (A+B+C)</TableHead>
+                        <TableHead>Balance</TableHead>
+                        <TableHead className="text-right">Loan Paid To Date</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {amortizationSchedule.map((row) => (
+                        <AmortizationRow key={row.year} row={row} />
+                        ))}
+                    </TableBody>
+                    </Table>
+                </CardContent>
+                </Card>
+            )}
 
            <Card>
             <CardHeader>
