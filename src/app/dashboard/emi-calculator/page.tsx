@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useContext } from 'react';
+import { useState, useMemo, useEffect, useContext, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -108,49 +108,34 @@ export default function EmiCalculatorPage() {
     useState<PrepaymentFrequency>('none');
   const [prepaymentAmount, setPrepaymentAmount] = useState('0');
 
-  // Results State
-  const [emi, setEmi] = useState<number | null>(null);
-  const [totalInterest, setTotalInterest] = useState<number | null>(null);
-  const [totalPayment, setTotalPayment] = useState<number | null>(null);
-  const [amortizationData, setAmortizationData] = useState<AmortizationData[]>(
-    []
-  );
-
   useEffect(() => {
     setCurrency(globalCurrency);
   }, [globalCurrency]);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
       style: 'currency',
       currency: currency,
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  }, [currency]);
 
-  const calculateEmi = () => {
+  const { emi, totalInterest, totalPayment, amortizationData } = useMemo(() => {
     const p = parseFloat(principal);
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(tenure) * 12;
     const extra = parseFloat(prepaymentAmount) || 0;
 
     if (p <= 0 || r < 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
-      setEmi(null);
-      setTotalInterest(null);
-      setTotalPayment(null);
-      setAmortizationData([]);
-      return;
+      return { emi: null, totalInterest: null, totalPayment: null, amortizationData: [] };
     }
     
     if (r === 0) {
         const emiValue = p / n;
-        setEmi(emiValue);
-        // ... handle zero interest rate amortization if needed
-        return;
+        return { emi: emiValue, totalInterest: 0, totalPayment: p, amortizationData: [] }; // Simplified for zero interest
     }
 
     const emiValue = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-    setEmi(emiValue);
 
     let balance = p;
     let totalInterestPaid = 0;
@@ -232,14 +217,13 @@ export default function EmiCalculatorPage() {
       });
     });
 
-    setTotalInterest(totalInterestPaid);
-    setTotalPayment(p + totalInterestPaid);
-    setAmortizationData(schedule);
-  };
-
-  useEffect(() => {
-    calculateEmi();
-  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency, currency]);
+    return { 
+        emi: emiValue, 
+        totalInterest: totalInterestPaid, 
+        totalPayment: p + totalInterestPaid, 
+        amortizationData: schedule 
+    };
+  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency]);
   
   const AmortizationRow = ({ row }: { row: AmortizationData }) => {
     const [isOpen, setIsOpen] = useState(false);

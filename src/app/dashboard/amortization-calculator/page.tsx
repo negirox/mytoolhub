@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -69,28 +69,25 @@ export default function AmortizationCalculatorPage() {
   const [loanTerm, setLoanTerm] = useState('30');
   const [currency, setCurrency] = useState<Currency>(globalCurrency);
   
-  const [amortizationData, setAmortizationData] = useState<AmortizationYear[]>([]);
-
   useEffect(() => {
       setCurrency(globalCurrency);
   }, [globalCurrency]);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
       style: 'currency',
       currency: currency,
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  }, [currency]);
 
-  const calculateAmortization = () => {
+  const amortizationData = useMemo(() => {
     const p = parseFloat(loanAmount);
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(loanTerm) * 12;
 
     if (p <= 0 || r <= 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
-      setAmortizationData([]);
-      return;
+      return [];
     }
 
     const emiValue = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
@@ -140,12 +137,8 @@ export default function AmortizationCalculatorPage() {
         };
     });
 
-    setAmortizationData(schedule);
-  };
-  
-  useEffect(() => {
-    calculateAmortization();
-  }, [loanAmount, interestRate, loanTerm, currency]);
+    return schedule;
+  }, [loanAmount, interestRate, loanTerm]);
 
   const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
     const [isOpen, setIsOpen] = useState(false);
