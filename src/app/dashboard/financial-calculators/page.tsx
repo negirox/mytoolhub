@@ -115,7 +115,7 @@ const tools = [
   },
   {
     title: 'Debt-to-Income Ratio Calculator',
-    description: 'Calculate your debt-to-income ratio.',
+    description: 'Calculate your debt-to-income (DTI) ratio to assess financial health.',
     href: '/dashboard/dti-calculator',
     icon: <CirclePercent className="size-8" />,
     bgColor: 'bg-orange-100 dark:bg-orange-900/50',
@@ -247,3 +247,5 @@ export default function FinancialCalculatorsPage() {
     </TooltipProvider>
   );
 }
+
+    
