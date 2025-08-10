@@ -22,20 +22,36 @@ import {
   Wrench,
   Info,
   ShieldCheck,
+  Github,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 function Logo() {
   return (
-    <div className="flex items-center gap-2.5 p-2">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <Wrench />
+    <div className="flex items-center justify-between p-2">
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <Wrench />
+        </div>
+        <h1 className="font-headline text-lg font-semibold text-sidebar-foreground">
+          MyToolHub
+        </h1>
       </div>
-      <h1 className="font-headline text-lg font-semibold text-sidebar-foreground">
-        MyToolHub
-      </h1>
+       <Tooltip>
+        <TooltipTrigger asChild>
+            <Link href="https://github.com/fawazahmed0/currency-api" target="_blank" rel="noopener noreferrer" className="text-sidebar-foreground/80 hover:text-sidebar-foreground">
+                <Github className="size-5" />
+                <span className="sr-only">GitHub</span>
+            </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+            <p>View the open-source API on GitHub</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

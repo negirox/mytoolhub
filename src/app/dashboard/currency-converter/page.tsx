@@ -176,22 +176,7 @@ export default function CurrencyConverterPage() {
         <div className="grid gap-6">
           <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <CardTitle className="font-headline">Currency Converter</CardTitle>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Link href="https://github.com/fawazahmed0/currency-api" target="_blank" rel="noopener noreferrer">
-                                <Button variant="outline" size="icon">
-                                    <Github className="size-5" />
-                                    <span className="sr-only">GitHub</span>
-                                </Button>
-                            </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>View the open-source API on GitHub</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </div>
+                <CardTitle className="font-headline">Currency Converter</CardTitle>
               <CardDescription>
                 Get real-time exchange rates from a free, open-source API. The conversion will happen automatically.
               </CardDescription>
