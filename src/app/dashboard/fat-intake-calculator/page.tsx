@@ -52,19 +52,19 @@ export default function FatIntakeCalculatorPage() {
     });
   };
 
+  const chartConfig = {
+      fatCalories: { label: 'Fat Calories', color: 'hsl(var(--chart-1))' },
+      otherCalories: { label: 'Other Calories', color: 'hsl(var(--chart-3))' }
+  }
+
   const chartData = useMemo(() => {
     if (!results) return [];
     return [
-        { name: 'Fat Calories', value: results.fatCalories, fill: 'hsl(var(--chart-1))' },
-        { name: 'Other Calories', value: results.otherCalories, fill: 'hsl(var(--chart-3))' }
+        { name: 'fatCalories', value: results.fatCalories, fill: 'var(--color-fatCalories)' },
+        { name: 'otherCalories', value: results.otherCalories, fill: 'var(--color-otherCalories)' }
     ];
   }, [results]);
 
-  const chartConfig = {
-      calories: {
-          label: 'Calories'
-      }
-  }
 
   return (
     <>
@@ -115,19 +115,19 @@ export default function FatIntakeCalculatorPage() {
                         <CardHeader>
                             <CardTitle className="font-headline">Calorie Breakdown</CardTitle>
                             <CardDescription>
-                                This chart shows the proportion of your daily calories that come from fat.
+                                This chart shows the proportion of your daily calories that come from fat versus other sources.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex items-center justify-center">
                             <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm">
                                 <PieChart accessibilityLayer>
-                                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                                    <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
                                     <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                                         {chartData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={entry.fill} />
                                         ))}
                                     </Pie>
-                                    <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+                                    <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
                                 </PieChart>
                             </ChartContainer>
                         </CardContent>

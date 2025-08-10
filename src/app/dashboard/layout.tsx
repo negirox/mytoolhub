@@ -11,36 +11,70 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
+  SidebarFooter,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import {
-  Calculator,
-  CreditCard,
-  EggFried,
-  HardHat,
-  Home,
+  HeartPulse,
   Landmark,
   LayoutDashboard,
   Menu,
-  Percent,
-  Ruler,
-  Scale,
-  Wallet,
+  Wrench,
+  Info,
+  ShieldCheck,
+  Github,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { CurrencyProvider } from '@/context/CurrencyContext';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 function Logo() {
   return (
-    <div className="flex items-center gap-2.5 p-2">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <HardHat />
+    <div className="flex items-center justify-between p-2">
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <Wrench />
+        </div>
+        <h1 className="font-headline text-lg font-semibold text-sidebar-foreground">
+          MyToolHub
+        </h1>
       </div>
-      <h1 className="font-headline text-lg font-semibold text-sidebar-foreground">
-        MyToolHub
-      </h1>
     </div>
   );
 }
+
+const NAV_GROUPS = [
+  {
+    heading: 'Health & Fitness',
+    href: '/dashboard/health-and-fitness',
+    icon: <HeartPulse />,
+  },
+  {
+    heading: 'Financial Calculators',
+    href: '/dashboard/financial-calculators',
+    icon: <Landmark />,
+  },
+  {
+    heading: 'General Utilities',
+    href: '/dashboard/general-utilities',
+    icon: <Wrench />,
+  },
+];
+
+const LEGAL_LINKS = [
+    {
+        heading: 'About Us',
+        href: '/dashboard/about',
+        icon: <Info />
+    },
+    {
+        heading: 'Privacy Policy',
+        href: '/dashboard/privacy',
+        icon: <ShieldCheck />
+    }
+]
 
 export default function DashboardLayout({
   children,
@@ -50,157 +84,102 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <Logo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Dashboard"
-                isActive={pathname === '/dashboard'}
-              >
-                <Link href="/dashboard">
-                  <LayoutDashboard />
-                  <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="BMI Calculator"
-                isActive={pathname === '/dashboard/bmi-calculator'}
-              >
-                <Link href="/dashboard/bmi-calculator">
-                  <Scale />
-                  <span>BMI Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Calorie Calculator"
-                isActive={pathname === '/dashboard/calorie-calculator'}
-              >
-                <Link href="/dashboard/calorie-calculator">
-                  <Calculator />
-                  <span>Calorie Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Protein Calculator"
-                isActive={pathname === '/dashboard/protein-calculator'}
-              >
-                <Link href="/dashboard/protein-calculator">
-                  <EggFried />
-                  <span>Protein Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Fat Intake Calculator"
-                isActive={pathname === '/dashboard/fat-intake-calculator'}
-              >
-                <Link href="/dashboard/fat-intake-calculator">
-                  <Percent />
-                  <span>Fat Intake Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="EMI Calculator"
-                isActive={pathname === '/dashboard/emi-calculator'}
-              >
-                <Link href="/dashboard/emi-calculator">
-                  <Landmark />
-                  <span>EMI Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Home Loan Calculator"
-                isActive={pathname === '/dashboard/home-loan-emi-calculator'}
-              >
-                <Link href="/dashboard/home-loan-emi-calculator">
-                  <Home />
-                  <span>Home Loan Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Credit Card EMI"
-                isActive={pathname === '/dashboard/credit-card-emi-calculator'}
-              >
-                <Link href="/dashboard/credit-card-emi-calculator">
-                  <CreditCard />
-                  <span>Credit Card EMI</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Currency Converter"
-                isActive={pathname === '/dashboard/currency-converter'}
-              >
-                <Link href="/dashboard/currency-converter">
-                  <Wallet />
-                  <span>Currency Converter</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Unit Converter"
-                isActive={pathname === '/dashboard/unit-converter'}
-              >
-                <Link href="/dashboard/unit-converter">
-                  <Ruler />
-                  <span>Unit Converter</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Tax Calculator"
-                isActive={pathname === '/dashboard/tax-calculator'}
-              >
-                <Link href="/dashboard/tax-calculator">
-                  <Percent />
-                  <span>Tax Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
-          <Logo />
-          <SidebarTrigger>
-            <Menu />
-          </SidebarTrigger>
-        </header>
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+    <CurrencyProvider>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Dashboard"
+                  isActive={pathname === '/dashboard'}
+                >
+                  <Link href="/dashboard">
+                    <LayoutDashboard />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {NAV_GROUPS.map((group) => (
+                <SidebarMenuItem key={group.href}>
+                  <SidebarMenuButton
+                        asChild
+                        className="justify-between"
+                        isActive={pathname.startsWith(group.href)}
+                      >
+                        <Link href={group.href}>
+                          <div className="flex items-center gap-2">
+                            {group.icon}
+                            <span>{group.heading}</span>
+                          </div>
+                        </Link>
+                      </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+           <SidebarFooter>
+            <SidebarSeparator />
+            <SidebarMenu>
+                {LEGAL_LINKS.map((link) => (
+                    <SidebarMenuItem key={link.href}>
+                        <SidebarMenuButton
+                            asChild
+                            tooltip={link.heading}
+                            isActive={pathname === link.href}
+                        >
+                            <Link href={link.href}>
+                                {link.icon}
+                                <span>{link.heading}</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                ))}
+                <SidebarMenuItem>
+                    <SidebarMenuButton
+                        asChild
+                        tooltip="View Source on GitHub"
+                    >
+                        <Link href="https://github.com/negirox" target="_blank" rel="noopener noreferrer">
+                           <Github />
+                           <span>GitHub</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
+        <SidebarInset>
+          <div className="flex flex-col min-h-svh">
+            <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
+                <Logo />
+                <SidebarTrigger>
+                <Menu />
+                </SidebarTrigger>
+            </header>
+            <main className="flex-1">
+                {children}
+            </main>
+            <footer className="mt-auto border-t bg-background/80 py-4 text-center text-xs text-muted-foreground">
+                <div className="container mx-auto">
+                    <p>&copy; {new Date().getFullYear()} MyToolHub. All Rights Reserved.</p>
+                    <nav className="mt-2 space-x-4">
+                        <Link href="/dashboard/about" className="hover:text-primary">About Us</Link>
+                        <Link href="/dashboard/privacy" className="hover:text-primary">Privacy Policy</Link>
+                         <span className="mt-4 inline-block">
+                            Developed by <a href="https://github.com/negirox" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Negirox</a>
+                        </span>
+                    </nav>
+                </div>
+            </footer>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </CurrencyProvider>
   );
 }

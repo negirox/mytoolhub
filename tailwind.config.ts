@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -89,10 +90,15 @@ export default {
             height: '0',
           },
         },
+        'breathe': {
+            '0%, 100%': { transform: 'scale(1)', opacity: '0.8' },
+            '50%': { transform: 'scale(1.1)', opacity: '1' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'breathe': 'breathe 4s ease-in-out infinite',
       },
     },
   },

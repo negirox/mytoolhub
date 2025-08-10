@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -55,9 +55,10 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+
 
 type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
 interface MonthlyAmortizationData {
@@ -79,18 +80,28 @@ interface AmortizationData {
   monthlyData: MonthlyAmortizationData[];
 }
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(value);
+const currencyLocales: Record<Currency, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE',
+};
+const currencySymbols: Record<Currency, string> = {
+  INR: '₹',
+  USD: '$',
+  EUR: '€',
 };
 
 export default function EmiCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [principal, setPrincipal] = useState('1000000');
   const [interestRate, setInterestRate] = useState('8.5');
   const [tenure, setTenure] = useState('20');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
 
   // Advanced Options State
   const [prepaymentFrequency, setPrepaymentFrequency] =
@@ -105,13 +116,25 @@ export default function EmiCalculatorPage() {
     []
   );
 
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
   const calculateEmi = () => {
     const p = parseFloat(principal);
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(tenure) * 12;
     const extra = parseFloat(prepaymentAmount) || 0;
 
-    if (p <= 0 || r < 0 || n <= 0) {
+    if (p <= 0 || r < 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -216,7 +239,7 @@ export default function EmiCalculatorPage() {
 
   useEffect(() => {
     calculateEmi();
-  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency]);
+  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency, currency]);
   
   const AmortizationRow = ({ row }: { row: AmortizationData }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -329,13 +352,25 @@ export default function EmiCalculatorPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="principal">Loan Amount (₹)</Label>
+                    <Label htmlFor="currency">Currency</Label>
+                    <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                        <SelectTrigger id="currency">
+                            <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="INR">INR (₹)</SelectItem>
+                            <SelectItem value="USD">USD ($)</SelectItem>
+                            <SelectItem value="EUR">EUR (€)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="principal">Loan Amount ({currencySymbols[currency]})</Label>
                     <Input
                       id="principal"
                       type="number"
                       value={principal}
                       onChange={(e) => setPrincipal(e.target.value)}
-                      placeholder="e.g., 10,00,000"
                     />
                     <Slider
                       value={[parseFloat(principal)]}
@@ -441,7 +476,7 @@ export default function EmiCalculatorPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="prepayment-amount">
-                          Prepayment Amount (₹)
+                          Prepayment Amount ({currencySymbols[currency]})
                         </Label>
                         <Input
                           id="prepayment-amount"
@@ -553,7 +588,7 @@ export default function EmiCalculatorPage() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
                        <PieChart>
-                          <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                          <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
                           <Pie
                             data={pieChartData}
                             dataKey="value"

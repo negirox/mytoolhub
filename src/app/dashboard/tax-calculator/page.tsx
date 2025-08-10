@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useContext, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -44,6 +44,8 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+
 
 type TaxRegime = 'new' | 'old';
 type TaxBracket = {
@@ -52,17 +54,19 @@ type TaxBracket = {
   tax: number;
 };
 
-// Health and Education Cess
-const CESS_RATE = 0.04;
-
-const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 2,
-    }).format(value);
+const currencyLocales: Record<Currency, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE',
+};
+const currencySymbols: Record<Currency, string> = {
+  INR: '₹',
+  USD: '$',
+  EUR: '€',
 };
 
+// Health and Education Cess
+const CESS_RATE = 0.04;
 
 const calculateNewRegimeTax = (taxableIncome: number) => {
   let tax = 0;
@@ -191,8 +195,15 @@ const calculateOldRegimeTax = (taxableIncome: number) => {
 };
 
 export default function TaxCalculatorPage() {
+    const currencyContext = useContext(CurrencyContext);
+    if (!currencyContext) {
+        throw new Error('useContext must be used within a CurrencyProvider');
+    }
+    const { globalCurrency } = currencyContext;
+
   const [income, setIncome] = useState('1000000');
   const [taxRegime, setTaxRegime] = useState<TaxRegime>('new');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
   const [totalTax, setTotalTax] = useState<number | null>(null);
   const [taxBreakdown, setTaxBreakdown] = useState<TaxBracket[]>([]);
   const [taxableIncome, setTaxableIncome] = useState<number | null>(null);
@@ -208,6 +219,10 @@ export default function TaxCalculatorPage() {
   const [homeLoanInterest, setHomeLoanInterest] = useState('0');
   const [otherDeductions, setOtherDeductions] = useState('0');
   
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
+
   const financialYear = useMemo(() => {
     const today = new Date();
     const currentMonth = today.getMonth(); // 0-11
@@ -225,6 +240,14 @@ export default function TaxCalculatorPage() {
     }
     return `FY ${startYear}-${String(endYear).slice(-2)}`;
   }, []);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+        style: 'currency',
+        currency: currency,
+        maximumFractionDigits: 2,
+    }).format(value);
+  };
 
   const calculateTax = () => {
     const incomeNum = parseFloat(income);
@@ -268,7 +291,7 @@ export default function TaxCalculatorPage() {
 
   const chartConfig = {
     amount: {
-      label: 'Amount (₹)',
+      label: `Amount (${currencySymbols[currency]})`,
     },
     grossIncome: {
         label: 'Gross Income',
@@ -313,9 +336,22 @@ export default function TaxCalculatorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-3">
+                 <div className="space-y-2">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                      <SelectTrigger id="currency">
+                          <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          <SelectItem value="INR">INR (₹)</SelectItem>
+                          <SelectItem value="USD">USD ($)</SelectItem>
+                          <SelectItem value="EUR">EUR (€)</SelectItem>
+                      </SelectContent>
+                  </Select>
+                </div>
                 <div className="space-y-2">
-                  <Label htmlFor="income">Annual Income (₹)</Label>
+                  <Label htmlFor="income">Annual Income ({currencySymbols[currency]})</Label>
                   <Input
                     id="income"
                     type="number"
@@ -347,7 +383,7 @@ export default function TaxCalculatorPage() {
                   <AccordionContent>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-2">
-                        <Label htmlFor="standard-deduction">Standard Deduction (₹)</Label>
+                        <Label htmlFor="standard-deduction">Standard Deduction ({currencySymbols[currency]})</Label>
                         <Input
                           id="standard-deduction"
                           type="number"
@@ -446,8 +482,7 @@ export default function TaxCalculatorPage() {
                       <CardHeader>
                         <CardTitle>Calculation Results</CardTitle>
                         <CardDescription>
-                          Based on a taxable income of ₹
-                          {taxableIncome.toLocaleString('en-IN')}.
+                          Based on a taxable income of {formatCurrency(taxableIncome)}.
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -456,19 +491,10 @@ export default function TaxCalculatorPage() {
                             Total Tax Payable:
                           </h3>
                           <p className="text-3xl font-bold text-primary">
-                            ₹
-                            {totalTax.toLocaleString('en-IN', {
-                              maximumFractionDigits: 2,
-                              minimumFractionDigits: 2,
-                            })}
+                            {formatCurrency(totalTax)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            (Includes Health & Education Cess of ₹
-                            {cess.toLocaleString('en-IN', {
-                              maximumFractionDigits: 2,
-                              minimumFractionDigits: 2,
-                            })}
-                            )
+                            (Includes Health & Education Cess of {formatCurrency(cess)})
                           </p>
                         </div>
                         <div>
@@ -479,11 +505,11 @@ export default function TaxCalculatorPage() {
                             <Table>
                               <TableHeader>
                                 <TableRow>
-                                  <TableHead>Income Slab (₹)</TableHead>
+                                  <TableHead>Income Slab ({currencySymbols[currency]})</TableHead>
                                   <TableHead>Tax Rate</TableHead>
 
                                   <TableHead className="text-right">
-                                    Tax Amount (₹)
+                                    Tax Amount ({currencySymbols[currency]})
                                   </TableHead>
                                 </TableRow>
                               </TableHeader>
@@ -493,10 +519,7 @@ export default function TaxCalculatorPage() {
                                     <TableCell>{bracket.slab}</TableCell>
                                     <TableCell>{bracket.rate}</TableCell>
                                     <TableCell className="text-right">
-                                      {bracket.tax.toLocaleString('en-IN', {
-                                        maximumFractionDigits: 2,
-                                        minimumFractionDigits: 2,
-                                      })}
+                                      {formatCurrency(bracket.tax)}
                                     </TableCell>
                                   </TableRow>
                                 ))}

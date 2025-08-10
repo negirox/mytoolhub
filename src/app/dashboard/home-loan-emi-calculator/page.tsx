@@ -53,16 +53,21 @@ import { Button } from '@/components/ui/button';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(value);
+type Currency = 'INR' | 'USD' | 'EUR';
+
+const currencyLocales: Record<Currency, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE',
+};
+const currencySymbols: Record<Currency, string> = {
+  INR: '₹',
+  USD: '$',
+  EUR: '€',
 };
 
 interface MonthlyAmortizationData {
@@ -98,6 +103,7 @@ export default function HomeLoanEmiCalculatorPage() {
   const [homeInsurancePercent, setHomeInsurancePercent] = useState(0.05);
   const [maintenanceExpenses, setMaintenanceExpenses] = useState(2500);
   const [monthlyExtraPayment, setMonthlyExtraPayment] = useState(0);
+  const [currency, setCurrency] = useState<Currency>('INR');
 
   const [results, setResults] = useState({
     emi: 0,
@@ -120,6 +126,15 @@ export default function HomeLoanEmiCalculatorPage() {
     () => homeValue + loanInsurance - downPaymentAmount,
     [homeValue, loanInsurance, downPaymentAmount]
   );
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
 
   useEffect(() => {
     const p = loanAmount;
@@ -268,6 +283,7 @@ export default function HomeLoanEmiCalculatorPage() {
     maintenanceExpenses,
     monthlyExtraPayment,
     loanAmount,
+    currency,
   ]);
   
   const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
@@ -446,11 +462,24 @@ export default function HomeLoanEmiCalculatorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+               <div className="mb-6 max-w-xs">
+                <Label htmlFor="currency">Currency</Label>
+                <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                    <SelectTrigger id="currency">
+                        <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="INR">INR (₹)</SelectItem>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="home-value">Home Value (₹)</Label>
+                      <Label htmlFor="home-value">Home Value ({currencySymbols[currency]})</Label>
                       <Input
                         id="home-value"
                         type="number"
@@ -485,7 +514,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="loan-insurance">
-                        Loan Insurance (₹)
+                        Loan Insurance ({currencySymbols[currency]})
                       </Label>
                       <Input
                         id="loan-insurance"
@@ -584,7 +613,7 @@ export default function HomeLoanEmiCalculatorPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Maintenance / month (₹)</Label>
+                        <Label>Maintenance / month ({currencySymbols[currency]})</Label>
                         <Input
                           type="number"
                           value={maintenanceExpenses}
@@ -594,7 +623,7 @@ export default function HomeLoanEmiCalculatorPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Monthly Extra Payment (₹)</Label>
+                        <Label>Monthly Extra Payment ({currencySymbols[currency]})</Label>
                         <Input
                           type="number"
                           value={monthlyExtraPayment}
@@ -752,7 +781,7 @@ export default function HomeLoanEmiCalculatorPage() {
                   <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm mx-auto">
                     <PieChart>
                       <RechartsTooltip
-                        content={<ChartTooltipContent hideLabel />}
+                        content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)}/>}
                       />
                       <Pie
                         data={pieData}
@@ -791,7 +820,7 @@ export default function HomeLoanEmiCalculatorPage() {
                   >
                     <PieChart>
                       <RechartsTooltip
-                        content={<ChartTooltipContent hideLabel />}
+                        content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)}/>}
                       />
                       <Pie
                         data={breakdownData}
@@ -853,7 +882,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     />
                     <ChartTooltip
                       cursor={false}
-                      content={<ChartTooltipContent indicator="dot" />}
+                      content={<ChartTooltipContent indicator="dot" formatter={(value, name) => <span>{formatCurrency(value as number)}</span>} />}
                     />
                     <ChartLegend content={<ChartLegendContent />} />
                     <Bar dataKey="balance" fill="var(--color-balance)" yAxisId="left" name="Balance" radius={4} />
