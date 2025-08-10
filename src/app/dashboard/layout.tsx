@@ -156,7 +156,7 @@ export default function DashboardLayout({
                         <Link href="/dashboard/about" className="hover:text-primary">About Us</Link>
                         <Link href="/dashboard/privacy" className="hover:text-primary">Privacy Policy</Link>
                     </nav>
-                    <p className="mt-4">
+                     <p className="mt-4">
                         Developed by <a href="https://github.com/google-gemini" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Gemini</a>
                     </p>
                 </div>
