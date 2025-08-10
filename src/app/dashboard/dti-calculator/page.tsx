@@ -170,9 +170,9 @@ export default function DtiCalculatorPage() {
     const remainingIncome = results.totalMonthlyIncome - results.totalMonthlyDebt;
     
     return [
-      { name: 'House Debts/Expenses', value: results.monthlyHouseDebt, fill: 'var(--color-houseDebt)' },
-      { name: 'Other Debts/Expenses', value: results.monthlyOtherDebt, fill: 'var(--color-otherDebt)' },
-      { name: 'Remaining Income', value: remainingIncome > 0 ? remainingIncome : 0, fill: 'var(--color-remaining)' },
+      { name: 'houseDebt', value: results.monthlyHouseDebt, fill: 'var(--color-houseDebt)' },
+      { name: 'otherDebt', value: results.monthlyOtherDebt, fill: 'var(--color-otherDebt)' },
+      { name: 'remaining', value: remainingIncome > 0 ? remainingIncome : 0, fill: 'var(--color-remaining)' },
     ].filter(item => item.value > 0);
   }, [results]);
 
@@ -321,14 +321,17 @@ export default function DtiCalculatorPage() {
                                 <ChartTooltip 
                                     content={<ChartTooltipContent 
                                         nameKey="name" 
-                                        formatter={(value, name, props) => (
-                                            <div className='flex flex-col'>
-                                                <span>{props.payload.name}: {formatCurrency(value as number)}</span>
-                                                <span className='text-muted-foreground text-xs'>
-                                                    ({((value as number / results.totalMonthlyIncome) * 100).toFixed(1)}%)
-                                                </span>
-                                            </div>
-                                        )} 
+                                        formatter={(value, name, props) => {
+                                            const itemKey = props.payload.name as keyof typeof incomeBreakdownChartConfig;
+                                            return (
+                                                <div className='flex flex-col'>
+                                                    <span>{incomeBreakdownChartConfig[itemKey]?.label}: {formatCurrency(value as number)}</span>
+                                                    <span className='text-muted-foreground text-xs'>
+                                                        ({((value as number / results.totalMonthlyIncome) * 100).toFixed(1)}%)
+                                                    </span>
+                                                </div>
+                                            )
+                                        }} 
                                     />}
                                 />
                                 <Pie 
@@ -356,7 +359,7 @@ export default function DtiCalculatorPage() {
                                     <Cell key={entry.name} fill={entry.fill} />
                                 ))}
                                 </Pie>
-                                <ChartLegend content={<ChartLegendContent />} />
+                                <ChartLegend content={<ChartLegendContent formatter={(value) => incomeBreakdownChartConfig[value as keyof typeof incomeBreakdownChartConfig].label} />} />
                             </PieChart>
                         </ChartContainer>
                     </CardContent>
