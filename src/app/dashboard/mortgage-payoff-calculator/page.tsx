@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,10 +17,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend, Tooltip } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -60,6 +63,10 @@ export default function MortgagePayoffCalculatorPage() {
     interestSaved: number;
     payoffDate: string;
     newPayoffDate: string;
+    originalMonthlyPayment: number;
+    newMonthlyPayment: number;
+    originalTotalPayment: number;
+    newTotalPayment: number;
   } | null>(null);
 
   useEffect(() => {
@@ -95,19 +102,23 @@ export default function MortgagePayoffCalculatorPage() {
     let balance = p;
     let months = 0;
     let totalInterestPaidWithExtra = 0;
+    let totalPaymentWithExtra = 0;
+
     while (balance > 0) {
       const interestForMonth = balance * r;
-      let principalForMonth = emi - interestForMonth;
+      const principalForMonth = emi - interestForMonth;
       
-      const totalPaymentThisMonth = emi + extra;
+      const extraPaymentForMonth = Math.min(extra, balance - principalForMonth);
+      const totalPaymentThisMonth = emi + extraPaymentForMonth;
       
-      if(balance < totalPaymentThisMonth - interestForMonth) {
+      if(balance <= principalForMonth + extraPaymentForMonth) {
           balance = 0;
       } else {
-          balance -= (principalForMonth + extra);
+          balance -= (principalForMonth + extraPaymentForMonth);
       }
       
       totalInterestPaidWithExtra += interestForMonth;
+      totalPaymentWithExtra += totalPaymentThisMonth;
       months++;
       if (months > n_original * 2) break; // Safety break
     }
@@ -126,6 +137,10 @@ export default function MortgagePayoffCalculatorPage() {
         interestSaved,
         payoffDate: originalPayoffDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' }),
         newPayoffDate: newPayoffDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' }),
+        originalMonthlyPayment: emi,
+        newMonthlyPayment: emi + extra,
+        originalTotalPayment,
+        newTotalPayment: totalPaymentWithExtra,
     });
   };
   
@@ -253,26 +268,67 @@ export default function MortgagePayoffCalculatorPage() {
           </Card>
           
            {results && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-headline">Loan Comparison</CardTitle>
-                <CardDescription>Term length and total interest with and without extra payments.</CardDescription>
-              </CardHeader>
-              <CardContent className="flex items-center justify-center">
-                   <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-                      <BarChart data={chartData}>
-                        <CartesianGrid vertical={false} />
-                        <XAxis dataKey="name" />
-                        <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--chart-1))" tickFormatter={(val) => formatCurrency(val)} />
-                        <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--chart-2))" tickFormatter={(val) => `${val} mo`} />
-                        <ChartTooltip content={<ChartTooltipContent formatter={(value, name) => <span>{name === 'Total Interest' ? formatCurrency(value as number) : `${value} months`}</span>} />} />
-                        <Legend />
-                        <Bar yAxisId="left" dataKey="Total Interest" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-                        <Bar yAxisId="right" dataKey="Loan Term (Months)" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ChartContainer>
-              </CardContent>
-            </Card>
+            <div className="grid gap-6 lg:grid-cols-2">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline">Loan Comparison</CardTitle>
+                        <CardDescription>Key metrics with and without extra payments.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Metric</TableHead>
+                                    <TableHead className="text-right">Original</TableHead>
+                                    <TableHead className="text-right text-primary">With Extra Payment</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>Monthly Payment</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(results.originalMonthlyPayment)}</TableCell>
+                                    <TableCell className="text-right text-primary">{formatCurrency(results.newMonthlyPayment)}</TableCell>
+                                </TableRow>
+                                 <TableRow>
+                                    <TableCell>Loan Term</TableCell>
+                                    <TableCell className="text-right">{formatYearsAndMonths(results.originalTerm)}</TableCell>
+                                    <TableCell className="text-right text-primary">{formatYearsAndMonths(results.newTerm)}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>Total Interest Paid</TableCell>
+                                    <TableCell className="text-right text-destructive">{formatCurrency(results.originalTotalInterest)}</TableCell>
+                                    <TableCell className="text-right text-green-600 dark:text-green-400">{formatCurrency(results.newTotalInterest)}</TableCell>
+                                </TableRow>
+                                 <TableRow className="font-semibold">
+                                    <TableCell>Total Payments</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(results.originalTotalPayment)}</TableCell>
+                                    <TableCell className="text-right text-primary">{formatCurrency(results.newTotalPayment)}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-headline">Savings Comparison</CardTitle>
+                    <CardDescription>Term length and total interest with and without extra payments.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-center">
+                       <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                          <BarChart data={chartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="name" />
+                            <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--chart-1))" tickFormatter={(val) => formatCurrency(val)} />
+                            <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--chart-2))" tickFormatter={(val) => `${val} mo`} />
+                            <Tooltip content={<ChartTooltipContent formatter={(value, name) => <span>{name === 'Total Interest' ? formatCurrency(value as number) : `${value} months`}</span>} />} />
+                            <Legend />
+                            <Bar yAxisId="left" dataKey="Total Interest" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                            <Bar yAxisId="right" dataKey="Loan Term (Months)" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ChartContainer>
+                  </CardContent>
+                </Card>
+            </div>
            )}
 
             <Card>
