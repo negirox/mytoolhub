@@ -27,6 +27,16 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Pie, PieChart, Cell, Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+
 
 interface MonthlyAmortizationData {
   month: number;
@@ -81,18 +91,19 @@ export default function AmortizationCalculatorPage() {
     }).format(value);
   }, [currency]);
 
-  const amortizationData = useMemo(() => {
+  const { amortizationData, totalInterest, totalPrincipal } = useMemo(() => {
     const p = parseFloat(loanAmount);
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(loanTerm) * 12;
 
-    if (p <= 0 || r <= 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
-      return [];
+    if (p <= 0 || r < 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
+      return { amortizationData: [], totalInterest: 0, totalPrincipal: 0 };
     }
 
-    const emiValue = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    const emiValue = r > 0 ? (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : p/n;
     
     let balance = p;
+    let interestSoFar = 0;
     const yearlyData: { [key: number]: Omit<AmortizationYear, 'year' | 'balance' | 'loanPaidToDate'> & {monthlyData: MonthlyAmortizationData[]} } = {};
 
     for (let month = 1; month <= n; month++) {
@@ -103,6 +114,7 @@ export default function AmortizationCalculatorPage() {
           principalForMonth = balance;
       }
       balance -= principalForMonth;
+      interestSoFar += interestForMonth;
 
       const year = Math.ceil(month / 12);
       if (!yearlyData[year]) {
@@ -137,7 +149,7 @@ export default function AmortizationCalculatorPage() {
         };
     });
 
-    return schedule;
+    return { amortizationData: schedule, totalInterest: interestSoFar, totalPrincipal: p };
   }, [loanAmount, interestRate, loanTerm]);
 
   const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
@@ -212,6 +224,16 @@ export default function AmortizationCalculatorPage() {
       </>
     );
   };
+  
+   const chartConfig = {
+    principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
+    interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
+  };
+
+  const pieChartData = useMemo(() => ([
+    { name: 'principal', value: totalPrincipal, fill: 'var(--color-principal)' },
+    { name: 'interest', value: totalInterest, fill: 'var(--color-interest)' }
+  ]), [totalPrincipal, totalInterest]);
 
 
   return (
@@ -278,6 +300,47 @@ export default function AmortizationCalculatorPage() {
           </Card>
 
             {amortizationData.length > 0 && (
+              <div className="grid gap-6 lg:grid-cols-5">
+                <Card className="lg:col-span-3">
+                  <CardHeader>
+                    <CardTitle className="font-headline">Year-wise Payment Breakdown</CardTitle>
+                    <CardDescription>Visualizing how your payments of principal and interest change over time.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                     <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                        <AreaChart accessibilityLayer data={amortizationData} margin={{ left: 12, right: 12, top: 20 }}>
+                          <CartesianGrid vertical={false} />
+                           <XAxis dataKey="year" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => `Year ${value}`} />
+                           <YAxis tickFormatter={(value) => formatCurrency(value as number)} />
+                           <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" formatter={(value, name) => <span>{formatCurrency(value as number)}</span>} />} />
+                           <ChartLegend content={<ChartLegendContent />} />
+                           <Area dataKey="principal" type="natural" fill="var(--color-principal)" fillOpacity={0.7} stroke="var(--color-principal)" stackId="a" />
+                           <Area dataKey="interest" type="natural" fill="var(--color-interest)" fillOpacity={0.7} stroke="var(--color-interest)" stackId="a" />
+                        </AreaChart>
+                     </ChartContainer>
+                  </CardContent>
+                </Card>
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="font-headline">Total Payment Breakdown</CardTitle>
+                    <CardDescription>Principal vs. Interest over the full loan term.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-center">
+                    <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
+                       <PieChart>
+                          <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
+                          <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} labelLine={false} label={({ percent }) => `${(percent * 100).toFixed(0)}%`}>
+                            {pieChartData.map((entry) => (<Cell key={entry.name} fill={entry.fill} />))}
+                          </Pie>
+                          <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                       </PieChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {amortizationData.length > 0 && (
                 <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Amortization Table</CardTitle>
@@ -288,10 +351,10 @@ export default function AmortizationCalculatorPage() {
                     <TableHeader>
                         <TableRow>
                         <TableHead className="w-[100px]">Year</TableHead>
-                        <TableHead>Principal</TableHead>
-                        <TableHead>Interest</TableHead>
+                        <TableHead>Principal Paid</TableHead>
+                        <TableHead>Interest Paid</TableHead>
                         <TableHead>Total Payment</TableHead>
-                        <TableHead>Balance</TableHead>
+                        <TableHead>Ending Balance</TableHead>
                         <TableHead className="text-right">Loan Paid To Date</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -304,6 +367,44 @@ export default function AmortizationCalculatorPage() {
                 </CardContent>
                 </Card>
             )}
+            
+            <Card>
+                <CardHeader><CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle></CardHeader>
+                <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="item-1">
+                            <AccordionTrigger>What is loan amortization?</AccordionTrigger>
+                            <AccordionContent>
+                                Loan amortization is the process of spreading out a loan into a series of fixed payments over time. A portion of each payment goes toward the loan's principal (the amount you borrowed) and a portion goes toward interest.
+                            </AccordionContent>
+                        </AccordionItem>
+                         <AccordionItem value="item-2">
+                            <AccordionTrigger>Why do I pay more interest at the beginning of my loan?</AccordionTrigger>
+                            <AccordionContent>
+                                In the early years of a loan, the outstanding principal balance is at its highest. Since interest is calculated on the current balance, the interest component of your payment is larger at the start. As you pay down the principal, the interest portion of each payment decreases.
+                            </AccordionContent>
+                        </AccordionItem>
+                         <AccordionItem value="item-3">
+                            <AccordionTrigger>How can I use this amortization schedule?</AccordionTrigger>
+                            <AccordionContent>
+                                You can use this schedule to understand exactly where your money is going with each payment. It helps you see how much you'll pay in total interest over the life of the loan and visualize your progress in paying down your debt.
+                            </AccordionContent>
+                        </AccordionItem>
+                         <AccordionItem value="item-4">
+                            <AccordionTrigger>What is an amortization schedule?</AccordionTrigger>
+                            <AccordionContent>
+                            An amortization schedule is a table detailing each periodic payment on a loan. It breaks down each payment into its principal and interest components and shows the remaining balance of the loan after each payment is made. This calculator provides a yearly and monthly schedule.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-5">
+                            <AccordionTrigger>Can I pay off my loan faster?</AccordionTrigger>
+                            <AccordionContent>
+                                Yes. Making extra payments directly towards the principal can help you pay off your loan faster and save a significant amount on total interest. Check our "EMI Calculator" for a prepayment feature to see how this works.
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </CardContent>
+            </Card>
 
         </div>
       </main>
