@@ -19,6 +19,7 @@ import {
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -273,6 +274,46 @@ export default function MortgagePayoffCalculatorPage() {
               </CardContent>
             </Card>
            )}
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="item-1">
+                            <AccordionTrigger>How do extra payments save me money?</AccordionTrigger>
+                            <AccordionContent>
+                                Extra payments go directly toward reducing your loan's principal balance. Since mortgage interest is calculated on the outstanding balance, a lower principal means you pay less interest with each subsequent payment. This effect compounds over time, leading to significant interest savings and a shorter loan term.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-2">
+                            <AccordionTrigger>Is it better to make extra monthly payments or one large annual payment?</AccordionTrigger>
+                            <AccordionContent>
+                                Both methods help, but making smaller, more frequent extra payments (like monthly) is often slightly better. This is because you reduce the principal balance sooner, which means less interest accrues. However, the most important thing is to be consistent with whichever method you choose.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-3">
+                            <AccordionTrigger>Should I inform my lender before making extra payments?</AccordionTrigger>
+                            <AccordionContent>
+                                Yes, it's crucial. You must ensure your extra payments are applied directly to the loan's principal, not toward future interest. Contact your lender to understand their process. Some may require you to specify "apply to principal" on your payment.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-4">
+                            <AccordionTrigger>Are there any prepayment penalties?</AccordionTrigger>
+                            <AccordionContent>
+                                Some loan agreements include a prepayment penalty clause, which charges a fee if you pay off a large portion or all of your loan within a specific period. Always check your loan documents or contact your lender to see if you have a prepayment penalty before making large extra payments.
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-5">
+                            <AccordionTrigger>Should I pay off my mortgage early or invest the extra money?</AccordionTrigger>
+                            <AccordionContent>
+                                This is a common financial debate. Paying off your mortgage offers a guaranteed, risk-free return equal to your loan's interest rate. Investing in the stock market could potentially yield higher returns, but it comes with risk. The right choice depends on your personal risk tolerance and financial goals.
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </CardContent>
+            </Card>
         </div>
       </main>
     </>
