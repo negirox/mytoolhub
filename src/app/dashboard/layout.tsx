@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sidebar';
 import {
   Calculator,
+  ChevronDown,
   CreditCard,
   EggFried,
   HardHat,
@@ -30,6 +31,10 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 function Logo() {
   return (
@@ -43,6 +48,34 @@ function Logo() {
     </div>
   );
 }
+
+const SidebarCollapsibleGroup = ({
+  groupLabel,
+  children,
+}: {
+  groupLabel: string;
+  children: React.ReactNode;
+}) => {
+  const [isOpen, setIsOpen] = useState(true);
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+          <Button variant="ghost" className="w-full flex justify-between items-center px-2">
+            <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
+            <ChevronDown
+              className={cn('size-4 transition-transform', isOpen && 'rotate-180')}
+            />
+          </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <SidebarMenu className="pl-4">
+            {children}
+        </SidebarMenu>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
+
 
 export default function DashboardLayout({
   children,
@@ -72,8 +105,7 @@ export default function DashboardLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>
             
-            <SidebarGroup>
-              <SidebarGroupLabel>Health & Fitness</SidebarGroupLabel>
+             <SidebarCollapsibleGroup groupLabel="Health & Fitness">
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
@@ -122,10 +154,9 @@ export default function DashboardLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarGroup>
+            </SidebarCollapsibleGroup>
 
-            <SidebarGroup>
-               <SidebarGroupLabel>Financial Calculators</SidebarGroupLabel>
+            <SidebarCollapsibleGroup groupLabel="Financial Calculators">
                 <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
@@ -174,10 +205,9 @@ export default function DashboardLayout({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarGroup>
+            </SidebarCollapsibleGroup>
             
-            <SidebarGroup>
-                <SidebarGroupLabel>General Utilities</SidebarGroupLabel>
+            <SidebarCollapsibleGroup groupLabel="General Utilities">
                  <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
@@ -202,7 +232,7 @@ export default function DashboardLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-            </SidebarGroup>
+            </SidebarCollapsibleGroup>
 
           </SidebarMenu>
         </SidebarContent>
