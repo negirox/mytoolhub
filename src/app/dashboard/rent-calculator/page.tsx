@@ -8,8 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { redirect } from 'next/navigation';
 
 export default function RentCalculatorPage() {
+    redirect('/dashboard/rent-affordability-calculator');
   return (
     <>
       <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">

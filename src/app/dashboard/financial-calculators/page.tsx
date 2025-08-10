@@ -104,9 +104,9 @@ const tools = [
     iconColor: 'text-green-600 dark:text-green-400'
   },
   {
-    title: 'Rent Calculator',
-    description: 'Calculate your estimated rent payments.',
-    href: '/dashboard/rent-calculator',
+    title: 'Rent Affordability Calculator',
+    description: 'Calculate your affordable monthly rent spending.',
+    href: '/dashboard/rent-affordability-calculator',
     icon: <Banknote className="size-8" />,
     bgColor: 'bg-teal-100 dark:bg-teal-900/50',
     textColor: 'text-teal-800 dark:text-teal-200',
