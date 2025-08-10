@@ -23,6 +23,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from '@/components/ui/chart';
 import {
   Pie,
@@ -91,13 +93,13 @@ export default function MortgageCalculatorPage() {
   };
 
   const chartConfig = {
-    principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
-    interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
+    principal: { label: 'Principal Loan', color: 'hsl(var(--chart-2))' },
+    interest: { label: 'Total Interest', color: 'hsl(var(--chart-1))' },
   };
   
   const pieChartData = useMemo(() => ([
-    { name: 'Principal Loan', value: loanAmount, fill: 'var(--color-principal)' },
-    { name: 'Total Interest', value: totalInterest || 0, fill: 'var(--color-interest)' }
+    { name: 'principal', value: loanAmount, fill: 'var(--color-principal)' },
+    { name: 'interest', value: totalInterest || 0, fill: 'var(--color-interest)' }
   ]), [loanAmount, totalInterest]);
 
 
@@ -206,12 +208,12 @@ export default function MortgageCalculatorPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Loan Breakdown</CardTitle>
-                <CardDescription>Principal vs. Interest</CardDescription>
+                <CardDescription>A visual comparison of the total principal versus the total interest paid over the life of the loan.</CardDescription>
               </CardHeader>
               <CardContent className="flex items-center justify-center">
                   <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
                      <PieChart>
-                        <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                        <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
                         <Pie
                           data={pieChartData}
                           dataKey="value"
@@ -236,6 +238,7 @@ export default function MortgageCalculatorPage() {
                               <Cell key={`cell-${index}`} fill={entry.fill} />
                           ))}
                         </Pie>
+                        <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
                      </PieChart>
                   </ChartContainer>
               </CardContent>

@@ -261,35 +261,41 @@ export default function BmiCalculatorPage() {
                     )}
                 </div>
                  {bmi !== null && (
-                    <div className="mt-8 flex flex-col items-center justify-center rounded-lg border p-4 md:p-6">
-                        <div className="w-full max-w-xl">
-                            <div className="relative h-6 w-full rounded-full flex overflow-hidden">
-                                <div className="w-[14%] bg-[hsl(var(--chart-4))]" /> 
-                                <div className="w-[26%] bg-[hsl(var(--chart-2))]" />
-                                <div className="w-[20%] bg-[hsl(var(--chart-5))]" />
-                                <div className="w-[40%] bg-[hsl(var(--chart-1))]" />
-                                <div
-                                    className="absolute top-0 h-full w-1.5 -translate-x-1/2 transform rounded-full bg-foreground border-2 border-background"
-                                    style={{ left: `${bmiMarkerPosition}%` }}
-                                >
-                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold">{bmi.toFixed(1)}</div>
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle className="font-headline">BMI Scale</CardTitle>
+                            <CardDescription>This scale shows where your BMI falls on the spectrum from underweight to obesity.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col items-center justify-center pt-4">
+                            <div className="w-full max-w-xl">
+                                <div className="relative h-6 w-full rounded-full flex overflow-hidden">
+                                    <div className="w-[14%] bg-[hsl(var(--chart-4))]" /> 
+                                    <div className="w-[26%] bg-[hsl(var(--chart-2))]" />
+                                    <div className="w-[20%] bg-[hsl(var(--chart-5))]" />
+                                    <div className="w-[40%] bg-[hsl(var(--chart-1))]" />
+                                    <div
+                                        className="absolute top-0 h-full w-1.5 -translate-x-1/2 transform rounded-full bg-foreground border-2 border-background"
+                                        style={{ left: `${bmiMarkerPosition}%` }}
+                                    >
+                                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold">{bmi.toFixed(1)}</div>
+                                    </div>
+                                </div>
+                                <div className="relative mt-2 flex w-full text-xs text-muted-foreground">
+                                    <div className="w-[14%] text-center">Underweight</div>
+                                    <div className="w-[26%] text-center">Normal</div>
+                                    <div className="w-[20%] text-center">Overweight</div>
+                                    <div className="w-[40%] text-center">Obesity</div>
+                                </div>
+                                 <div className="relative mt-1 flex w-full text-xs text-muted-foreground">
+                                    <span className="absolute" style={{left: `0%`}}>15</span>
+                                    <span className="absolute" style={{left: `14%`, transform: 'translateX(-50%)'}}>18.5</span>
+                                    <span className="absolute" style={{left: `40%`, transform: 'translateX(-50%)'}}>25</span>
+                                    <span className="absolute" style={{left: `60%`, transform: 'translateX(-50%)'}}>30</span>
+                                    <span className="absolute" style={{left: `100%`, transform: 'translateX(-100%)'}}>40</span>
                                 </div>
                             </div>
-                            <div className="relative mt-2 flex w-full text-xs text-muted-foreground">
-                                <div className="w-[14%] text-center">Underweight</div>
-                                <div className="w-[26%] text-center">Normal</div>
-                                <div className="w-[20%] text-center">Overweight</div>
-                                <div className="w-[40%] text-center">Obesity</div>
-                            </div>
-                             <div className="relative mt-1 flex w-full text-xs text-muted-foreground">
-                                <span className="absolute" style={{left: `0%`}}>15</span>
-                                <span className="absolute" style={{left: `14%`, transform: 'translateX(-50%)'}}>18.5</span>
-                                <span className="absolute" style={{left: `40%`, transform: 'translateX(-50%)'}}>25</span>
-                                <span className="absolute" style={{left: `60%`, transform: 'translateX(-50%)'}}>30</span>
-                                <span className="absolute" style={{left: `100%`, transform: 'translateX(-100%)'}}>40</span>
-                            </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
                 )}
               </Tabs>
             </CardContent>
