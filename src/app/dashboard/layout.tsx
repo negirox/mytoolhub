@@ -11,9 +11,13 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import {
   HeartPulse,
+  Home,
   Landmark,
   LayoutDashboard,
   Menu,
@@ -21,6 +25,13 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
 function Logo() {
   return (
@@ -34,6 +45,29 @@ function Logo() {
     </div>
   );
 }
+
+const NAV_GROUPS = [
+  {
+    heading: 'Health & Fitness',
+    href: '/dashboard/health-and-fitness',
+    icon: <HeartPulse />,
+  },
+  {
+    heading: 'Financial Calculators',
+    href: '/dashboard/financial-calculators',
+    icon: <Landmark />,
+  },
+    {
+    heading: 'Mortgage & Real Estate',
+    href: '/dashboard/mortgage-and-real-estate',
+    icon: <Home />,
+  },
+  {
+    heading: 'General Utilities',
+    href: '/dashboard/general-utilities',
+    icon: <Wrench />,
+  },
+];
 
 export default function DashboardLayout({
   children,
@@ -62,46 +96,34 @@ export default function DashboardLayout({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Health & Fitness"
-                  isActive={pathname === '/dashboard/health-and-fitness'}
-                >
-                  <Link href="/dashboard/health-and-fitness">
-                    <HeartPulse />
-                    <span>Health & Fitness</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
 
-            <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Financial Calculators"
-                  isActive={pathname === '/dashboard/financial-calculators'}
-                >
-                  <Link href="/dashboard/financial-calculators">
-                    <Landmark />
-                    <span>Financial Calculators</span>
-                  </Link>
-                </SidebarMenuButton>
+            {NAV_GROUPS.map((group) => (
+              <SidebarMenuItem key={group.href}>
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      asChild
+                      className="justify-between"
+                      isActive={pathname.startsWith(group.href)}
+                    >
+                      <Link href={group.href}>
+                        <div className="flex items-center gap-2">
+                          {group.icon}
+                          <span>{group.heading}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-5 [&[data-state=open]>svg]:rotate-90"
+                        >
+                          <ChevronRight className="transition-transform duration-200" />
+                        </Button>
+                      </Link>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </Collapsible>
               </SidebarMenuItem>
-            
-             <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="General Utilities"
-                  isActive={pathname === '/dashboard/general-utilities'}
-                >
-                  <Link href="/dashboard/general-utilities">
-                    <Wrench />
-                    <span>General Utilities</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
+            ))}
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
