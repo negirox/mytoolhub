@@ -53,8 +53,8 @@ export default function FatIntakeCalculatorPage() {
   };
 
   const chartConfig = {
-      fatCalories: { label: 'Fat Calories', color: 'hsl(var(--chart-1))' },
-      otherCalories: { label: 'Other Calories', color: 'hsl(var(--chart-3))' }
+      fatCalories: { label: 'Fat Calories', color: 'hsl(var(--chart-5))' },
+      otherCalories: { label: 'Other Calories (Protein & Carbs)', color: 'hsl(var(--chart-2))' }
   }
 
   const chartData = useMemo(() => {
@@ -103,7 +103,7 @@ export default function FatIntakeCalculatorPage() {
                          <p className="text-3xl font-bold text-primary">{results.grams} grams/day</p>
                       </div>
                       <p className="text-sm text-muted-foreground pt-4">
-                        This is equivalent to <span className="font-semibold">{results.fatCalories.toLocaleString()} calories</span> from fat per day. Focus on consuming healthy unsaturated fats.
+                        This is equivalent to <span className="font-semibold text-orange-600 dark:text-orange-400">{results.fatCalories.toLocaleString()} calories</span> from fat per day. Focus on consuming healthy unsaturated fats.
                       </p>
                     </div>
                   </div>
@@ -121,7 +121,7 @@ export default function FatIntakeCalculatorPage() {
                         <CardContent className="flex items-center justify-center">
                             <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-sm">
                                 <PieChart accessibilityLayer>
-                                    <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
+                                    <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value, name) => `${chartConfig[name as keyof typeof chartConfig].label}: ${value}`} />} />
                                     <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                                         {chartData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -142,31 +142,31 @@ export default function FatIntakeCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-1">
                         <AccordionTrigger>Why is dietary fat important?</AccordionTrigger>
                         <AccordionContent>
                         Dietary fat is an essential macronutrient required for energy, vitamin absorption (A, D, E, K), hormone production, and protecting your organs. It's a vital part of a balanced diet.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-2">
                         <AccordionTrigger>What's the difference between "good" and "bad" fats?</AccordionTrigger>
                         <AccordionContent>
                         "Good" fats are unsaturated (monounsaturated and polyunsaturated) fats found in foods like avocados, nuts, seeds, and olive oil. They can improve blood cholesterol levels and reduce the risk of heart disease. "Bad" fats are saturated and trans fats, found in fatty meats, butter, and processed foods, which can raise bad cholesterol levels.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-3">
                         <AccordionTrigger>What percentage of my calories should come from fat?</AccordionTrigger>
                         <AccordionContent>
                         Most dietary guidelines recommend that adults get 20% to 35% of their total daily calories from fat. Athletes or those on specific diets (like keto) may have different requirements.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-4">
                         <AccordionTrigger>How many calories are in a gram of fat?</AccordionTrigger>
                         <AccordionContent>
                         Fat is the most energy-dense macronutrient, containing 9 calories per gram. This is more than double the calories in protein and carbohydrates, which each contain about 4 calories per gram.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-5">
                         <AccordionTrigger>Does eating fat make you fat?</AccordionTrigger>
                         <AccordionContent>
                         Eating fat does not automatically make you gain body fat. Weight gain is caused by consuming more total calories than your body burns, regardless of the source. Including healthy fats in your diet can actually help with satiety and weight management.

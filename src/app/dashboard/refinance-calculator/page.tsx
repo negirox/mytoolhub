@@ -257,8 +257,8 @@ export default function RefinanceCalculatorPage() {
                             <CardTitle className="font-headline">Results</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                             <Alert variant={results.isCheaper ? 'default' : 'destructive'}>
-                                <AlertTitle>{results.isCheaper ? "Refinancing could be beneficial" : "Refinancing may not be beneficial"}</AlertTitle>
+                             <Alert variant={results.lifetimeSavings > 0 ? "default" : "destructive"} className={results.lifetimeSavings > 0 ? 'border-green-500/50' : 'border-red-500/50'}>
+                                <AlertTitle className={results.lifetimeSavings > 0 ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}>{results.lifetimeSavings > 0 ? "Refinancing could be beneficial" : "Refinancing may not be beneficial"}</AlertTitle>
                                 <AlertDescription>
                                     The APR for the new loan is {results.newApr.toFixed(3)}%, which is {Math.abs(results.aprDifference).toFixed(3)}% {results.aprDifference > 0 ? 'lower' : 'higher'} than the {currentInterestRate}% interest rate of the current loan.
                                 </AlertDescription>
@@ -278,7 +278,7 @@ export default function RefinanceCalculatorPage() {
                                 </div>
                                 <div className="rounded-lg border p-3">
                                   <p className="text-sm text-muted-foreground">Upfront Cost</p>
-                                  <p className="text-xl font-semibold">{formatCurrency(results.upfrontCost)}</p>
+                                  <p className="text-xl font-semibold text-red-600 dark:text-red-400">{formatCurrency(results.upfrontCost)}</p>
                                 </div>
                                 <div className="rounded-lg border p-3">
                                   <p className="text-sm text-muted-foreground">Break-even Point</p>
@@ -308,7 +308,7 @@ export default function RefinanceCalculatorPage() {
                                     <tr className="border-b"><td className="py-2">Monthly Payment</td><td className="text-right py-2">{formatCurrency(parseFloat(currentMonthlyPayment))}</td><td className="text-right py-2">{formatCurrency(results.newMonthlyPayment)}</td></tr>
                                     <tr className="border-b"><td className="py-2">Remaining Term</td><td className="text-right py-2">{results.currentLoanTermRemaining} mo</td><td className="text-right py-2">{parseInt(newLoanTerm) * 12} mo</td></tr>
                                     <tr className="border-b"><td className="py-2">Interest Rate/APR</td><td className="text-right py-2">{parseFloat(currentInterestRate).toFixed(3)}%</td><td className="text-right py-2">{results.newApr.toFixed(3)}%</td></tr>
-                                    <tr className="border-b"><td className="py-2">Total Interest</td><td className="text-right py-2">{formatCurrency(results.currentTotalInterest)}</td><td className="text-right py-2">{formatCurrency(results.newTotalInterest)}</td></tr>
+                                    <tr className="border-b"><td className="py-2 text-red-600 dark:text-red-400">Total Interest</td><td className="text-right py-2 text-red-600 dark:text-red-400">{formatCurrency(results.currentTotalInterest)}</td><td className="text-right py-2 text-red-600 dark:text-red-400">{formatCurrency(results.newTotalInterest)}</td></tr>
                                     <tr><td className="py-2 font-semibold">Total Payments</td><td className="text-right py-2 font-semibold">{formatCurrency(results.currentTotalInterest + parseFloat(remainingBalance))}</td><td className="text-right py-2 font-semibold">{formatCurrency(results.newTotalInterest + parseFloat(remainingBalance) + parseFloat(cashOutAmount))}</td></tr>
                                 </tbody>
                             </table>

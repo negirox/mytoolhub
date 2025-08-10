@@ -61,9 +61,9 @@ interface DebtItem {
 
 const getDtiCategory = (dti: number) => {
     if (dti <= 35) return { text: 'Looking Good', color: 'hsl(var(--chart-2))' };
-    if (dti <= 43) return { text: 'Needs Improvement', color: 'hsl(var(--chart-5))' };
-    if (dti <= 49) return { text: 'Cause for Concern', color: 'hsl(var(--chart-1))' };
-    return { text: 'High Risk', color: 'hsl(var(--destructive))' };
+    if (dti <= 43) return { text: 'Needs Improvement', color: 'hsl(var(--chart-4))' };
+    if (dti <= 49) return { text: 'Cause for Concern', color: 'hsl(var(--chart-5))' };
+    return { text: 'High Risk', color: 'hsl(var(--chart-1))' };
 };
 
 export default function DtiCalculatorPage() {
@@ -172,7 +172,7 @@ export default function DtiCalculatorPage() {
     return [
       { name: 'House Debts/Expenses', value: results.monthlyHouseDebt, fill: 'var(--color-houseDebt)' },
       { name: 'Other Debts/Expenses', value: results.monthlyOtherDebt, fill: 'var(--color-otherDebt)' },
-      { name: 'Remaining Income', value: remainingIncome, fill: 'var(--color-remaining)' },
+      { name: 'Remaining Income', value: remainingIncome > 0 ? remainingIncome : 0, fill: 'var(--color-remaining)' },
     ].filter(item => item.value > 0);
   }, [results]);
 
@@ -213,7 +213,7 @@ export default function DtiCalculatorPage() {
                 </div>
               <div className="grid gap-8 md:grid-cols-2">
                 <div className="space-y-4">
-                    <h3 className="flex items-center gap-2 font-headline text-lg font-semibold"><TrendingUp className="text-green-500" /> Incomes (Before Tax)</h3>
+                    <h3 className="flex items-center gap-2 font-headline text-lg font-semibold text-green-600 dark:text-green-400"><TrendingUp /> Incomes (Before Tax)</h3>
                     {incomes.map(item => (
                         <div key={item.id} className="space-y-2">
                             <Label htmlFor={item.id} className="flex items-center gap-1">
@@ -239,7 +239,7 @@ export default function DtiCalculatorPage() {
                     ))}
                 </div>
                 <div className="space-y-4">
-                     <h3 className="flex items-center gap-2 font-headline text-lg font-semibold"><TrendingDown className="text-red-500" /> Debts / Expenses</h3>
+                     <h3 className="flex items-center gap-2 font-headline text-lg font-semibold text-red-600 dark:text-red-400"><TrendingDown /> Debts / Expenses</h3>
                      {debts.map(item => (
                         <div key={item.id} className="space-y-2">
                             <Label htmlFor={item.id} className="flex items-center gap-1">
@@ -298,7 +298,7 @@ export default function DtiCalculatorPage() {
                             <AlertCircle className="h-4 w-4" style={{color: dtiCategory.color}} />
                             <AlertTitle style={{color: dtiCategory.color}}>What this means</AlertTitle>
                             <CardDescription>
-                                Your total monthly debts ({formatCurrency(results.totalMonthlyDebt)}) are {results.dti.toFixed(2)}% of your total monthly income ({formatCurrency(results.totalMonthlyIncome)}). 
+                                Your total monthly debts (<span className="font-semibold text-red-600 dark:text-red-400">{formatCurrency(results.totalMonthlyDebt)}</span>) are {results.dti.toFixed(2)}% of your total monthly income (<span className="font-semibold text-green-600 dark:text-green-400">{formatCurrency(results.totalMonthlyIncome)}</span>). 
                                 Lenders prefer a DTI ratio below 36%, with ratios above 43% often considered high risk.
                             </CardDescription>
                         </Alert>

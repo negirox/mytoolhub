@@ -295,7 +295,7 @@ export default function CreditCardEmiCalculatorPage() {
   };
   
   const chartConfig = {
-      principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
+      principal: { label: 'Principal', color: 'hsl(var(--chart-3))' },
       interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
       fees: { label: 'Total Fees & GST', color: 'hsl(var(--chart-5))' },
       gstOnInterest: { label: 'GST on Interest', color: 'hsl(var(--chart-5))' },
@@ -399,16 +399,16 @@ export default function CreditCardEmiCalculatorPage() {
                              <span className="font-medium">{formatCurrency(parseFloat(amount))}</span>
                            </div>
                            <div className="flex justify-between">
-                             <span>Processing Fees + GST</span>
-                             <span className="font-medium">{formatCurrency(results.processingFeeGst)}</span>
+                             <span className="text-orange-600 dark:text-orange-400">Processing Fees + GST</span>
+                             <span className="font-medium text-orange-600 dark:text-orange-400">{formatCurrency(results.processingFeeGst)}</span>
                            </div>
                            <div className="flex justify-between">
-                             <span>Total Interest Payable</span>
-                             <span className="font-medium">{formatCurrency(results.totalInterest)}</span>
+                             <span className="text-red-600 dark:text-red-400">Total Interest Payable</span>
+                             <span className="font-medium text-red-600 dark:text-red-400">{formatCurrency(results.totalInterest)}</span>
                            </div>
                            <div className="flex justify-between">
-                             <span>GST on Interest</span>
-                             <span className="font-medium">{formatCurrency(results.gstOnInterest)}</span>
+                             <span className="text-red-600 dark:text-red-400">GST on Interest</span>
+                             <span className="font-medium text-red-600 dark:text-red-400">{formatCurrency(results.gstOnInterest)}</span>
                            </div>
                            <div className="flex justify-between text-base font-bold border-t pt-2 mt-2">
                              <span>Total Cost</span>
