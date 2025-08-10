@@ -11,20 +11,26 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(value);
+type Currency = 'USD' | 'INR' | 'EUR';
+
+const currencySymbols: Record<Currency, string> = {
+  USD: '$',
+  INR: '₹',
+  EUR: '€',
+};
+
+const currencyLocales: Record<Currency, string> = {
+    USD: 'en-US',
+    INR: 'en-IN',
+    EUR: 'de-DE',
 };
 
 const formatYearsAndMonths = (totalMonths: number) => {
@@ -38,6 +44,7 @@ export default function MortgagePayoffCalculatorPage() {
   const [interestRate, setInterestRate] = useState('7.0');
   const [loanTerm, setLoanTerm] = useState('30');
   const [extraPayment, setExtraPayment] = useState('200');
+  const [currency, setCurrency] = useState<Currency>('USD');
   
   const [results, setResults] = useState<{
     originalTerm: number;
@@ -48,6 +55,14 @@ export default function MortgagePayoffCalculatorPage() {
     payoffDate: string;
     newPayoffDate: string;
   } | null>(null);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
   const calculatePayoff = () => {
     const p = parseFloat(loanAmount);
@@ -90,7 +105,7 @@ export default function MortgagePayoffCalculatorPage() {
     const interestSaved = originalTotalInterest - totalInterestPaidWithExtra;
 
     const today = new Date();
-    const originalPayoffDate = new Date(today.setMonth(today.getMonth() + n_original));
+    const originalPayoffDate = new Date(new Date(today).setMonth(today.getMonth() + n_original));
     const newPayoffDate = new Date(new Date().setMonth(new Date().getMonth() + months));
 
     setResults({
@@ -106,7 +121,7 @@ export default function MortgagePayoffCalculatorPage() {
   
   useEffect(() => {
     calculatePayoff();
-  }, [loanAmount, interestRate, loanTerm, extraPayment]);
+  }, [loanAmount, interestRate, loanTerm, extraPayment, currency]);
 
   const chartData = useMemo(() => {
     if (!results) return [];
@@ -149,7 +164,20 @@ export default function MortgagePayoffCalculatorPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="loan-amount">Current Loan Balance ($)</Label>
+                    <Label htmlFor="currency">Currency</Label>
+                    <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                        <SelectTrigger id="currency">
+                            <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="USD">USD ($)</SelectItem>
+                            <SelectItem value="INR">INR (₹)</SelectItem>
+                            <SelectItem value="EUR">EUR (€)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="loan-amount">Current Loan Balance ({currencySymbols[currency]})</Label>
                     <Input
                       id="loan-amount"
                       type="number"
@@ -177,7 +205,7 @@ export default function MortgagePayoffCalculatorPage() {
                     />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="extra-payment">Monthly Extra Payment ($)</Label>
+                    <Label htmlFor="extra-payment">Monthly Extra Payment ({currencySymbols[currency]})</Label>
                     <Input
                       id="extra-payment"
                       type="number"
@@ -227,7 +255,7 @@ export default function MortgagePayoffCalculatorPage() {
                         <XAxis dataKey="name" />
                         <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--chart-1))" tickFormatter={(val) => formatCurrency(val)} />
                         <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--chart-2))" tickFormatter={(val) => `${val} mo`} />
-                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <ChartTooltip content={<ChartTooltipContent formatter={(value, name) => <span>{name === 'Total Interest' ? formatCurrency(value as number) : `${value} months`}</span>} />} />
                         <Legend />
                         <Bar yAxisId="left" dataKey="Total Interest" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
                         <Bar yAxisId="right" dataKey="Loan Term (Months)" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />

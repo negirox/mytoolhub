@@ -31,13 +31,20 @@ import {
   PieChart,
   Cell,
 } from 'recharts';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(value);
+type Currency = 'USD' | 'INR' | 'EUR';
+
+const currencySymbols: Record<Currency, string> = {
+  USD: '$',
+  INR: '₹',
+  EUR: '€',
+};
+
+const currencyLocales: Record<Currency, string> = {
+    USD: 'en-US',
+    INR: 'en-IN',
+    EUR: 'de-DE',
 };
 
 export default function MortgageCalculatorPage() {
@@ -45,6 +52,7 @@ export default function MortgageCalculatorPage() {
   const [downPayment, setDownPayment] = useState('60000');
   const [interestRate, setInterestRate] = useState('7.0');
   const [loanTerm, setLoanTerm] = useState('30');
+  const [currency, setCurrency] = useState<Currency>('USD');
 
   const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
   const [totalInterest, setTotalInterest] = useState<number | null>(null);
@@ -53,6 +61,14 @@ export default function MortgageCalculatorPage() {
   const loanAmount = useMemo(() => {
     return (parseFloat(homePrice) || 0) - (parseFloat(downPayment) || 0);
   }, [homePrice, downPayment]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
 
   const calculateMortgage = () => {
@@ -78,7 +94,7 @@ export default function MortgageCalculatorPage() {
 
   useEffect(() => {
     calculateMortgage();
-  }, [loanAmount, interestRate, loanTerm]);
+  }, [loanAmount, interestRate, loanTerm, currency]);
 
   const downPaymentPercentage = useMemo(() => {
     const price = parseFloat(homePrice) || 0;
@@ -123,7 +139,20 @@ export default function MortgageCalculatorPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="home-price">Home Price ($)</Label>
+                    <Label htmlFor="currency">Currency</Label>
+                    <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                        <SelectTrigger id="currency">
+                            <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="USD">USD ($)</SelectItem>
+                            <SelectItem value="INR">INR (₹)</SelectItem>
+                            <SelectItem value="EUR">EUR (€)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="home-price">Home Price ({currencySymbols[currency]})</Label>
                     <Input
                       id="home-price"
                       type="number"
@@ -132,7 +161,7 @@ export default function MortgageCalculatorPage() {
                     />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="down-payment">Down Payment ($)</Label>
+                    <Label htmlFor="down-payment">Down Payment ({currencySymbols[currency]})</Label>
                     <Input
                       id="down-payment"
                       type="number"
@@ -213,7 +242,7 @@ export default function MortgageCalculatorPage() {
               <CardContent className="flex items-center justify-center">
                   <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
                      <PieChart>
-                        <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
+                        <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
                         <Pie
                           data={pieChartData}
                           dataKey="value"

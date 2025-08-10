@@ -38,16 +38,23 @@ import {
 } from '@/components/ui/chart';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(value);
+type Currency = 'USD' | 'INR' | 'EUR';
+
+const currencySymbols: Record<Currency, string> = {
+  USD: '$',
+  INR: '₹',
+  EUR: '€',
+};
+
+const currencyLocales: Record<Currency, string> = {
+    USD: 'en-US',
+    INR: 'en-IN',
+    EUR: 'de-DE',
 };
 
 export default function HouseAffordabilityCalculatorPage() {
   const [activeTab, setActiveTab] = useState('income');
+  const [currency, setCurrency] = useState<Currency>('USD');
   
   // Income-based state
   const [annualIncome, setAnnualIncome] = useState('120000');
@@ -78,6 +85,14 @@ export default function HouseAffordabilityCalculatorPage() {
     homeInsurance: number;
     hoa: number;
   } | null>(null);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
   const calculateAffordability = () => {
     let affordableHomePrice = 0;
@@ -167,9 +182,11 @@ export default function HouseAffordabilityCalculatorPage() {
         const finalTaxPercent = activeTab === 'income' ? propertyTaxPercent : bbPropertyTaxPercent;
         const finalInsurancePercent = activeTab === 'income' ? homeInsurancePercent : bbHomeInsurancePercent;
         const finalHoa = activeTab === 'income' ? hoaFees : bbHoaFees;
+        const finalInterestRate = activeTab === 'income' ? interestRate : bbInterestRate;
+        const finalLoanTerm = activeTab === 'income' ? loanTerm : bbLoanTerm;
 
         const loan = affordableHomePrice * (1 - (parseFloat(finalDownPaymentPercent) / 100));
-        const p_i = loan * ((parseFloat(interestRate) / 12 / 100) * Math.pow(1 + (parseFloat(interestRate) / 12 / 100), parseInt(loanTerm) * 12)) / (Math.pow(1 + (parseFloat(interestRate) / 12 / 100), parseInt(loanTerm) * 12) - 1);
+        const p_i = loan * ((parseFloat(finalInterestRate) / 12 / 100) * Math.pow(1 + (parseFloat(finalInterestRate) / 12 / 100), parseInt(finalLoanTerm) * 12)) / (Math.pow(1 + (parseFloat(finalInterestRate) / 12 / 100), parseInt(finalLoanTerm) * 12) - 1);
         const taxes = (affordableHomePrice * (parseFloat(finalTaxPercent) / 100)) / 12;
         const insurance = (affordableHomePrice * (parseFloat(finalInsurancePercent) / 100)) / 12;
         const monthlyPayment = p_i + taxes + insurance + parseFloat(finalHoa);
@@ -220,6 +237,19 @@ export default function HouseAffordabilityCalculatorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-6 max-w-xs">
+                <Label htmlFor="currency">Currency</Label>
+                <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                    <SelectTrigger id="currency">
+                        <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                        <SelectItem value="INR">INR (₹)</SelectItem>
+                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 max-w-lg">
                   <TabsTrigger value="income">Based on Income</TabsTrigger>
@@ -230,12 +260,12 @@ export default function HouseAffordabilityCalculatorPage() {
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="annual-income">Annual Household Income ($)</Label>
+                            <Label htmlFor="annual-income">Annual Household Income ({currencySymbols[currency]})</Label>
                             <Input id="annual-income" type="number" value={annualIncome} onChange={e => setAnnualIncome(e.target.value)} />
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="monthly-debt">Monthly Debt Payback ($)</Label>
-                            <Input id="monthly-debt" type="number" value={monthlyDebt} onChange={e => setMonthlyDebt(e.target.value)} placeholder="Car, student loans, etc." />
+                            <Label htmlFor="monthly-debt">Monthly Debt Payback ({currencySymbols[currency]})</Label>
+                            <Input id="monthly-debt" type="number" value={monthlyDebt} onChange={e => setMonthlyDebt(e.target.value)} placeholder="Car, student loan, etc." />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                              <div className="space-y-2">
@@ -272,7 +302,7 @@ export default function HouseAffordabilityCalculatorPage() {
                             <Input id="home-insurance" type="number" value={homeInsurancePercent} onChange={e => setHomeInsurancePercent(e.target.value)} />
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="hoa-fees">HOA Fees ($ / month)</Label>
+                            <Label htmlFor="hoa-fees">HOA Fees ({currencySymbols[currency]} / month)</Label>
                             <Input id="hoa-fees" type="number" value={hoaFees} onChange={e => setHoaFees(e.target.value)} />
                         </div>
                     </div>
@@ -283,7 +313,7 @@ export default function HouseAffordabilityCalculatorPage() {
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="bb-monthly-budget">Budget for House ($ / month)</Label>
+                            <Label htmlFor="bb-monthly-budget">Budget for House ({currencySymbols[currency]} / month)</Label>
                             <Input id="bb-monthly-budget" type="number" value={monthlyBudget} onChange={e => setMonthlyBudget(e.target.value)} />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -311,7 +341,7 @@ export default function HouseAffordabilityCalculatorPage() {
                             <Input id="bb-home-insurance" type="number" value={bbHomeInsurancePercent} onChange={e => setBbHomeInsurancePercent(e.target.value)} />
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="bb-hoa-fees">HOA Fees ($ / month)</Label>
+                            <Label htmlFor="bb-hoa-fees">HOA Fees ({currencySymbols[currency]} / month)</Label>
                             <Input id="bb-hoa-fees" type="number" value={bbHoaFees} onChange={e => setBbHoaFees(e.target.value)} />
                         </div>
                     </div>
@@ -342,7 +372,7 @@ export default function HouseAffordabilityCalculatorPage() {
                          <h4 className="text-center font-semibold mb-2">Monthly Payment Breakdown</h4>
                         <ChartContainer config={chartConfig} className="min-h-[250px] w-full max-w-xs">
                             <PieChart>
-                                <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
+                                <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
                                 <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={80}>
                                     {pieChartData.map((entry) => (
                                         <Cell key={entry.name} fill={entry.fill} />
@@ -401,5 +431,3 @@ export default function HouseAffordabilityCalculatorPage() {
     </TooltipProvider>
   );
 }
-
-    

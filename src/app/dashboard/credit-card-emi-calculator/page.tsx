@@ -38,20 +38,27 @@ import {
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const GST_RATE = 0.18; // 18% GST
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(value);
+type Currency = 'INR' | 'USD' | 'EUR';
+
+const currencyLocales: Record<Currency, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE',
 };
+
+const currencySymbols: Record<Currency, string> = {
+  INR: '₹',
+  USD: '$',
+  EUR: '€',
+};
+
 
 interface MonthlyAmortizationData {
   month: number;
@@ -78,6 +85,8 @@ export default function CreditCardEmiCalculatorPage() {
   const [rate, setRate] = useState('18');
   const [tenure, setTenure] = useState('6');
   const [fees, setFees] = useState('300');
+  const [currency, setCurrency] = useState<Currency>('INR');
+
 
   const [results, setResults] = useState({
     monthlyEmi: 0,
@@ -89,6 +98,14 @@ export default function CreditCardEmiCalculatorPage() {
   });
 
   const [amortizationSchedule, setAmortizationSchedule] = useState<AmortizationYear[]>([]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
   const calculateEmi = () => {
     const p = parseFloat(amount);
@@ -180,7 +197,7 @@ export default function CreditCardEmiCalculatorPage() {
   
   useEffect(() => {
     calculateEmi();
-  }, [amount, rate, tenure, fees]);
+  }, [amount, rate, tenure, fees, currency]);
 
   const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -305,8 +322,21 @@ export default function CreditCardEmiCalculatorPage() {
               <div className="grid gap-8 lg:grid-cols-2">
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Credit Card Loan Details</h3>
+                    <div className="space-y-2">
+                        <Label htmlFor="currency">Currency</Label>
+                        <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                            <SelectTrigger id="currency">
+                                <SelectValue placeholder="Select currency" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="INR">INR (₹)</SelectItem>
+                                <SelectItem value="USD">USD ($)</SelectItem>
+                                <SelectItem value="EUR">EUR (€)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                    <div className="space-y-2">
-                    <Label htmlFor="amount">Transaction Amount (₹)</Label>
+                    <Label htmlFor="amount">Transaction Amount ({currencySymbols[currency]})</Label>
                     <Input id="amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
                   </div>
                    <div className="space-y-2">
@@ -318,7 +348,7 @@ export default function CreditCardEmiCalculatorPage() {
                     <Input id="tenure" type="number" value={tenure} onChange={(e) => setTenure(e.target.value)} />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="fees" className="flex items-center gap-1">Processing Fees (pre-GST) (₹) 
+                    <Label htmlFor="fees" className="flex items-center gap-1">Processing Fees (pre-GST) ({currencySymbols[currency]}) 
                         <Tooltip>
                             <TooltipTrigger asChild><Info className="size-3" /></TooltipTrigger>
                             <TooltipContent><p>One-time fee charged by the bank, before GST is applied.</p></TooltipContent>
@@ -383,7 +413,7 @@ export default function CreditCardEmiCalculatorPage() {
                 <CardContent className="flex items-center justify-center">
                     <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
                         <PieChart>
-                            <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />
+                            <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
                             <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100}>
                               {pieChartData.map((entry) => (
                                   <Cell key={entry.name} fill={entry.fill} />
@@ -415,7 +445,7 @@ export default function CreditCardEmiCalculatorPage() {
                           />
                           <ChartTooltip 
                             cursor={false}
-                            content={<ChartTooltipContent />} 
+                            content={<ChartTooltipContent formatter={(value, name) => <span>{formatCurrency(value as number)}</span>} />} 
                           />
                           <ChartLegend content={<ChartLegendContent />} />
                           <Bar dataKey="principal" stackId="a" fill="var(--color-principal)" name="Principal" radius={4} />

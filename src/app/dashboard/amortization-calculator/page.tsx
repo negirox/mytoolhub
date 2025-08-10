@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface MonthlyAmortizationData {
   month: number;
@@ -43,20 +44,35 @@ interface AmortizationYear {
   monthlyData: MonthlyAmortizationData[];
 }
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(value);
+type Currency = 'USD' | 'INR' | 'EUR';
+
+const currencySymbols: Record<Currency, string> = {
+  USD: '$',
+  INR: '₹',
+  EUR: '€',
+};
+
+const currencyLocales: Record<Currency, string> = {
+    USD: 'en-US',
+    INR: 'en-IN',
+    EUR: 'de-DE', // Using German locale for Euro formatting
 };
 
 export default function AmortizationCalculatorPage() {
   const [loanAmount, setLoanAmount] = useState('240000');
   const [interestRate, setInterestRate] = useState('7.0');
   const [loanTerm, setLoanTerm] = useState('30');
+  const [currency, setCurrency] = useState<Currency>('USD');
   
   const [amortizationData, setAmortizationData] = useState<AmortizationYear[]>([]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
   const calculateAmortization = () => {
     const p = parseFloat(loanAmount);
@@ -120,7 +136,7 @@ export default function AmortizationCalculatorPage() {
   
   useEffect(() => {
     calculateAmortization();
-  }, [loanAmount, interestRate, loanTerm]);
+  }, [loanAmount, interestRate, loanTerm, currency]);
 
   const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -213,9 +229,22 @@ export default function AmortizationCalculatorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+               <div className="mb-6 max-w-xs">
+                <Label htmlFor="currency">Currency</Label>
+                <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                    <SelectTrigger id="currency">
+                        <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                        <SelectItem value="INR">INR (₹)</SelectItem>
+                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
               <div className="grid gap-6 md:grid-cols-3">
                 <div className="space-y-2">
-                  <Label htmlFor="loan-amount">Loan Amount ($)</Label>
+                  <Label htmlFor="loan-amount">Loan Amount ({currencySymbols[currency]})</Label>
                   <Input
                     id="loan-amount"
                     type="number"
