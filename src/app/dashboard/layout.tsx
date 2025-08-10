@@ -11,6 +11,8 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import {
   Calculator,
@@ -69,126 +71,139 @@ export default function DashboardLayout({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="BMI Calculator"
-                isActive={pathname === '/dashboard/bmi-calculator'}
-              >
-                <Link href="/dashboard/bmi-calculator">
-                  <Scale />
-                  <span>BMI Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Calorie Calculator"
-                isActive={pathname === '/dashboard/calorie-calculator'}
-              >
-                <Link href="/dashboard/calorie-calculator">
-                  <Calculator />
-                  <span>Calorie Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Protein Calculator"
-                isActive={pathname === '/dashboard/protein-calculator'}
-              >
-                <Link href="/dashboard/protein-calculator">
-                  <EggFried />
-                  <span>Protein Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Fat Intake Calculator"
-                isActive={pathname === '/dashboard/fat-intake-calculator'}
-              >
-                <Link href="/dashboard/fat-intake-calculator">
-                  <Percent />
-                  <span>Fat Intake Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="EMI Calculator"
-                isActive={pathname === '/dashboard/emi-calculator'}
-              >
-                <Link href="/dashboard/emi-calculator">
-                  <Landmark />
-                  <span>EMI Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Home Loan Calculator"
-                isActive={pathname === '/dashboard/home-loan-emi-calculator'}
-              >
-                <Link href="/dashboard/home-loan-emi-calculator">
-                  <Home />
-                  <span>Home Loan Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Credit Card EMI"
-                isActive={pathname === '/dashboard/credit-card-emi-calculator'}
-              >
-                <Link href="/dashboard/credit-card-emi-calculator">
-                  <CreditCard />
-                  <span>Credit Card EMI</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Currency Converter"
-                isActive={pathname === '/dashboard/currency-converter'}
-              >
-                <Link href="/dashboard/currency-converter">
-                  <Wallet />
-                  <span>Currency Converter</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Unit Converter"
-                isActive={pathname === '/dashboard/unit-converter'}
-              >
-                <Link href="/dashboard/unit-converter">
-                  <Ruler />
-                  <span>Unit Converter</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Tax Calculator"
-                isActive={pathname === '/dashboard/tax-calculator'}
-              >
-                <Link href="/dashboard/tax-calculator">
-                  <Percent />
-                  <span>Tax Calculator</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            
+            <SidebarGroup>
+              <SidebarGroupLabel>Health & Fitness</SidebarGroupLabel>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="BMI Calculator"
+                  isActive={pathname === '/dashboard/bmi-calculator'}
+                >
+                  <Link href="/dashboard/bmi-calculator">
+                    <Scale />
+                    <span>BMI Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Calorie Calculator"
+                  isActive={pathname === '/dashboard/calorie-calculator'}
+                >
+                  <Link href="/dashboard/calorie-calculator">
+                    <Calculator />
+                    <span>Calorie Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Protein Calculator"
+                  isActive={pathname === '/dashboard/protein-calculator'}
+                >
+                  <Link href="/dashboard/protein-calculator">
+                    <EggFried />
+                    <span>Protein Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Fat Intake Calculator"
+                  isActive={pathname === '/dashboard/fat-intake-calculator'}
+                >
+                  <Link href="/dashboard/fat-intake-calculator">
+                    <Percent />
+                    <span>Fat Intake Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarGroup>
+
+            <SidebarGroup>
+               <SidebarGroupLabel>Financial Calculators</SidebarGroupLabel>
+                <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="EMI Calculator"
+                  isActive={pathname === '/dashboard/emi-calculator'}
+                >
+                  <Link href="/dashboard/emi-calculator">
+                    <Landmark />
+                    <span>EMI Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Home Loan Calculator"
+                  isActive={pathname === '/dashboard/home-loan-emi-calculator'}
+                >
+                  <Link href="/dashboard/home-loan-emi-calculator">
+                    <Home />
+                    <span>Home Loan Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Credit Card EMI"
+                  isActive={pathname === '/dashboard/credit-card-emi-calculator'}
+                >
+                  <Link href="/dashboard/credit-card-emi-calculator">
+                    <CreditCard />
+                    <span>Credit Card EMI</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Tax Calculator"
+                  isActive={pathname === '/dashboard/tax-calculator'}
+                >
+                  <Link href="/dashboard/tax-calculator">
+                    <Percent />
+                    <span>Tax Calculator</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarGroup>
+            
+            <SidebarGroup>
+                <SidebarGroupLabel>General Utilities</SidebarGroupLabel>
+                 <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip="Currency Converter"
+                      isActive={pathname === '/dashboard/currency-converter'}
+                    >
+                      <Link href="/dashboard/currency-converter">
+                        <Wallet />
+                        <span>Currency Converter</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip="Unit Converter"
+                      isActive={pathname === '/dashboard/unit-converter'}
+                    >
+                      <Link href="/dashboard/unit-converter">
+                        <Ruler />
+                        <span>Unit Converter</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+            </SidebarGroup>
+
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>

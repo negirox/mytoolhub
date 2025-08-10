@@ -91,10 +91,10 @@ const tools = [
     description: 'Calculate credit card EMIs with processing fees and GST.',
     href: '/dashboard/credit-card-emi-calculator',
     icon: <CreditCard className="size-8" />,
-    bgColor: 'bg-red-100 dark:bg-red-900/50',
-    textColor: 'text-red-800 dark:text-red-200',
-    hoverBg: 'hover:bg-red-200 dark:hover:bg-red-900/80',
-    iconColor: 'text-red-600 dark:text-red-400'
+    bgColor: 'bg-rose-100 dark:bg-rose-900/50',
+    textColor: 'text-rose-800 dark:text-rose-200',
+    hoverBg: 'hover:bg-rose-200 dark:hover:bg-rose-900/80',
+    iconColor: 'text-rose-600 dark:text-rose-400'
   },
   {
     title: 'Currency Converter',
@@ -161,12 +161,12 @@ export default function DashboardPage() {
               <Tooltip key={tool.href}>
                 <TooltipTrigger asChild>
                   <Link href={tool.href} className="h-full">
-                    <Card className={`flex flex-col h-full transition-colors ${tool.bgColor} ${tool.hoverBg}`}>
+                    <Card className={`flex flex-col h-full transition-all duration-300 hover:scale-105 ${tool.bgColor} ${tool.hoverBg}`}>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className={`font-headline text-lg ${tool.textColor}`}>
                           {tool.title}
                         </CardTitle>
-                        <div className={tool.iconColor}>{tool.icon}</div>
+                        <div className={`${tool.iconColor} animate-breathe`}>{tool.icon}</div>
                       </CardHeader>
                       <CardContent className="flex-grow">
                         <p className={`text-sm ${tool.textColor} opacity-80`}>
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{tool.description}</p>
+                  <p>Click to use the {tool.title}. {tool.description}</p>
                 </TooltipContent>
               </Tooltip>
             ))}
