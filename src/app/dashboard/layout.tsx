@@ -11,6 +11,8 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
+  SidebarFooter,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import {
   HeartPulse,
@@ -18,17 +20,11 @@ import {
   LayoutDashboard,
   Menu,
   Wrench,
-  Home
+  Info,
+  ShieldCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 
 function Logo() {
@@ -61,6 +57,19 @@ const NAV_GROUPS = [
     icon: <Wrench />,
   },
 ];
+
+const LEGAL_LINKS = [
+    {
+        heading: 'About Us',
+        href: '/dashboard/about',
+        icon: <Info />
+    },
+    {
+        heading: 'Privacy Policy',
+        href: '/dashboard/privacy',
+        icon: <ShieldCheck />
+    }
+]
 
 export default function DashboardLayout({
   children,
@@ -109,15 +118,47 @@ export default function DashboardLayout({
               ))}
             </SidebarMenu>
           </SidebarContent>
+           <SidebarFooter>
+            <SidebarSeparator />
+            <SidebarMenu>
+                {LEGAL_LINKS.map((link) => (
+                    <SidebarMenuItem key={link.href}>
+                        <SidebarMenuButton
+                            asChild
+                            tooltip={link.heading}
+                            isActive={pathname === link.href}
+                        >
+                            <Link href={link.href}>
+                                {link.icon}
+                                <span>{link.heading}</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                ))}
+            </SidebarMenu>
+          </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
-            <Logo />
-            <SidebarTrigger>
-              <Menu />
-            </SidebarTrigger>
-          </header>
-          {children}
+          <div className="flex flex-col min-h-svh">
+            <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
+                <Logo />
+                <SidebarTrigger>
+                <Menu />
+                </SidebarTrigger>
+            </header>
+            <main className="flex-1">
+                {children}
+            </main>
+            <footer className="mt-auto border-t bg-background/80 py-4 text-center text-xs text-muted-foreground">
+                <div className="container mx-auto">
+                    <p>&copy; {new Date().getFullYear()} MyToolHub. All Rights Reserved.</p>
+                    <nav className="mt-2 space-x-4">
+                        <Link href="/dashboard/about" className="hover:text-primary">About Us</Link>
+                        <Link href="/dashboard/privacy" className="hover:text-primary">Privacy Policy</Link>
+                    </nav>
+                </div>
+            </footer>
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </CurrencyProvider>
