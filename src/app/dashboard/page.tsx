@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, HeartPulse, Home, Landmark, Wrench } from 'lucide-react';
+import { ArrowRight, HeartPulse, Landmark, Wrench } from 'lucide-react';
 import { Clock } from '@/components/ui/clock';
 import { Metadata } from 'next';
 import {
@@ -45,16 +45,6 @@ const categories = [
     textColor: 'text-green-800 dark:text-green-200',
     hoverBg: 'hover:bg-green-200 dark:hover:bg-green-900/80',
     iconColor: 'text-green-600 dark:text-green-400'
-  },
-  {
-    title: 'Mortgage & Real Estate',
-    description: 'Calculators for home buyers, including mortgage payments, amortization schedules, and payoff strategies.',
-    href: '/dashboard/mortgage-and-real-estate',
-    icon: <Home className="size-8" />,
-    bgColor: 'bg-purple-100 dark:bg-purple-900/50',
-    textColor: 'text-purple-800 dark:text-purple-200',
-    hoverBg: 'hover:bg-purple-200 dark:hover:bg-purple-900/80',
-    iconColor: 'text-purple-600 dark:text-purple-400'
   },
    {
     title: 'General Utilities',
@@ -96,7 +86,7 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => (
               <Tooltip key={category.href}>
                 <TooltipTrigger asChild>

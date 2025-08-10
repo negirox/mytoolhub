@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, CreditCard, Home, Landmark, Percent } from 'lucide-react';
+import { ArrowRight, CreditCard, Home, Landmark, Percent, Calculator, ChevronsRight } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -62,6 +62,36 @@ const tools = [
     textColor: 'text-cyan-800 dark:text-cyan-200',
     hoverBg: 'hover:bg-cyan-200 dark:hover:bg-cyan-900/80',
     iconColor: 'text-cyan-600 dark:text-cyan-400'
+  },
+  {
+    title: 'Mortgage Calculator',
+    description: 'Estimate your monthly mortgage payments.',
+    href: '/dashboard/mortgage-calculator',
+    icon: <Home className="size-8" />,
+    bgColor: 'bg-purple-100 dark:bg-purple-900/50',
+    textColor: 'text-purple-800 dark:text-purple-200',
+    hoverBg: 'hover:bg-purple-200 dark:hover:bg-purple-900/80',
+    iconColor: 'text-purple-600 dark:text-purple-400'
+  },
+   {
+    title: 'Amortization Calculator',
+    description: 'See a detailed breakdown of your loan payments over time.',
+    href: '/dashboard/amortization-calculator',
+    icon: <Calculator className="size-8" />,
+    bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
+    textColor: 'text-indigo-800 dark:text-indigo-200',
+    hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
+    iconColor: 'text-indigo-600 dark:text-indigo-400'
+  },
+   {
+    title: 'Mortgage Payoff Calculator',
+    description: 'Calculate how extra payments can shorten your mortgage term.',
+    href: '/dashboard/mortgage-payoff-calculator',
+    icon: <ChevronsRight className="size-8" />,
+    bgColor: 'bg-pink-100 dark:bg-pink-900/50',
+    textColor: 'text-pink-800 dark:text-pink-200',
+    hoverBg: 'hover:bg-pink-200 dark:hover:bg-pink-900/80',
+    iconColor: 'text-pink-600 dark:text-pink-400'
   },
 ];
 

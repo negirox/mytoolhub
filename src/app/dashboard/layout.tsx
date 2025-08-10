@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/sidebar';
 import {
   HeartPulse,
-  Home,
   Landmark,
   LayoutDashboard,
   Menu,
@@ -56,11 +55,6 @@ const NAV_GROUPS = [
     heading: 'Financial Calculators',
     href: '/dashboard/financial-calculators',
     icon: <Landmark />,
-  },
-    {
-    heading: 'Mortgage & Real Estate',
-    href: '/dashboard/mortgage-and-real-estate',
-    icon: <Home />,
   },
   {
     heading: 'General Utilities',
