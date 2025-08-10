@@ -26,6 +26,14 @@ import { Info, AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle } from '@/components/ui/alert';
+import { Pie, PieChart, Cell } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -47,6 +55,7 @@ interface DebtItem {
     label: string;
     value: string;
     period: Period;
+    isHousing: boolean;
     tooltip?: string;
 }
 
@@ -74,21 +83,23 @@ export default function DtiCalculatorPage() {
   ]);
 
   const [debts, setDebts] = useState<DebtItem[]>([
-      { id: 'rent', label: 'Rental Cost', value: '1200', period: 'Month' },
-      { id: 'mortgage', label: 'Mortgage', value: '0', period: 'Month' },
-      { id: 'property_tax', label: 'Property Tax', value: '0', period: 'Year' },
-      { id: 'hoa', label: 'HOA Fees', value: '0', period: 'Month' },
-      { id: 'home_insurance', label: 'Homeowner Insurance', value: '0', period: 'Year' },
-      { id: 'credit_cards', label: 'Credit Cards', value: '200', period: 'Month' },
-      { id: 'student_loan', label: 'Student Loan', value: '0', period: 'Month' },
-      { id: 'auto_loan', label: 'Auto Loan', value: '250', period: 'Month' },
-      { id: 'other_loans', label: 'Other Loans & Liabilities', value: '0', period: 'Month', tooltip: 'Personal loan, child support, alimony, etc.' },
+      { id: 'rent', label: 'Rental Cost', value: '1200', period: 'Month', isHousing: true },
+      { id: 'mortgage', label: 'Mortgage', value: '0', period: 'Month', isHousing: true },
+      { id: 'property_tax', label: 'Property Tax', value: '0', period: 'Year', isHousing: true },
+      { id: 'hoa', label: 'HOA Fees', value: '0', period: 'Month', isHousing: true },
+      { id: 'home_insurance', label: 'Homeowner Insurance', value: '0', period: 'Year', isHousing: true },
+      { id: 'credit_cards', label: 'Credit Cards', value: '200', period: 'Month', isHousing: false },
+      { id: 'student_loan', label: 'Student Loan', value: '0', period: 'Month', isHousing: false },
+      { id: 'auto_loan', label: 'Auto Loan', value: '250', period: 'Month', isHousing: false },
+      { id: 'other_loans', label: 'Other Loans & Liabilities', value: '0', period: 'Month', isHousing: false, tooltip: 'Personal loan, child support, alimony, etc.' },
   ]);
 
   const [results, setResults] = useState<{
     dti: number;
     totalMonthlyIncome: number;
     totalMonthlyDebt: number;
+    monthlyHouseDebt: number;
+    monthlyOtherDebt: number;
   } | null>(null);
   
   useEffect(() => {
@@ -115,11 +126,21 @@ export default function DtiCalculatorPage() {
         const value = parseFloat(item.value) || 0;
         return acc + (item.period === 'Year' ? value / 12 : value);
     }, 0);
+    
+    let totalMonthlyDebt = 0;
+    let monthlyHouseDebt = 0;
+    let monthlyOtherDebt = 0;
 
-    const totalMonthlyDebt = debts.reduce((acc, item) => {
+    debts.forEach(item => {
         const value = parseFloat(item.value) || 0;
-        return acc + (item.period === 'Year' ? value / 12 : value);
-    }, 0);
+        const monthlyValue = item.period === 'Year' ? value / 12 : value;
+        totalMonthlyDebt += monthlyValue;
+        if (item.isHousing) {
+            monthlyHouseDebt += monthlyValue;
+        } else {
+            monthlyOtherDebt += monthlyValue;
+        }
+    });
     
     if (totalMonthlyIncome <= 0) {
         setResults(null);
@@ -131,15 +152,36 @@ export default function DtiCalculatorPage() {
     setResults({
         dti,
         totalMonthlyIncome,
-        totalMonthlyDebt
+        totalMonthlyDebt,
+        monthlyHouseDebt,
+        monthlyOtherDebt
     });
   }
 
   useEffect(() => {
     calculateDti();
-  }, [incomes, debts]);
+  }, [incomes, debts, currency]);
 
   const dtiCategory = useMemo(() => (results ? getDtiCategory(results.dti) : null), [results]);
+
+  const incomeBreakdownChartData = useMemo(() => {
+    if (!results) return [];
+    
+    const remainingIncome = results.totalMonthlyIncome - results.totalMonthlyDebt;
+    
+    return [
+      { name: 'House Debts/Expenses', value: results.monthlyHouseDebt, fill: 'var(--color-houseDebt)' },
+      { name: 'Other Debts/Expenses', value: results.monthlyOtherDebt, fill: 'var(--color-otherDebt)' },
+      { name: 'Remaining Income', value: remainingIncome, fill: 'var(--color-remaining)' },
+    ].filter(item => item.value > 0);
+  }, [results]);
+
+  const incomeBreakdownChartConfig = {
+      houseDebt: { label: 'House Debts/Expenses', color: 'hsl(var(--chart-5))' },
+      otherDebt: { label: 'Other Debts/Expenses', color: 'hsl(var(--chart-1))' },
+      remaining: { label: 'Remaining Income', color: 'hsl(var(--chart-2))' },
+  }
+
 
   return (
     <TooltipProvider>
@@ -227,45 +269,99 @@ export default function DtiCalculatorPage() {
           </Card>
           
           {results && dtiCategory && (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Your DTI Ratio</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border p-6">
-                        <div className="text-center">
-                            <p className="text-6xl font-bold" style={{ color: dtiCategory.color }}>
-                                {results.dti.toFixed(2)}<span className="text-4xl">%</span>
-                            </p>
-                            <p className="text-lg font-semibold" style={{ color: dtiCategory.color }}>
-                                {dtiCategory.text}
-                            </p>
-                        </div>
-                        <div className="w-full max-w-md">
-                            <Progress value={results.dti} className="h-4 [&>div]:bg-red-500" style={{'--progress-color': dtiCategory.color} as React.CSSProperties} />
-                            <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                                <span>0%</span>
-                                <span>35%</span>
-                                <span>43%</span>
-                                <span>50%+</span>
+            <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline">Your DTI Ratio</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border p-6">
+                            <div className="text-center">
+                                <p className="text-6xl font-bold" style={{ color: dtiCategory.color }}>
+                                    {results.dti.toFixed(2)}<span className="text-4xl">%</span>
+                                </p>
+                                <p className="text-lg font-semibold" style={{ color: dtiCategory.color }}>
+                                    {dtiCategory.text}
+                                </p>
+                            </div>
+                            <div className="w-full max-w-md">
+                                <Progress value={results.dti} className="h-4 [&>div]:bg-red-500" style={{'--progress-color': dtiCategory.color} as React.CSSProperties} />
+                                <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+                                    <span>0%</span>
+                                    <span>35%</span>
+                                    <span>43%</span>
+                                    <span>50%+</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                     <Alert style={{borderColor: dtiCategory.color}}>
-                        <AlertCircle className="h-4 w-4" style={{color: dtiCategory.color}} />
-                        <AlertTitle style={{color: dtiCategory.color}}>What this means</AlertTitle>
-                        <CardDescription>
-                            Your total monthly debts ({formatCurrency(results.totalMonthlyDebt)}) are {results.dti.toFixed(2)}% of your total monthly income ({formatCurrency(results.totalMonthlyIncome)}). 
-                            Lenders prefer a DTI ratio below 36%, with ratios above 43% often considered high risk.
-                        </CardDescription>
-                    </Alert>
-                </CardContent>
-                 <CardFooter>
-                    <p className="text-xs text-muted-foreground">
-                        This calculator provides an estimate for informational purposes only. Lenders may calculate DTI differently.
-                    </p>
-                </CardFooter>
-            </Card>
+                        <Alert style={{borderColor: dtiCategory.color}}>
+                            <AlertCircle className="h-4 w-4" style={{color: dtiCategory.color}} />
+                            <AlertTitle style={{color: dtiCategory.color}}>What this means</AlertTitle>
+                            <CardDescription>
+                                Your total monthly debts ({formatCurrency(results.totalMonthlyDebt)}) are {results.dti.toFixed(2)}% of your total monthly income ({formatCurrency(results.totalMonthlyIncome)}). 
+                                Lenders prefer a DTI ratio below 36%, with ratios above 43% often considered high risk.
+                            </CardDescription>
+                        </Alert>
+                    </CardContent>
+                    <CardFooter>
+                        <p className="text-xs text-muted-foreground">
+                            This calculator provides an estimate for informational purposes only. Lenders may calculate DTI differently.
+                        </p>
+                    </CardFooter>
+                </Card>
+
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline">Income Breakdown</CardTitle>
+                        <CardDescription>A visual representation of how your monthly income is allocated.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center">
+                        <ChartContainer config={incomeBreakdownChartConfig} className="min-h-[300px] w-full max-w-sm">
+                            <PieChart>
+                                <ChartTooltip 
+                                    content={<ChartTooltipContent 
+                                        nameKey="name" 
+                                        formatter={(value, name, props) => (
+                                            <div className='flex flex-col'>
+                                                <span>{props.payload.name}: {formatCurrency(value as number)}</span>
+                                                <span className='text-muted-foreground text-xs'>
+                                                    ({((value as number / results.totalMonthlyIncome) * 100).toFixed(1)}%)
+                                                </span>
+                                            </div>
+                                        )} 
+                                    />}
+                                />
+                                <Pie 
+                                    data={incomeBreakdownChartData} 
+                                    dataKey="value" 
+                                    nameKey="name" 
+                                    cx="50%" 
+                                    cy="50%" 
+                                    innerRadius={60} 
+                                    outerRadius={100}
+                                    labelLine={false}
+                                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                                        const RADIAN = Math.PI / 180;
+                                        const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
+                                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                        return (
+                                        <text x={x} y={y} fill="hsl(var(--foreground))" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs font-semibold">
+                                            {`${(percent * 100).toFixed(0)}%`}
+                                        </text>
+                                        );
+                                    }}
+                                >
+                                {incomeBreakdownChartData.map((entry) => (
+                                    <Cell key={entry.name} fill={entry.fill} />
+                                ))}
+                                </Pie>
+                                <ChartLegend content={<ChartLegendContent />} />
+                            </PieChart>
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+            </div>
           )}
 
            <Card>
