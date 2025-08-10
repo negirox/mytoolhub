@@ -135,6 +135,10 @@ export default function DtiCalculatorPage() {
     });
   }
 
+  useEffect(() => {
+    calculateDti();
+  }, [incomes, debts]);
+
   const dtiCategory = useMemo(() => (results ? getDtiCategory(results.dti) : null), [results]);
 
   return (
@@ -148,7 +152,7 @@ export default function DtiCalculatorPage() {
             <CardHeader>
               <CardTitle className="font-headline">Debt-to-Income (DTI) Ratio Calculator</CardTitle>
               <CardDescription>
-                Your DTI ratio helps lenders assess your ability to repay loans. A lower DTI is generally better.
+                Your DTI ratio helps lenders assess your ability to repay loans. A lower DTI is generally better. The calculation updates automatically as you type.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -219,7 +223,6 @@ export default function DtiCalculatorPage() {
                     ))}
                 </div>
               </div>
-              <Button onClick={calculateDti} className="mt-6 w-full md:w-auto">Calculate DTI</Button>
             </CardContent>
           </Card>
           
@@ -314,5 +317,3 @@ export default function DtiCalculatorPage() {
     </TooltipProvider>
   );
 }
-
-    
