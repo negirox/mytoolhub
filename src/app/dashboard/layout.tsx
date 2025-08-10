@@ -145,7 +145,7 @@ export default function DashboardLayout({
                         asChild
                         tooltip="View Source on GitHub"
                     >
-                        <Link href="https://github.com/fawazahmed0/currency-api" target="_blank" rel="noopener noreferrer">
+                        <Link href="https://github.com/negirox" target="_blank" rel="noopener noreferrer">
                            <Github />
                            <span>GitHub</span>
                         </Link>
