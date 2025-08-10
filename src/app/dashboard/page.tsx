@@ -68,12 +68,12 @@ export default function DashboardPage() {
 
   return (
     <TooltipProvider>
-      <header className="sticky top-0 z-30 hidden h-14 items-center justify-between gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
+      <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">Dashboard</h1>
-         <div className="w-full max-w-[200px] space-y-2">
+        <div className="flex items-center gap-2">
             <Label htmlFor="master-currency" className="text-xs">Default Currency</Label>
             <Select value={globalCurrency} onValueChange={(val) => setGlobalCurrency(val as Currency)}>
-                <SelectTrigger id="master-currency" className="h-9">
+                <SelectTrigger id="master-currency" className="h-9 w-[120px]">
                     <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
                 <SelectContent>
