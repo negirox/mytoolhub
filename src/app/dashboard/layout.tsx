@@ -155,9 +155,9 @@ export default function DashboardLayout({
                     <nav className="mt-2 space-x-4">
                         <Link href="/dashboard/about" className="hover:text-primary">About Us</Link>
                         <Link href="/dashboard/privacy" className="hover:text-primary">Privacy Policy</Link>
-                         <p className="mt-4 inline">
+                         <span className="mt-4 inline-block">
                             Developed by <a href="https://github.com/negirox" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Negirox</a>
-                        </p>
+                        </span>
                     </nav>
                 </div>
             </footer>
