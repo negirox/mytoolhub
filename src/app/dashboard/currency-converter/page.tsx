@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -12,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, ArrowRightLeft } from 'lucide-react';
+import { Terminal, ArrowRightLeft, Github } from 'lucide-react';
 import { Combobox } from '@/components/ui/combobox';
 import {
   ChartContainer,
@@ -22,6 +23,9 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import Link from 'next/link';
+import { Tooltip, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 
 const CURRENCIES_URL =
   'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json';
@@ -162,7 +166,7 @@ export default function CurrencyConverterPage() {
   };
 
   return (
-    <>
+    <TooltipProvider>
       <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">
           Currency Converter
@@ -172,9 +176,24 @@ export default function CurrencyConverterPage() {
         <div className="grid gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline">Currency Converter</CardTitle>
+                <div className="flex items-center justify-between">
+                    <CardTitle className="font-headline">Currency Converter</CardTitle>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Link href="https://github.com/fawazahmed0/currency-api" target="_blank" rel="noopener noreferrer">
+                                <Button variant="outline" size="icon">
+                                    <Github className="size-5" />
+                                    <span className="sr-only">GitHub</span>
+                                </Button>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>View the open-source API on GitHub</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
               <CardDescription>
-                Get real-time exchange rates. The conversion will happen automatically.
+                Get real-time exchange rates from a free, open-source API. The conversion will happen automatically.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -260,6 +279,6 @@ export default function CurrencyConverterPage() {
           )}
         </div>
       </main>
-    </>
+    </TooltipProvider>
   );
 }
