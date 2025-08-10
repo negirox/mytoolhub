@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -42,10 +42,9 @@ import {
 import { ChevronDown, ChevronRight, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 
 const GST_RATE = 0.18; // 18% GST
-
-type Currency = 'INR' | 'USD' | 'EUR';
 
 const currencyLocales: Record<Currency, string> = {
     INR: 'en-IN',
@@ -81,11 +80,17 @@ interface AmortizationYear {
 }
 
 export default function CreditCardEmiCalculatorPage() {
+    const currencyContext = useContext(CurrencyContext);
+    if (!currencyContext) {
+        throw new Error('useContext must be used within a CurrencyProvider');
+    }
+    const { globalCurrency } = currencyContext;
+
   const [amount, setAmount] = useState('15000');
   const [rate, setRate] = useState('18');
   const [tenure, setTenure] = useState('6');
   const [fees, setFees] = useState('300');
-  const [currency, setCurrency] = useState<Currency>('INR');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
 
 
   const [results, setResults] = useState({
@@ -98,6 +103,10 @@ export default function CreditCardEmiCalculatorPage() {
   });
 
   const [amortizationSchedule, setAmortizationSchedule] = useState<AmortizationYear[]>([]);
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -115,6 +124,14 @@ export default function CreditCardEmiCalculatorPage() {
 
     if (isNaN(p) || isNaN(r) || isNaN(n) || p <= 0 || r < 0 || n <= 0) {
       setAmortizationSchedule([]);
+      setResults({
+        monthlyEmi: 0,
+        apr: 0,
+        processingFeeGst: 0,
+        totalInterest: 0,
+        gstOnInterest: 0,
+        totalPayments: 0,
+      });
       return;
     }
 

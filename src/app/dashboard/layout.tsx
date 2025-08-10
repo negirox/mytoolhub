@@ -11,9 +11,6 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import {
   HeartPulse,
@@ -21,6 +18,7 @@ import {
   LayoutDashboard,
   Menu,
   Wrench,
+  Home
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -31,6 +29,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { CurrencyProvider } from '@/context/CurrencyContext';
 
 function Logo() {
   return (
@@ -71,65 +70,56 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <Logo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip="Dashboard"
-                isActive={pathname === '/dashboard'}
-              >
-                <Link href="/dashboard">
-                  <LayoutDashboard />
-                  <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            {NAV_GROUPS.map((group) => (
-              <SidebarMenuItem key={group.href}>
-                <Collapsible>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      asChild
-                      className="justify-between"
-                      isActive={pathname.startsWith(group.href)}
-                    >
-                      <Link href={group.href}>
-                        <div className="flex items-center gap-2">
-                          {group.icon}
-                          <span>{group.heading}</span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-5 [&[data-state=open]>svg]:rotate-90"
-                        >
-                          <ChevronRight className="transition-transform duration-200" />
-                        </Button>
-                      </Link>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </Collapsible>
+    <CurrencyProvider>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Dashboard"
+                  isActive={pathname === '/dashboard'}
+                >
+                  <Link href="/dashboard">
+                    <LayoutDashboard />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
-          <Logo />
-          <SidebarTrigger>
-            <Menu />
-          </SidebarTrigger>
-        </header>
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+
+              {NAV_GROUPS.map((group) => (
+                <SidebarMenuItem key={group.href}>
+                  <SidebarMenuButton
+                        asChild
+                        className="justify-between"
+                        isActive={pathname.startsWith(group.href)}
+                      >
+                        <Link href={group.href}>
+                          <div className="flex items-center gap-2">
+                            {group.icon}
+                            <span>{group.heading}</span>
+                          </div>
+                        </Link>
+                      </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+        <SidebarInset>
+          <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
+            <Logo />
+            <SidebarTrigger>
+              <Menu />
+            </SidebarTrigger>
+          </header>
+          {children}
+        </SidebarInset>
+      </SidebarProvider>
+    </CurrencyProvider>
   );
 }

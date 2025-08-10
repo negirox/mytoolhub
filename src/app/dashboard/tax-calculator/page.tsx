@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useContext, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -44,6 +44,8 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+
 
 type TaxRegime = 'new' | 'old';
 type TaxBracket = {
@@ -51,8 +53,6 @@ type TaxBracket = {
   rate: string;
   tax: number;
 };
-
-type Currency = 'INR' | 'USD' | 'EUR';
 
 const currencyLocales: Record<Currency, string> = {
     INR: 'en-IN',
@@ -195,9 +195,15 @@ const calculateOldRegimeTax = (taxableIncome: number) => {
 };
 
 export default function TaxCalculatorPage() {
+    const currencyContext = useContext(CurrencyContext);
+    if (!currencyContext) {
+        throw new Error('useContext must be used within a CurrencyProvider');
+    }
+    const { globalCurrency } = currencyContext;
+
   const [income, setIncome] = useState('1000000');
   const [taxRegime, setTaxRegime] = useState<TaxRegime>('new');
-  const [currency, setCurrency] = useState<Currency>('INR');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
   const [totalTax, setTotalTax] = useState<number | null>(null);
   const [taxBreakdown, setTaxBreakdown] = useState<TaxBracket[]>([]);
   const [taxableIncome, setTaxableIncome] = useState<number | null>(null);
@@ -213,6 +219,10 @@ export default function TaxCalculatorPage() {
   const [homeLoanInterest, setHomeLoanInterest] = useState('0');
   const [otherDeductions, setOtherDeductions] = useState('0');
   
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
+
   const financialYear = useMemo(() => {
     const today = new Date();
     const currentMonth = today.getMonth(); // 0-11

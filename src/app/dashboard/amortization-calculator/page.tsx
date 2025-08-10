@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import {
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 
 interface MonthlyAmortizationData {
   month: number;
@@ -44,8 +45,6 @@ interface AmortizationYear {
   monthlyData: MonthlyAmortizationData[];
 }
 
-type Currency = 'USD' | 'INR' | 'EUR';
-
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
   INR: '₹',
@@ -59,12 +58,22 @@ const currencyLocales: Record<Currency, string> = {
 };
 
 export default function AmortizationCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [loanAmount, setLoanAmount] = useState('240000');
   const [interestRate, setInterestRate] = useState('7.0');
   const [loanTerm, setLoanTerm] = useState('30');
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
   
   const [amortizationData, setAmortizationData] = useState<AmortizationYear[]>([]);
+
+  useEffect(() => {
+      setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -79,7 +88,7 @@ export default function AmortizationCalculatorPage() {
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(loanTerm) * 12;
 
-    if (p <= 0 || r <= 0 || n <= 0) {
+    if (p <= 0 || r <= 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
       setAmortizationData([]);
       return;
     }

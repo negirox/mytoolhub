@@ -1,4 +1,7 @@
 
+'use client';
+
+import React, { useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -10,20 +13,16 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight, HeartPulse, Landmark, Wrench } from 'lucide-react';
 import { Clock } from '@/components/ui/clock';
-import { Metadata } from 'next';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import React from 'react';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 
-
-export const metadata: Metadata = {
-    title: 'Dashboard | MyToolHub',
-    description: 'Unlock a suite of powerful, free online calculators and converters designed for your everyday needs. From health and fitness to finance and general utility, all our tools are fast, secure, and operate entirely on your device for maximum privacy.'
-};
 
 const categories = [
   {
@@ -59,10 +58,31 @@ const categories = [
 ];
 
 export default function DashboardPage() {
+    const currencyContext = useContext(CurrencyContext);
+
+    if (!currencyContext) {
+        throw new Error("CurrencyContext must be used within a CurrencyProvider");
+    }
+
+    const { globalCurrency, setGlobalCurrency } = currencyContext;
+
   return (
     <TooltipProvider>
-      <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
+      <header className="sticky top-0 z-30 hidden h-14 items-center justify-between gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
         <h1 className="font-headline text-xl font-semibold">Dashboard</h1>
+         <div className="w-full max-w-[200px] space-y-2">
+            <Label htmlFor="master-currency" className="text-xs">Default Currency</Label>
+            <Select value={globalCurrency} onValueChange={(val) => setGlobalCurrency(val as Currency)}>
+                <SelectTrigger id="master-currency" className="h-9">
+                    <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="INR">INR (₹)</SelectItem>
+                    <SelectItem value="USD">USD ($)</SelectItem>
+                    <SelectItem value="EUR">EUR (€)</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
       </header>
       <main className="flex-1 p-4 md:p-6">
         <div className="grid gap-6">

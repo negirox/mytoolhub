@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -18,8 +18,7 @@ import {
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-type Currency = 'USD' | 'INR' | 'EUR';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -40,11 +39,17 @@ const formatYearsAndMonths = (totalMonths: number) => {
 }
 
 export default function MortgagePayoffCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [loanAmount, setLoanAmount] = useState('240000');
   const [interestRate, setInterestRate] = useState('7.0');
   const [loanTerm, setLoanTerm] = useState('30');
   const [extraPayment, setExtraPayment] = useState('200');
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
   
   const [results, setResults] = useState<{
     originalTerm: number;
@@ -55,6 +60,10 @@ export default function MortgagePayoffCalculatorPage() {
     payoffDate: string;
     newPayoffDate: string;
   } | null>(null);
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -70,7 +79,7 @@ export default function MortgagePayoffCalculatorPage() {
     const n_original = parseFloat(loanTerm) * 12;
     const extra = parseFloat(extraPayment) || 0;
 
-    if (p <= 0 || r <= 0 || n_original <= 0) {
+    if (p <= 0 || r <= 0 || n_original <= 0 || isNaN(p) || isNaN(r) || isNaN(n_original)) {
       setResults(null);
       return;
     }

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -32,8 +32,7 @@ import {
   Cell,
 } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-type Currency = 'USD' | 'INR' | 'EUR';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -48,11 +47,17 @@ const currencyLocales: Record<Currency, string> = {
 };
 
 export default function MortgageCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [homePrice, setHomePrice] = useState('300000');
   const [downPayment, setDownPayment] = useState('60000');
   const [interestRate, setInterestRate] = useState('7.0');
   const [loanTerm, setLoanTerm] = useState('30');
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
 
   const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
   const [totalInterest, setTotalInterest] = useState<number | null>(null);
@@ -61,6 +66,10 @@ export default function MortgageCalculatorPage() {
   const loanAmount = useMemo(() => {
     return (parseFloat(homePrice) || 0) - (parseFloat(downPayment) || 0);
   }, [homePrice, downPayment]);
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -76,7 +85,7 @@ export default function MortgageCalculatorPage() {
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(loanTerm) * 12;
 
-    if (p <= 0 || r <= 0 || n <= 0) {
+    if (p <= 0 || r <= 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
       setMonthlyPayment(null);
       setTotalInterest(null);
       setTotalPayment(null);

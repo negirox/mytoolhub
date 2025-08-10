@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -37,8 +37,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-
-type Currency = 'USD' | 'INR' | 'EUR';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -53,8 +52,14 @@ const currencyLocales: Record<Currency, string> = {
 };
 
 export default function HouseAffordabilityCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [activeTab, setActiveTab] = useState('income');
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
   
   // Income-based state
   const [annualIncome, setAnnualIncome] = useState('120000');
@@ -85,6 +90,10 @@ export default function HouseAffordabilityCalculatorPage() {
     homeInsurance: number;
     hoa: number;
   } | null>(null);
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {

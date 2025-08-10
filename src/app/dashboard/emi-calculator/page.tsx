@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -57,6 +57,8 @@ import {
   CollapsibleContent,
 } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+
 
 type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
 interface MonthlyAmortizationData {
@@ -77,7 +79,6 @@ interface AmortizationData {
   loanPaidToDate: number;
   monthlyData: MonthlyAmortizationData[];
 }
-type Currency = 'INR' | 'USD' | 'EUR';
 
 const currencyLocales: Record<Currency, string> = {
     INR: 'en-IN',
@@ -91,10 +92,16 @@ const currencySymbols: Record<Currency, string> = {
 };
 
 export default function EmiCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [principal, setPrincipal] = useState('1000000');
   const [interestRate, setInterestRate] = useState('8.5');
   const [tenure, setTenure] = useState('20');
-  const [currency, setCurrency] = useState<Currency>('INR');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
 
   // Advanced Options State
   const [prepaymentFrequency, setPrepaymentFrequency] =
@@ -108,6 +115,10 @@ export default function EmiCalculatorPage() {
   const [amortizationData, setAmortizationData] = useState<AmortizationData[]>(
     []
   );
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -123,7 +134,7 @@ export default function EmiCalculatorPage() {
     const n = parseFloat(tenure) * 12;
     const extra = parseFloat(prepaymentAmount) || 0;
 
-    if (p <= 0 || r < 0 || n <= 0) {
+    if (p <= 0 || r < 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
