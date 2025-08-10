@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useContext } from 'react';
+import { useState, useMemo, useEffect, useContext, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -92,47 +92,36 @@ export default function CreditCardEmiCalculatorPage() {
   const [fees, setFees] = useState('300');
   const [currency, setCurrency] = useState<Currency>(globalCurrency);
 
-
-  const [results, setResults] = useState({
-    monthlyEmi: 0,
-    apr: 0,
-    processingFeeGst: 0,
-    totalInterest: 0,
-    gstOnInterest: 0,
-    totalPayments: 0,
-  });
-
-  const [amortizationSchedule, setAmortizationSchedule] = useState<AmortizationYear[]>([]);
-
   useEffect(() => {
     setCurrency(globalCurrency);
   }, [globalCurrency]);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
       style: 'currency',
       currency: currency,
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  },[currency]);
 
-  const calculateEmi = () => {
+  const { results, amortizationSchedule } = useMemo(() => {
     const p = parseFloat(amount);
     const r = parseFloat(rate) / 12 / 100; // Monthly interest rate
     const n = parseInt(tenure);
     const procFees = parseFloat(fees) || 0;
 
     if (isNaN(p) || isNaN(r) || isNaN(n) || p <= 0 || r < 0 || n <= 0) {
-      setAmortizationSchedule([]);
-      setResults({
-        monthlyEmi: 0,
-        apr: 0,
-        processingFeeGst: 0,
-        totalInterest: 0,
-        gstOnInterest: 0,
-        totalPayments: 0,
-      });
-      return;
+      return {
+        results: {
+            monthlyEmi: 0,
+            apr: 0,
+            processingFeeGst: 0,
+            totalInterest: 0,
+            gstOnInterest: 0,
+            totalPayments: 0,
+        },
+        amortizationSchedule: []
+      };
     }
 
     const emiPrincipalAndInterest = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
@@ -191,30 +180,27 @@ export default function CreditCardEmiCalculatorPage() {
             monthlyData: data.monthlyData,
         };
     });
-    setAmortizationSchedule(schedule);
 
     const processingFeeWithGst = procFees * (1 + GST_RATE);
     const monthlyEmi = emiPrincipalAndInterest + (totalGstOnInterest / n);
     const totalPayments = p + totalInterest + totalGstOnInterest + processingFeeWithGst;
     
-    // APR Calculation
     const totalFeesAndInterest = totalInterest + procFees;
     const tenureInYears = n / 12;
     const apr = (totalFeesAndInterest / p) * (1 / tenureInYears) * 100;
-
-    setResults({
-      monthlyEmi: monthlyEmi,
-      apr: apr,
-      processingFeeGst: processingFeeWithGst,
-      totalInterest: totalInterest,
-      gstOnInterest: totalGstOnInterest,
-      totalPayments: totalPayments,
-    });
-  };
-  
-  useEffect(() => {
-    calculateEmi();
-  }, [amount, rate, tenure, fees, currency]);
+    
+    return {
+        results: {
+            monthlyEmi: monthlyEmi,
+            apr: apr,
+            processingFeeGst: processingFeeWithGst,
+            totalInterest: totalInterest,
+            gstOnInterest: totalGstOnInterest,
+            totalPayments: totalPayments,
+        },
+        amortizationSchedule: schedule
+    };
+  }, [amount, rate, tenure, fees]);
 
   const AmortizationRow = ({ row }: { row: AmortizationYear }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -295,7 +281,7 @@ export default function CreditCardEmiCalculatorPage() {
   };
   
   const chartConfig = {
-      principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
+      principal: { label: 'Principal', color: 'hsl(var(--chart-3))' },
       interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
       fees: { label: 'Total Fees & GST', color: 'hsl(var(--chart-5))' },
       gstOnInterest: { label: 'GST on Interest', color: 'hsl(var(--chart-5))' },
@@ -373,7 +359,6 @@ export default function CreditCardEmiCalculatorPage() {
                     </Label>
                     <Input id="fees" type="number" value={fees} onChange={(e) => setFees(e.target.value)} />
                   </div>
-                  <Button onClick={calculateEmi} className="w-full md:w-auto">Recalculate</Button>
                 </div>
                  <div className="flex flex-col gap-4">
                     <Card className="bg-muted/50">
@@ -399,16 +384,16 @@ export default function CreditCardEmiCalculatorPage() {
                              <span className="font-medium">{formatCurrency(parseFloat(amount))}</span>
                            </div>
                            <div className="flex justify-between">
-                             <span>Processing Fees + GST</span>
-                             <span className="font-medium">{formatCurrency(results.processingFeeGst)}</span>
+                             <span className="text-orange-600 dark:text-orange-400">Processing Fees + GST</span>
+                             <span className="font-medium text-orange-600 dark:text-orange-400">{formatCurrency(results.processingFeeGst)}</span>
                            </div>
                            <div className="flex justify-between">
-                             <span>Total Interest Payable</span>
-                             <span className="font-medium">{formatCurrency(results.totalInterest)}</span>
+                             <span className="text-red-600 dark:text-red-400">Total Interest Payable</span>
+                             <span className="font-medium text-red-600 dark:text-red-400">{formatCurrency(results.totalInterest)}</span>
                            </div>
                            <div className="flex justify-between">
-                             <span>GST on Interest</span>
-                             <span className="font-medium">{formatCurrency(results.gstOnInterest)}</span>
+                             <span className="text-red-600 dark:text-red-400">GST on Interest</span>
+                             <span className="font-medium text-red-600 dark:text-red-400">{formatCurrency(results.gstOnInterest)}</span>
                            </div>
                            <div className="flex justify-between text-base font-bold border-t pt-2 mt-2">
                              <span>Total Cost</span>

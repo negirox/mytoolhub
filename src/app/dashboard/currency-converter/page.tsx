@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, ArrowRightLeft, Github } from 'lucide-react';
+import { Terminal, ArrowRightLeft, Github, Loader2 } from 'lucide-react';
 import { Combobox } from '@/components/ui/combobox';
 import {
   ChartContainer,
@@ -25,6 +25,7 @@ import {
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import Link from 'next/link';
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 const CURRENCIES_URL =
@@ -89,6 +90,7 @@ export default function CurrencyConverterPage() {
 
     setIsLoading(true);
     setError(null);
+    setResult(null);
 
     try {
       const res = await fetch(`${EXCHANGE_RATE_URL_PREFIX}/${fromCurrency}.json`);
@@ -127,7 +129,11 @@ export default function CurrencyConverterPage() {
   }, [amount, fromCurrency, toCurrency, currencies]);
   
   useEffect(() => {
-    convertCurrency();
+    const debounceTimer = setTimeout(() => {
+        convertCurrency();
+    }, 500); // Debounce API calls
+
+    return () => clearTimeout(debounceTimer);
   }, [amount, fromCurrency, toCurrency, convertCurrency]);
 
   const handleSwapCurrencies = () => {
@@ -157,11 +163,11 @@ export default function CurrencyConverterPage() {
   const chartConfig = {
     result: {
       label: "Result",
-      color: "hsl(var(--chart-1))",
+      color: "hsl(var(--chart-2))",
     },
     rate: {
         label: "Exchange Rate",
-        color: "hsl(var(--chart-2))",
+        color: "hsl(var(--chart-3))",
     }
   };
 
@@ -178,7 +184,7 @@ export default function CurrencyConverterPage() {
             <CardHeader>
                 <CardTitle className="font-headline">Currency Converter</CardTitle>
               <CardDescription>
-                Get real-time exchange rates from a free, open-source API. The conversion will happen automatically.
+                Get real-time exchange rates from a free, open-source API. The conversion will happen automatically as you type.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -227,7 +233,17 @@ export default function CurrencyConverterPage() {
                 </div>
               </div>
               
-              {isLoading && <p className="mt-4 text-sm text-muted-foreground">Converting...</p>}
+              {isLoading && (
+                 <div className="mt-6 rounded-lg border p-4 space-y-3">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <h3 className="font-headline text-lg font-semibold">Please wait...</h3>
+                    </div>
+                    <Skeleton className="h-8 w-3/4 mt-2" />
+                    <Skeleton className="h-4 w-1/2 mt-3" />
+                </div>
+              )}
+
               {result !== null && !isLoading && (
                 <div className="mt-6 rounded-lg border p-4">
                   <h3 className="font-headline text-lg font-semibold">

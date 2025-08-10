@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useContext } from 'react';
+import { useState, useMemo, useEffect, useContext, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -108,49 +108,34 @@ export default function EmiCalculatorPage() {
     useState<PrepaymentFrequency>('none');
   const [prepaymentAmount, setPrepaymentAmount] = useState('0');
 
-  // Results State
-  const [emi, setEmi] = useState<number | null>(null);
-  const [totalInterest, setTotalInterest] = useState<number | null>(null);
-  const [totalPayment, setTotalPayment] = useState<number | null>(null);
-  const [amortizationData, setAmortizationData] = useState<AmortizationData[]>(
-    []
-  );
-
   useEffect(() => {
     setCurrency(globalCurrency);
   }, [globalCurrency]);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
       style: 'currency',
       currency: currency,
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  }, [currency]);
 
-  const calculateEmi = () => {
+  const { emi, totalInterest, totalPayment, amortizationData } = useMemo(() => {
     const p = parseFloat(principal);
     const r = parseFloat(interestRate) / 12 / 100;
     const n = parseFloat(tenure) * 12;
     const extra = parseFloat(prepaymentAmount) || 0;
 
     if (p <= 0 || r < 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
-      setEmi(null);
-      setTotalInterest(null);
-      setTotalPayment(null);
-      setAmortizationData([]);
-      return;
+      return { emi: null, totalInterest: null, totalPayment: null, amortizationData: [] };
     }
     
     if (r === 0) {
         const emiValue = p / n;
-        setEmi(emiValue);
-        // ... handle zero interest rate amortization if needed
-        return;
+        return { emi: emiValue, totalInterest: 0, totalPayment: p, amortizationData: [] }; // Simplified for zero interest
     }
 
     const emiValue = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-    setEmi(emiValue);
 
     let balance = p;
     let totalInterestPaid = 0;
@@ -232,14 +217,13 @@ export default function EmiCalculatorPage() {
       });
     });
 
-    setTotalInterest(totalInterestPaid);
-    setTotalPayment(p + totalInterestPaid);
-    setAmortizationData(schedule);
-  };
-
-  useEffect(() => {
-    calculateEmi();
-  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency, currency]);
+    return { 
+        emi: emiValue, 
+        totalInterest: totalInterestPaid, 
+        totalPayment: p + totalInterestPaid, 
+        amortizationData: schedule 
+    };
+  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency]);
   
   const AmortizationRow = ({ row }: { row: AmortizationData }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -320,9 +304,9 @@ export default function EmiCalculatorPage() {
   };
 
   const chartConfig = {
-    principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
+    principal: { label: 'Principal', color: 'hsl(var(--chart-3))' },
     interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
-    extraPayment: { label: 'Extra Payment', color: 'hsl(var(--chart-3))' }
+    extraPayment: { label: 'Extra Payment', color: 'hsl(var(--chart-2))' }
   };
   
   const pieChartData = useMemo(() => ([
@@ -426,7 +410,7 @@ export default function EmiCalculatorPage() {
                             </div>
                             <div className="space-y-1 rounded-lg border p-4">
                               <p className="text-sm font-medium text-muted-foreground">Total Interest</p>
-                              <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
+                              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(totalInterest)}</p>
                             </div>
                             <div className="space-y-1 rounded-lg border p-4">
                               <p className="text-sm font-medium text-muted-foreground">Total Payment (Principal + Interest)</p>
@@ -657,31 +641,31 @@ export default function EmiCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-1">
                         <AccordionTrigger>What is an EMI?</AccordionTrigger>
                         <AccordionContent>
                         An Equated Monthly Installment (EMI) is a fixed payment amount made by a borrower to a lender on a specified date each month. EMIs are used to pay off both interest and principal each month so that over a specified number of years, the loan is paid off in full.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-2">
                         <AccordionTrigger>How is EMI calculated?</AccordionTrigger>
                         <AccordionContent>
                         The mathematical formula for calculating EMI is: EMI = [P x R x (1+R)^N] / [(1+R)^N-1], where P is the principal loan amount, R is the monthly interest rate, and N is the number of monthly installments. Our calculator simplifies this process for you.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-3">
                         <AccordionTrigger>What is an amortization schedule?</AccordionTrigger>
                         <AccordionContent>
                         An amortization schedule is a table detailing each periodic payment on a loan. It breaks down each payment into its principal and interest components and shows the remaining balance of the loan after each payment is made. This calculator provides a yearly and monthly schedule.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-4">
                         <AccordionTrigger>How does prepayment of a loan help?</AccordionTrigger>
                         <AccordionContent>
                         Making prepayments (paying more than your scheduled EMI) can significantly reduce your total interest cost and shorten your loan tenure. By paying down the principal faster, you reduce the balance on which interest is calculated, leading to substantial savings over the life of the loan.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-5">
                         <AccordionTrigger>What is the difference between fixed and floating interest rates?</AccordionTrigger>
                         <AccordionContent>
                         A fixed interest rate remains the same throughout the loan tenure, meaning your EMI amount will not change. A floating interest rate, on the other hand, is linked to a benchmark rate and can change over time, causing your EMI amount to increase or decrease. This calculator assumes a fixed interest rate.

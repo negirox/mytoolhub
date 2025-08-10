@@ -26,10 +26,10 @@
     --ring: 257 51% 57%;
     --chart-1: 340 82% 52%;
     --chart-2: 160 84% 39%;
-    --chart-3: 45 93% 47%;
-    --chart-4: 43 74% 66%;
+    --chart-3: 210 93% 57%;
+    --chart-4: 45 93% 47%;
     --chart-5: 27 87% 67%;
-    --chart-6: 210 93% 57%;
+    --chart-6: 280 65% 60%;
     --radius: 0.5rem;
     --sidebar-background: 257 40% 25%;
     --sidebar-foreground: 285 50% 95%;
@@ -62,10 +62,10 @@
     --ring: 257 51% 67%;
     --chart-1: 340 82% 62%;
     --chart-2: 160 84% 49%;
-    --chart-3: 45 93% 57%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --chart-6: 210 93% 67%;
+    --chart-3: 210 93% 67%;
+    --chart-4: 45 93% 57%;
+    --chart-5: 27 87% 67%;
+    --chart-6: 280 75% 65%;
     --sidebar-background: 257 25% 10%;
     --sidebar-foreground: 285 50% 95%;
     --sidebar-primary: 285 50% 95%;
