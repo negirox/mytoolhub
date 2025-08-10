@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, ArrowRightLeft, Github } from 'lucide-react';
+import { Terminal, ArrowRightLeft, Github, Loader2 } from 'lucide-react';
 import { Combobox } from '@/components/ui/combobox';
 import {
   ChartContainer,
@@ -234,8 +234,11 @@ export default function CurrencyConverterPage() {
               </div>
               
               {isLoading && (
-                 <div className="mt-6 rounded-lg border p-4">
-                    <h3 className="font-headline text-lg font-semibold">Result</h3>
+                 <div className="mt-6 rounded-lg border p-4 space-y-3">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <h3 className="font-headline text-lg font-semibold">Please wait...</h3>
+                    </div>
                     <Skeleton className="h-8 w-3/4 mt-2" />
                     <Skeleton className="h-4 w-1/2 mt-3" />
                 </div>
