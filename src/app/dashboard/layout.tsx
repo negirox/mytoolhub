@@ -28,7 +28,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 function Logo() {
   return (
@@ -41,17 +41,6 @@ function Logo() {
           MyToolHub
         </h1>
       </div>
-       <Tooltip>
-        <TooltipTrigger asChild>
-            <Link href="https://github.com/fawazahmed0/currency-api" target="_blank" rel="noopener noreferrer" className="text-sidebar-foreground/80 hover:text-sidebar-foreground">
-                <Github className="size-5" />
-                <span className="sr-only">GitHub</span>
-            </Link>
-        </TooltipTrigger>
-        <TooltipContent side="right">
-            <p>View the open-source API on GitHub</p>
-        </TooltipContent>
-      </Tooltip>
     </div>
   );
 }
@@ -151,6 +140,17 @@ export default function DashboardLayout({
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 ))}
+                <SidebarMenuItem>
+                    <SidebarMenuButton
+                        asChild
+                        tooltip="View Source on GitHub"
+                    >
+                        <Link href="https://github.com/fawazahmed0/currency-api" target="_blank" rel="noopener noreferrer">
+                           <Github />
+                           <span>GitHub</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
