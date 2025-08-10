@@ -11,36 +11,22 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
-  SidebarGroup,
-  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import {
-  Calculator,
-  ChevronDown,
-  CreditCard,
-  EggFried,
-  HardHat,
-  Home,
+  HeartPulse,
   Landmark,
   LayoutDashboard,
   Menu,
-  Percent,
-  Ruler,
-  Scale,
-  Wallet,
+  Wrench,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
 
 function Logo() {
   return (
     <div className="flex items-center gap-2.5 p-2">
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <HardHat />
+        <Wrench />
       </div>
       <h1 className="font-headline text-lg font-semibold text-sidebar-foreground">
         MyToolHub
@@ -48,34 +34,6 @@ function Logo() {
     </div>
   );
 }
-
-const SidebarCollapsibleGroup = ({
-  groupLabel,
-  children,
-}: {
-  groupLabel: string;
-  children: React.ReactNode;
-}) => {
-  const [isOpen, setIsOpen] = useState(true);
-  return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger asChild>
-          <Button variant="ghost" className="w-full flex justify-between items-center px-2">
-            <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
-            <ChevronDown
-              className={cn('size-4 transition-transform', isOpen && 'rotate-180')}
-            />
-          </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <SidebarMenu className="pl-4">
-            {children}
-        </SidebarMenu>
-      </CollapsibleContent>
-    </Collapsible>
-  );
-};
-
 
 export default function DashboardLayout({
   children,
@@ -105,134 +63,44 @@ export default function DashboardLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>
             
-             <SidebarCollapsibleGroup groupLabel="Health & Fitness">
-              <SidebarMenuItem>
+            <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  tooltip="BMI Calculator"
-                  isActive={pathname === '/dashboard/bmi-calculator'}
+                  tooltip="Health & Fitness"
+                  isActive={pathname === '/dashboard/health-and-fitness'}
                 >
-                  <Link href="/dashboard/bmi-calculator">
-                    <Scale />
-                    <span>BMI Calculator</span>
+                  <Link href="/dashboard/health-and-fitness">
+                    <HeartPulse />
+                    <span>Health & Fitness</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Calorie Calculator"
-                  isActive={pathname === '/dashboard/calorie-calculator'}
-                >
-                  <Link href="/dashboard/calorie-calculator">
-                    <Calculator />
-                    <span>Calorie Calculator</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Protein Calculator"
-                  isActive={pathname === '/dashboard/protein-calculator'}
-                >
-                  <Link href="/dashboard/protein-calculator">
-                    <EggFried />
-                    <span>Protein Calculator</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Fat Intake Calculator"
-                  isActive={pathname === '/dashboard/fat-intake-calculator'}
-                >
-                  <Link href="/dashboard/fat-intake-calculator">
-                    <Percent />
-                    <span>Fat Intake Calculator</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarCollapsibleGroup>
 
-            <SidebarCollapsibleGroup groupLabel="Financial Calculators">
-                <SidebarMenuItem>
+            <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  tooltip="EMI Calculator"
-                  isActive={pathname === '/dashboard/emi-calculator'}
+                  tooltip="Financial Calculators"
+                  isActive={pathname === '/dashboard/financial-calculators'}
                 >
-                  <Link href="/dashboard/emi-calculator">
+                  <Link href="/dashboard/financial-calculators">
                     <Landmark />
-                    <span>EMI Calculator</span>
+                    <span>Financial Calculators</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Home Loan Calculator"
-                  isActive={pathname === '/dashboard/home-loan-emi-calculator'}
-                >
-                  <Link href="/dashboard/home-loan-emi-calculator">
-                    <Home />
-                    <span>Home Loan Calculator</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Credit Card EMI"
-                  isActive={pathname === '/dashboard/credit-card-emi-calculator'}
-                >
-                  <Link href="/dashboard/credit-card-emi-calculator">
-                    <CreditCard />
-                    <span>Credit Card EMI</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Tax Calculator"
-                  isActive={pathname === '/dashboard/tax-calculator'}
-                >
-                  <Link href="/dashboard/tax-calculator">
-                    <Percent />
-                    <span>Tax Calculator</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarCollapsibleGroup>
             
-            <SidebarCollapsibleGroup groupLabel="General Utilities">
-                 <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      tooltip="Currency Converter"
-                      isActive={pathname === '/dashboard/currency-converter'}
-                    >
-                      <Link href="/dashboard/currency-converter">
-                        <Wallet />
-                        <span>Currency Converter</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      tooltip="Unit Converter"
-                      isActive={pathname === '/dashboard/unit-converter'}
-                    >
-                      <Link href="/dashboard/unit-converter">
-                        <Ruler />
-                        <span>Unit Converter</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-            </SidebarCollapsibleGroup>
+             <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="General Utilities"
+                  isActive={pathname === '/dashboard/general-utilities'}
+                >
+                  <Link href="/dashboard/general-utilities">
+                    <Wrench />
+                    <span>General Utilities</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
           </SidebarMenu>
         </SidebarContent>
