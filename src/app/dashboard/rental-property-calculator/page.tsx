@@ -278,85 +278,68 @@ export default function RentalPropertyCalculatorPage() {
                         <CardDescription>Analyze the potential return on investment for a rental property.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid gap-8 lg:grid-cols-3">
-                            <div className="lg:col-span-2 grid gap-6">
-                                <Card>
-                                    <CardHeader><CardTitle className="text-lg">Purchase</CardTitle></CardHeader>
-                                    <CardContent className="grid md:grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label>Purchase Price</Label><Input value={purchasePrice} onChange={e => setPurchasePrice(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Closing Cost</Label><Input value={closingCost} onChange={e => setClosingCost(e.target.value)} /></div>
-                                        <div className="flex items-center space-x-2 pt-4"><Switch id="use-loan" checked={useLoan} onCheckedChange={setUseLoan} /><Label htmlFor="use-loan">Use Loan?</Label></div>
-                                        <div className="space-y-2"><Label>Down Payment (%)</Label><Input value={downPaymentPercent} onChange={e => setDownPaymentPercent(e.target.value)} disabled={!useLoan} /></div>
-                                        <div className="space-y-2"><Label>Interest Rate (%)</Label><Input value={interestRate} onChange={e => setInterestRate(e.target.value)} disabled={!useLoan} /></div>
-                                        <div className="space-y-2"><Label>Loan Term (years)</Label><Input value={loanTerm} onChange={e => setLoanTerm(e.target.value)} disabled={!useLoan} /></div>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader><CardTitle className="text-lg">Income</CardTitle></CardHeader>
-                                    <CardContent className="grid md:grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label>Monthly Rent</Label><Input value={monthlyRent} onChange={e => setMonthlyRent(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={rentIncrease} onChange={e => setRentIncrease(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Other Monthly Income</Label><Input value={otherIncome} onChange={e => setOtherIncome(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={otherIncomeIncrease} onChange={e => setOtherIncomeIncrease(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Vacancy Rate (%)</Label><Input value={vacancyRate} onChange={e => setVacancyRate(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Management Fee (% of rent)</Label><Input value={managementFee} onChange={e => setManagementFee(e.target.value)} /></div>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader><CardTitle className="text-lg">Recurring Operating Expenses</CardTitle></CardHeader>
-                                    <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        <div className="space-y-2"><Label>Property Tax (annual)</Label><Input value={propertyTax} onChange={e => setPropertyTax(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={propertyTaxIncrease} onChange={e => setPropertyTaxIncrease(e.target.value)} /></div>
-                                        <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
-                                        <div className="space-y-2"><Label>Total Insurance (annual)</Label><Input value={insurance} onChange={e => setInsurance(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={insuranceIncrease} onChange={e => setInsuranceIncrease(e.target.value)} /></div>
-                                        <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
-                                        <div className="space-y-2"><Label>Maintenance (annual)</Label><Input value={maintenance} onChange={e => setMaintenance(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={maintenanceIncrease} onChange={e => setMaintenanceIncrease(e.target.value)} /></div>
-                                        <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
-                                        <div className="space-y-2"><Label>HOA Fee (annual)</Label><Input value={hoa} onChange={e => setHoa(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={hoaIncrease} onChange={e => setHoaIncrease(e.target.value)} /></div>
-                                        <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
-                                        <div className="space-y-2"><Label>Other Costs (annual)</Label><Input value={otherCosts} onChange={e => setOtherCosts(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={otherCostsIncrease} onChange={e => setOtherCostsIncrease(e.target.value)} /></div>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader><CardTitle className="text-lg">Sale</CardTitle></CardHeader>
-                                    <CardContent className="grid md:grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label>Value Appreciation (% per year)</Label><Input value={appreciation} onChange={e => setAppreciation(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Holding Length (years)</Label><Input value={holdingLength} onChange={e => setHoldingLength(e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Cost to Sell (%)</Label><Input value={sellCost} onChange={e => setSellCost(e.target.value)} /></div>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                            <div className="space-y-4">
+                        <div className="grid gap-6">
+                            <Card>
+                                <CardHeader><CardTitle className="text-lg">Purchase</CardTitle></CardHeader>
+                                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="space-y-2"><Label>Purchase Price</Label><Input value={purchasePrice} onChange={e => setPurchasePrice(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Closing Cost</Label><Input value={closingCost} onChange={e => setClosingCost(e.target.value)} /></div>
+                                    <div className="flex items-center space-x-2 pt-4"><Switch id="use-loan" checked={useLoan} onCheckedChange={setUseLoan} /><Label htmlFor="use-loan">Use Loan?</Label></div>
+                                    <div className="space-y-2"><Label>Down Payment (%)</Label><Input value={downPaymentPercent} onChange={e => setDownPaymentPercent(e.target.value)} disabled={!useLoan} /></div>
+                                    <div className="space-y-2"><Label>Interest Rate (%)</Label><Input value={interestRate} onChange={e => setInterestRate(e.target.value)} disabled={!useLoan} /></div>
+                                    <div className="space-y-2"><Label>Loan Term (years)</Label><Input value={loanTerm} onChange={e => setLoanTerm(e.target.value)} disabled={!useLoan} /></div>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader><CardTitle className="text-lg">Income</CardTitle></CardHeader>
+                                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="space-y-2"><Label>Monthly Rent</Label><Input value={monthlyRent} onChange={e => setMonthlyRent(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={rentIncrease} onChange={e => setRentIncrease(e.target.value)} /></div>
+                                    <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
+                                    <div className="space-y-2"><Label>Other Monthly Income</Label><Input value={otherIncome} onChange={e => setOtherIncome(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={otherIncomeIncrease} onChange={e => setOtherIncomeIncrease(e.target.value)} /></div>
+                                    <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
+                                    <div className="space-y-2"><Label>Vacancy Rate (%)</Label><Input value={vacancyRate} onChange={e => setVacancyRate(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Management Fee (% of rent)</Label><Input value={managementFee} onChange={e => setManagementFee(e.target.value)} /></div>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader><CardTitle className="text-lg">Recurring Operating Expenses</CardTitle></CardHeader>
+                                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="space-y-2"><Label>Property Tax (annual)</Label><Input value={propertyTax} onChange={e => setPropertyTax(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={propertyTaxIncrease} onChange={e => setPropertyTaxIncrease(e.target.value)} /></div>
+                                    <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
+                                    <div className="space-y-2"><Label>Total Insurance (annual)</Label><Input value={insurance} onChange={e => setInsurance(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={insuranceIncrease} onChange={e => setInsuranceIncrease(e.target.value)} /></div>
+                                    <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
+                                    <div className="space-y-2"><Label>Maintenance (annual)</Label><Input value={maintenance} onChange={e => setMaintenance(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={maintenanceIncrease} onChange={e => setMaintenanceIncrease(e.target.value)} /></div>
+                                    <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
+                                    <div className="space-y-2"><Label>HOA Fee (annual)</Label><Input value={hoa} onChange={e => setHoa(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={hoaIncrease} onChange={e => setHoaIncrease(e.target.value)} /></div>
+                                    <div className="space-y-2 self-end text-sm text-muted-foreground hidden lg:block"></div>
+                                    <div className="space-y-2"><Label>Other Costs (annual)</Label><Input value={otherCosts} onChange={e => setOtherCosts(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Annual Increase (%)</Label><Input value={otherCostsIncrease} onChange={e => setOtherCostsIncrease(e.target.value)} /></div>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader><CardTitle className="text-lg">Sale</CardTitle></CardHeader>
+                                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="space-y-2"><Label>Value Appreciation (% per year)</Label><Input value={appreciation} onChange={e => setAppreciation(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Holding Length (years)</Label><Input value={holdingLength} onChange={e => setHoldingLength(e.target.value)} /></div>
+                                    <div className="space-y-2"><Label>Cost to Sell (%)</Label><Input value={sellCost} onChange={e => setSellCost(e.target.value)} /></div>
+                                </CardContent>
+                            </Card>
+                             <div className="space-y-4">
                                 <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
-                                    <SelectTrigger><SelectValue placeholder="Select currency" /></SelectTrigger>
+                                    <SelectTrigger className="max-w-xs"><SelectValue placeholder="Select currency" /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="USD">USD ($)</SelectItem>
                                         <SelectItem value="INR">INR (₹)</SelectItem>
                                         <SelectItem value="EUR">EUR (€)</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <Button onClick={calculate} className="w-full">Calculate</Button>
-                                {results && (
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-xl">Results Summary</CardTitle>
-                                            <CardDescription>For the {holdingLength} Years Invested</CardDescription>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2 text-sm">
-                                            <div className="flex justify-between font-bold text-base"><p>Total Profit when Sold:</p><p>{formatCurrency(results.totalProfitWhenSold)}</p></div>
-                                            <div className="flex justify-between"><p>Cash on Cash Return:</p><p>{results.cashOnCashReturn.toFixed(2)}%</p></div>
-                                            <div className="flex justify-between"><p>Capitalization Rate:</p><p>{results.capRate.toFixed(2)}%</p></div>
-                                            <div className="flex justify-between"><p>Total Rental Income:</p><p>{formatCurrency(results.totalRentalIncome)}</p></div>
-                                            <div className="flex justify-between"><p>Total Mortgage Payments:</p><p>{formatCurrency(results.totalMortgage)}</p></div>
-                                            <div className="flex justify-between"><p>Total Expenses:</p><p>{formatCurrency(results.totalExpenses)}</p></div>
-                                            <div className="flex justify-between"><p>Total Net Operating Income:</p><p>{formatCurrency(results.totalNoi)}</p></div>
-                                        </CardContent>
-                                    </Card>
-                                )}
+                                <Button onClick={calculate} className="w-full md:w-auto">Calculate</Button>
                             </div>
                         </div>
                     </CardContent>
@@ -364,6 +347,21 @@ export default function RentalPropertyCalculatorPage() {
 
                 {results && (
                     <>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="font-headline">Results Summary</CardTitle>
+                                <CardDescription>For the {holdingLength} Years Invested</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-2 text-sm">
+                                <div className="flex justify-between font-bold text-base"><p>Total Profit when Sold:</p><p>{formatCurrency(results.totalProfitWhenSold)}</p></div>
+                                <div className="flex justify-between"><p>Cash on Cash Return:</p><p>{results.cashOnCashReturn.toFixed(2)}%</p></div>
+                                <div className="flex justify-between"><p>Capitalization Rate:</p><p>{results.capRate.toFixed(2)}%</p></div>
+                                <div className="flex justify-between"><p>Total Rental Income:</p><p>{formatCurrency(results.totalRentalIncome)}</p></div>
+                                <div className="flex justify-between"><p>Total Mortgage Payments:</p><p>{formatCurrency(results.totalMortgage)}</p></div>
+                                <div className="flex justify-between"><p>Total Expenses:</p><p>{formatCurrency(results.totalExpenses)}</p></div>
+                                <div className="flex justify-between"><p>Total Net Operating Income:</p><p>{formatCurrency(results.totalNoi)}</p></div>
+                            </CardContent>
+                        </Card>
                         <Card>
                             <CardHeader>
                                 <CardTitle className="font-headline">First Year Analysis</CardTitle>
