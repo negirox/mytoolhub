@@ -411,17 +411,17 @@ export default function HomeLoanEmiCalculatorPage() {
   const pieData = useMemo(
     () => [
       {
-        name: 'Principal',
+        name: 'principal',
         value: loanAmount,
         fill: 'var(--color-principal)',
       },
       {
-        name: 'Interest',
+        name: 'interest',
         value: results.totalInterest,
         fill: 'var(--color-interest)',
       },
       {
-        name: 'Taxes, Insurance & Maintenance',
+        name: 'taxesAndMaintenance',
         value: results.taxesAndInsurance,
         fill: 'var(--color-taxesAndMaintenance)',
       },
@@ -432,23 +432,23 @@ export default function HomeLoanEmiCalculatorPage() {
   const breakdownData = useMemo(
     () => [
       {
-        name: 'Down Payment & Fees',
+        name: 'downPaymentAndFees',
         value: results.downPaymentAndFees,
         fill: 'var(--color-downPaymentAndFees)',
       },
-      { name: 'Principal', value: loanAmount, fill: 'var(--color-principal)' },
+      { name: 'principal', value: loanAmount, fill: 'var(--color-principal)' },
       {
-        name: 'Prepayments',
+        name: 'prepayments',
         value: results.totalPrepayments,
         fill: 'var(--color-prepayments)',
       },
       {
-        name: 'Interest',
+        name: 'interest',
         value: results.totalInterest,
         fill: 'var(--color-interest)',
       },
       {
-        name: 'Taxes, Home Insurance & Maintenance',
+        name: 'taxesAndMaintenance',
         value: results.taxesAndInsurance,
         fill: 'var(--color-taxesAndMaintenance)',
       },
@@ -812,7 +812,7 @@ export default function HomeLoanEmiCalculatorPage() {
                         ))}
                       </Pie>
                       <ChartLegend
-                        content={<ChartLegendContent nameKey="name" formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />}
+                        content={<ChartLegendContent nameKey="name" formatter={(value) => chartConfig[value as keyof typeof chartConfig]?.label ?? value} />}
                       />
                     </PieChart>
                   </ChartContainer>
@@ -842,7 +842,7 @@ export default function HomeLoanEmiCalculatorPage() {
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <Legend formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />
+                      <Legend formatter={(value) => chartConfig[value as keyof typeof chartConfig]?.label ?? value} />
                     </PieChart>
                   </ChartContainer>
                 </div>
