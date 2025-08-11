@@ -124,9 +124,9 @@ const tools = [
     iconColor: 'text-orange-600 dark:text-orange-400'
   },
   {
-    title: 'Real Estate Calculator',
+    title: 'Rental Property Calculator',
     description: 'Analyze potential real estate investments.',
-    href: '/dashboard/real-estate-calculator',
+    href: '/dashboard/rental-property-calculator',
     icon: <Building className="size-8" />,
     bgColor: 'bg-sky-100 dark:bg-sky-900/50',
     textColor: 'text-sky-800 dark:text-sky-200',
@@ -142,16 +142,6 @@ const tools = [
     textColor: 'text-blue-800 dark:text-blue-200',
     hoverBg: 'hover:bg-blue-200 dark:hover:bg-blue-900/80',
     iconColor: 'text-blue-600 dark:text-blue-400'
-  },
-  {
-    title: 'Rental Property Calculator',
-    description: 'Calculate the ROI of a rental property.',
-    href: '/dashboard/rental-property-calculator',
-    icon: <Building className="size-8" />,
-    bgColor: 'bg-lime-100 dark:bg-lime-900/50',
-    textColor: 'text-lime-800 dark:text-lime-200',
-    hoverBg: 'hover:bg-lime-200 dark:hover:bg-lime-900/80',
-    iconColor: 'text-lime-600 dark:text-lime-400'
   },
   {
     title: 'APR Calculator',
