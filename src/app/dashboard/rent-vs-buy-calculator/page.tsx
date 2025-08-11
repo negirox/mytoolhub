@@ -41,7 +41,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts';
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, AreaChart, Area } from 'recharts';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
@@ -62,6 +62,10 @@ interface YearData {
     year: number;
     buyingCost: number;
     rentingCost: number;
+    cumulativeBuyingCost: number;
+    cumulativeRentingCost: number;
+    homeEquity: number;
+    opportunityCost: number;
 }
 
 export default function RentVsBuyCalculatorPage() {
@@ -82,8 +86,6 @@ export default function RentVsBuyCalculatorPage() {
   const [homeInsurance, setHomeInsurance] = useState('2500');
   const [maintenanceCostPercent, setMaintenanceCostPercent] = useState('1.5');
   const [homeValueAppreciationPercent, setHomeValueAppreciationPercent] = useState('3');
-  const [costIncreasePercent, setCostIncreasePercent] = useState('3');
-  const [sellingClosingCostsPercent, setSellingClosingCostsPercent] = useState('7');
 
   // Home Rent
   const [monthlyRent, setMonthlyRent] = useState('3000');
@@ -122,8 +124,6 @@ export default function RentVsBuyCalculatorPage() {
     const pHomeInsurance = parseFloat(homeInsurance);
     const pMaintenanceCostPercent = parseFloat(maintenanceCostPercent) / 100;
     const pHomeValueAppreciationPercent = parseFloat(homeValueAppreciationPercent) / 100;
-    const pCostIncreasePercent = parseFloat(costIncreasePercent) / 100;
-    const pSellingClosingCostsPercent = parseFloat(sellingClosingCostsPercent) / 100;
 
     const pMonthlyRent = parseFloat(monthlyRent);
     const pRentIncreasePercent = parseFloat(rentIncreasePercent) / 100;
@@ -142,8 +142,8 @@ export default function RentVsBuyCalculatorPage() {
     const loanTermMonths = pLoanTermYears * 12;
     const monthlyMortgage = loanAmount > 0 && monthlyInterestRate > 0 ? (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanTermMonths)) : 0;
     
-    let cumulativeBuyingCost = upfrontBuyingCost;
-    let cumulativeRentingCost = pSecurityDeposit;
+    let cumulativeBuyingNetCost = 0;
+    let cumulativeRentingNetCost = 0;
     let homeValue = pHomePrice;
     let loanBalance = loanAmount;
     let currentRent = pMonthlyRent;
@@ -152,18 +152,19 @@ export default function RentVsBuyCalculatorPage() {
     const comparisonData: YearData[] = [];
     let breakEvenYear: number | null = null;
     
-    const opportunityCostOnUpfront = upfrontBuyingCost * pInvestmentReturnPercent;
-    cumulativeBuyingCost += opportunityCostOnUpfront;
-    
+    let totalOpportunityCost = 0;
+
     for (let year = 1; year <= 30; year++) {
         let annualMortgagePaid = 0;
         let interestPaid = 0;
+        let principalPaid = 0;
 
         if (loanAmount > 0) {
             for (let month = 1; month <= 12; month++) {
                 const monthlyInterestPaid = loanBalance * monthlyInterestRate;
                 const monthlyPrincipalPaid = monthlyMortgage - monthlyInterestPaid;
                 interestPaid += monthlyInterestPaid;
+                principalPaid += monthlyPrincipalPaid;
                 loanBalance -= monthlyPrincipalPaid;
                 annualMortgagePaid += monthlyMortgage;
             }
@@ -174,29 +175,36 @@ export default function RentVsBuyCalculatorPage() {
         const taxSavings = (interestPaid + propertyTax) * pTaxRate;
         const annualBuyingCost = annualMortgagePaid + propertyTax + currentHomeInsurance + maintenance - taxSavings;
 
+        const yearlyOpportunityCost = (upfrontBuyingCost + totalOpportunityCost) * pInvestmentReturnPercent;
+        totalOpportunityCost += yearlyOpportunityCost;
+
+        cumulativeBuyingNetCost += (annualBuyingCost + yearlyOpportunityCost);
+        
         homeValue *= (1 + pHomeValueAppreciationPercent);
         const equity = homeValue - loanBalance;
         
         const annualRentingCost = (currentRent * 12) + (pRentersInsurance * 12);
-        
-        cumulativeBuyingCost += annualBuyingCost;
-        cumulativeRentingCost += annualRentingCost;
+        cumulativeRentingNetCost += annualRentingCost;
 
-        const averageMonthlyBuyingCost = (cumulativeBuyingCost - equity) / (year * 12);
-        const averageMonthlyRentingCost = (cumulativeRentingCost - pSecurityDeposit) / (year * 12);
-        
+        const netBuyingCost = cumulativeBuyingNetCost - equity;
+        const netRentingCost = cumulativeRentingNetCost;
+
         comparisonData.push({
             year,
-            buyingCost: averageMonthlyBuyingCost,
-            rentingCost: averageMonthlyRentingCost,
+            buyingCost: netBuyingCost / year,
+            rentingCost: netRentingCost / year,
+            cumulativeBuyingCost: cumulativeBuyingNetCost,
+            cumulativeRentingCost: netRentingCost,
+            homeEquity: equity,
+            opportunityCost: totalOpportunityCost
         });
         
-        if (breakEvenYear === null && averageMonthlyBuyingCost < averageMonthlyRentingCost) {
+        if (breakEvenYear === null && netBuyingCost < netRentingCost) {
             breakEvenYear = year;
         }
         
         currentRent *= (1 + pRentIncreasePercent);
-        currentHomeInsurance *= (1 + pCostIncreasePercent);
+        currentHomeInsurance *= (1 + pRentIncreasePercent);
     }
 
     setResults({ breakEvenYear, comparisonData });
@@ -207,6 +215,10 @@ export default function RentVsBuyCalculatorPage() {
   const chartConfig = {
       buyingCost: { label: 'Average Buying Cost', color: 'hsl(var(--chart-1))' },
       rentingCost: { label: 'Average Renting Cost', color: 'hsl(var(--chart-2))' },
+      cumulativeRentingCost: { label: 'Cumulative Renting Cost', color: 'hsl(var(--chart-2))'},
+      homeEquity: { label: 'Home Equity', color: 'hsl(var(--chart-3))'},
+      cumulativeBuyingCost: { label: 'Cumulative Buying Cost', color: 'hsl(var(--chart-1))'},
+      opportunityCost: { label: 'Opportunity Cost', color: 'hsl(var(--chart-5))'},
   }
 
   return (
@@ -248,8 +260,6 @@ export default function RentVsBuyCalculatorPage() {
                             <div className="space-y-2"><Label>Home insurance ({currencySymbols[currency]}/year)</Label><Input value={homeInsurance} onChange={e=>setHomeInsurance(e.target.value)}/></div>
                             <div className="space-y-2"><Label>Maintenance cost (%/year)</Label><Input value={maintenanceCostPercent} onChange={e=>setMaintenanceCostPercent(e.target.value)}/></div>
                             <div className="space-y-2"><Label>Appreciation (%/year)</Label><Input value={homeValueAppreciationPercent} onChange={e=>setHomeValueAppreciationPercent(e.target.value)}/></div>
-                            <div className="space-y-2"><Label>Cost increase (%/year)</Label><Input value={costIncreasePercent} onChange={e=>setCostIncreasePercent(e.target.value)}/></div>
-                            <div className="space-y-2"><Label>Selling closing costs (%)</Label><Input value={sellingClosingCostsPercent} onChange={e=>setSellingClosingCostsPercent(e.target.value)}/></div>
                         </CardContent>
                     </Card>
                 </div>
@@ -287,17 +297,37 @@ export default function RentVsBuyCalculatorPage() {
                         </AlertTitle>
                     </Alert>
                     
-                    <ChartContainer config={chartConfig} className="min-h-[400px] w-full">
-                        <LineChart data={chartData}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis dataKey="year" tickFormatter={(v) => `${v}yr`} />
-                            <YAxis tickFormatter={(v) => formatCurrency(v)} />
-                            <Tooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)}/>} />
-                            <Legend />
-                            <Line type="monotone" dataKey="buyingCost" stroke="var(--color-buyingCost)" name="Average Buying Cost" dot={false} strokeWidth={2}/>
-                            <Line type="monotone" dataKey="rentingCost" stroke="var(--color-rentingCost)" name="Average Renting Cost" dot={false} strokeWidth={2}/>
-                        </LineChart>
-                    </ChartContainer>
+                    <div>
+                        <h3 className="font-semibold mb-2 text-center">Average Annual Cost Comparison</h3>
+                        <ChartContainer config={chartConfig} className="min-h-[400px] w-full">
+                            <LineChart data={chartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="year" tickFormatter={(v) => `${v}yr`} />
+                                <YAxis tickFormatter={(v) => formatCurrency(v)} />
+                                <Tooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)}/>} />
+                                <Legend />
+                                <Line type="monotone" dataKey="buyingCost" stroke="var(--color-buyingCost)" name="Average Buying Cost" dot={false} strokeWidth={2}/>
+                                <Line type="monotone" dataKey="rentingCost" stroke="var(--color-rentingCost)" name="Average Renting Cost" dot={false} strokeWidth={2}/>
+                            </LineChart>
+                        </ChartContainer>
+                    </div>
+
+                     <div>
+                        <h3 className="font-semibold mb-2 text-center">Cumulative Financial Position: Buying vs. Renting</h3>
+                        <ChartContainer config={chartConfig} className="min-h-[400px] w-full">
+                             <AreaChart data={chartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="year" tickFormatter={(v) => `${v}yr`}/>
+                                <YAxis tickFormatter={(v) => formatCurrency(v)} />
+                                <Tooltip content={<ChartTooltipContent formatter={(value, name) => formatCurrency(value as number)}/>} />
+                                <Legend />
+                                <Area type="monotone" dataKey="cumulativeRentingCost" name={chartConfig.cumulativeRentingCost.label} stroke="var(--color-rentingCost)" fill="var(--color-rentingCost)" fillOpacity={0.2} strokeWidth={2} />
+                                <Area type="monotone" dataKey="cumulativeBuyingCost" name={chartConfig.cumulativeBuyingCost.label} stroke="var(--color-buyingCost)" fill="var(--color-buyingCost)" fillOpacity={0.2} strokeWidth={2} />
+                                <Area type="monotone" dataKey="homeEquity" name={chartConfig.homeEquity.label} stroke="var(--color-homeEquity)" fill="var(--color-homeEquity)" fillOpacity={0.3} strokeWidth={2} />
+                                <Area type="monotone" dataKey="opportunityCost" name={chartConfig.opportunityCost.label} stroke="var(--color-opportunityCost)" fill="var(--color-opportunityCost)" fillOpacity={0.2} strokeWidth={2} />
+                            </AreaChart>
+                        </ChartContainer>
+                    </div>
 
                     <div>
                         <h3 className="mb-2 font-semibold">Average Cost Breakdown by Length of Stay</h3>
@@ -321,10 +351,10 @@ export default function RentVsBuyCalculatorPage() {
                                     {results.comparisonData.map(d => (
                                         <TableRow key={d.year}>
                                             <TableCell>{d.year} Year{d.year > 1 ? 's': ''}</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(d.buyingCost / 12)}</TableCell>
                                             <TableCell className="text-right">{formatCurrency(d.buyingCost)}</TableCell>
-                                            <TableCell className="text-right">{formatCurrency(d.buyingCost * 12)}</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(d.rentingCost / 12)}</TableCell>
                                             <TableCell className="text-right">{formatCurrency(d.rentingCost)}</TableCell>
-                                            <TableCell className="text-right">{formatCurrency(d.rentingCost * 12)}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
