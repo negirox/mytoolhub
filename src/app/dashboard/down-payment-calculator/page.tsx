@@ -30,6 +30,20 @@ import {
 } from '@/components/ui/table';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import { Pie, PieChart, Cell } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 
 const currencySymbols: Record<Currency, string> = {
@@ -146,7 +160,17 @@ export default function DownPaymentCalculatorPage() {
         const loanAmount = price - downPayment;
         const monthlyPayment = calculateMonthlyPayment(loanAmount, rate, term);
 
-        setPriceResults({ downPayment, closingCosts, cashNeeded, loanAmount, monthlyPayment });
+        setPriceResults({ 
+            downPayment, 
+            closingCosts, 
+            cashNeeded, 
+            loanAmount, 
+            monthlyPayment,
+            pieData: [
+                { name: 'downPayment', value: downPayment, fill: 'var(--color-downPayment)' },
+                { name: 'closingCosts', value: closingCosts, fill: 'var(--color-closingCosts)' },
+            ]
+        });
     };
 
     const calculateForHpac = () => {
@@ -165,12 +189,26 @@ export default function DownPaymentCalculatorPage() {
         const monthlyPayment = calculateMonthlyPayment(loanAmount, rate, term);
         
         if (downPayment > 0) {
-            setHpacResults({ downPayment, downPaymentPercent: downPaymentPercentResult, closingCosts, loanAmount, monthlyPayment });
+            setHpacResults({ 
+                downPayment, 
+                downPaymentPercent: downPaymentPercentResult, 
+                closingCosts, 
+                loanAmount, 
+                monthlyPayment,
+                pieData: [
+                    { name: 'downPayment', value: downPayment, fill: 'var(--color-downPayment)' },
+                    { name: 'closingCosts', value: closingCosts, fill: 'var(--color-closingCosts)' },
+                ]
+            });
         } else {
             setHpacResults(null);
         }
     };
 
+  const chartConfig = {
+    downPayment: { label: 'Down Payment', color: 'hsl(var(--chart-2))' },
+    closingCosts: { label: 'Closing Costs', color: 'hsl(var(--chart-5))' },
+  };
 
   return (
     <>
@@ -269,13 +307,26 @@ export default function DownPaymentCalculatorPage() {
                             </CardContent>
                              <CardContent><Button onClick={calculateForPrice}>Calculate</Button></CardContent>
                              {priceResults && (
-                                <CardContent>
-                                    <h3 className="font-bold text-xl text-primary mb-2">Cash Needed: {formatCurrency(priceResults.cashNeeded)}</h3>
-                                    <div className="text-sm space-y-1">
-                                        <p>Down Payment: {formatCurrency(priceResults.downPayment)}</p>
-                                        <p>Closing Costs: {formatCurrency(priceResults.closingCosts)}</p>
-                                        <p>Loan Amount: {formatCurrency(priceResults.loanAmount)}</p>
-                                        <p>Monthly Payment: {formatCurrency(priceResults.monthlyPayment)}</p>
+                                <CardContent className="grid md:grid-cols-2 gap-4 items-center">
+                                    <div>
+                                        <h3 className="font-bold text-xl text-primary mb-2">Cash Needed: {formatCurrency(priceResults.cashNeeded)}</h3>
+                                        <div className="text-sm space-y-1">
+                                            <p>Down Payment: {formatCurrency(priceResults.downPayment)}</p>
+                                            <p>Closing Costs: {formatCurrency(priceResults.closingCosts)}</p>
+                                            <p>Loan Amount: {formatCurrency(priceResults.loanAmount)}</p>
+                                            <p>Monthly Payment: {formatCurrency(priceResults.monthlyPayment)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-center">
+                                       <ChartContainer config={chartConfig} className="min-h-[200px] w-full max-w-xs">
+                                           <PieChart>
+                                               <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
+                                               <Pie data={priceResults.pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={80} label>
+                                                   {priceResults.pieData.map((entry: any) => (<Cell key={entry.name} fill={entry.fill} />))}
+                                               </Pie>
+                                               <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                                           </PieChart>
+                                       </ChartContainer>
                                     </div>
                                 </CardContent>
                             )}
@@ -291,21 +342,34 @@ export default function DownPaymentCalculatorPage() {
                             </CardContent>
                             <CardContent><Button onClick={calculateForHpac}>Calculate</Button></CardContent>
                             {hpacResults ? (
-                                <CardContent>
-                                    <h3 className="font-bold text-xl text-primary mb-2">Down Payment: {hpacResults.downPaymentPercent.toFixed(1)}%</h3>
-                                    <div className="text-sm space-y-1">
-                                        <p>Down Payment Amount: {formatCurrency(hpacResults.downPayment)}</p>
-                                        <p>Closing Costs: {formatCurrency(hpacResults.closingCosts)}</p>
-                                        <p>Loan Amount: {formatCurrency(hpacResults.loanAmount)}</p>
-                                        <p>Monthly Payment: {formatCurrency(hpacResults.monthlyPayment)}</p>
+                                <CardContent className="grid md:grid-cols-2 gap-4 items-center">
+                                    <div>
+                                        <h3 className="font-bold text-xl text-primary mb-2">Down Payment: {hpacResults.downPaymentPercent.toFixed(1)}%</h3>
+                                        <div className="text-sm space-y-1">
+                                            <p>Down Payment Amount: {formatCurrency(hpacResults.downPayment)}</p>
+                                            <p>Closing Costs: {formatCurrency(hpacResults.closingCosts)}</p>
+                                            <p>Loan Amount: {formatCurrency(hpacResults.loanAmount)}</p>
+                                            <p>Monthly Payment: {formatCurrency(hpacResults.monthlyPayment)}</p>
+                                        </div>
+                                         {hpacResults.downPaymentPercent < 20 && (
+                                            <Alert className="mt-4">
+                                                <AlertDescription>
+                                                    Since the down payment is less than 20%, you will likely be required to pay for Private Mortgage Insurance (PMI).
+                                                </AlertDescription>
+                                            </Alert>
+                                        )}
                                     </div>
-                                     {hpacResults.downPaymentPercent < 20 && (
-                                        <Alert className="mt-4">
-                                            <AlertDescription>
-                                                Since the down payment is less than 20%, you will likely be required to pay for Private Mortgage Insurance (PMI).
-                                            </AlertDescription>
-                                        </Alert>
-                                    )}
+                                     <div className="flex items-center justify-center">
+                                       <ChartContainer config={chartConfig} className="min-h-[200px] w-full max-w-xs">
+                                           <PieChart>
+                                               <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
+                                               <Pie data={hpacResults.pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={80} label>
+                                                   {hpacResults.pieData.map((entry: any) => (<Cell key={entry.name} fill={entry.fill} />))}
+                                               </Pie>
+                                               <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
+                                           </PieChart>
+                                       </ChartContainer>
+                                    </div>
                                 </CardContent>
                             ) : (
                                 hpacUpfrontCash > '0' && hpacHomePrice > '0' && (
@@ -323,6 +387,51 @@ export default function DownPaymentCalculatorPage() {
                  </Tabs>
             </CardContent>
           </Card>
+           <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>What is a down payment?</AccordionTrigger>
+                        <AccordionContent>
+                        A down payment is an initial, upfront partial payment for the purchase of an expensive item like a house. It is usually paid in cash or equivalent at the time of finalizing the transaction. The remaining amount is typically financed through a loan from a bank or other lender.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                        <AccordionTrigger>How much should I put down on a house?</AccordionTrigger>
+                        <AccordionContent>
+                        While 20% is often cited as the ideal down payment to avoid Private Mortgage Insurance (PMI), many loan programs allow for much less. For example, FHA loans require as little as 3.5% down. The right amount depends on your financial situation, the loan type, and your goals.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                        <AccordionTrigger>What are closing costs?</AccordionTrigger>
+                        <AccordionContent>
+                        Closing costs are fees associated with finalizing your mortgage. They typically range from 2% to 5% of the loan amount and can include appraisal fees, title insurance, attorney fees, and loan origination fees. These are paid at the end of the home-buying process.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-4">
+                        <AccordionTrigger>What is Private Mortgage Insurance (PMI)?</AccordionTrigger>
+                        <AccordionContent>
+                        PMI is a type of mortgage insurance you might be required to pay for a conventional loan if you make a down payment of less than 20%. It protects the lender—not you—in case you stop making payments on your loan. It's usually added to your monthly mortgage payment.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-5">
+                        <AccordionTrigger>Can I get a loan with 0% down?</AccordionTrigger>
+                        <AccordionContent>
+                        Yes, some loan programs offer 0% down payments, but they are not common. VA loans (for eligible veterans and service members) and USDA loans (for eligible rural homebuyers) are two primary examples of loans that may not require a down payment.
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-6">
+                        <AccordionTrigger>Does a larger down payment save money?</AccordionTrigger>
+                        <AccordionContent>
+                        Absolutely. A larger down payment reduces your loan principal, which means you'll have a lower monthly payment and pay significantly less in total interest over the life of the loan. It can also help you secure a better interest rate and avoid PMI.
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </CardContent>
+           </Card>
         </div>
       </main>
     </>
