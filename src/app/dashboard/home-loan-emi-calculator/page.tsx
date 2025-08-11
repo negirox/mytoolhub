@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import {
   Card,
   CardContent,
@@ -27,6 +27,7 @@ import {
   BarChart,
   Bar,
   Line,
+  ComposedChart,
 } from 'recharts';
 import {
   ChartContainer,
@@ -56,6 +57,8 @@ import {
 } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+
 
 type Currency = 'INR' | 'USD' | 'EUR';
 
@@ -92,6 +95,12 @@ interface AmortizationYear {
 }
 
 export default function HomeLoanEmiCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('CurrencyContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
   const [homeValue, setHomeValue] = useState(5000000);
   const [downPaymentPercent, setDownPaymentPercent] = useState(20);
   const [loanInsurance, setLoanInsurance] = useState(0);
@@ -103,7 +112,7 @@ export default function HomeLoanEmiCalculatorPage() {
   const [homeInsurancePercent, setHomeInsurancePercent] = useState(0.05);
   const [maintenanceExpenses, setMaintenanceExpenses] = useState(2500);
   const [monthlyExtraPayment, setMonthlyExtraPayment] = useState(0);
-  const [currency, setCurrency] = useState<Currency>('INR');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
 
   const [results, setResults] = useState({
     emi: 0,
@@ -117,6 +126,10 @@ export default function HomeLoanEmiCalculatorPage() {
   const [amortizationSchedule, setAmortizationSchedule] = useState<
     AmortizationYear[]
   >([]);
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
 
   const downPaymentAmount = useMemo(
     () => homeValue * (downPaymentPercent / 100),
@@ -369,7 +382,7 @@ export default function HomeLoanEmiCalculatorPage() {
     () => ({
       principal: {
         label: 'Principal',
-        color: 'hsl(var(--chart-2))',
+        color: 'hsl(var(--chart-3))',
       },
       interest: {
         label: 'Interest',
@@ -380,15 +393,15 @@ export default function HomeLoanEmiCalculatorPage() {
         color: 'hsl(var(--chart-5))',
       },
       taxesAndMaintenance: {
-        label: 'Taxes, Insurance & Maintenance',
-        color: 'hsl(var(--chart-3))',
+        label: 'Taxes, Insurance & Maint.',
+        color: 'hsl(var(--chart-4))',
       },
       balance: {
         label: 'Balance',
-        color: 'hsl(var(--chart-4))',
+        color: 'hsl(var(--chart-2))',
       },
       downPaymentAndFees: {
-        label: 'Down Payment, Fees & One-time Expenses',
+        label: 'Down Payment & Fees',
         color: 'hsl(var(--chart-6))',
       },
     }),
@@ -419,7 +432,7 @@ export default function HomeLoanEmiCalculatorPage() {
   const breakdownData = useMemo(
     () => [
       {
-        name: 'Down Payment, Fees & One-time Expenses',
+        name: 'Down Payment & Fees',
         value: results.downPaymentAndFees,
         fill: 'var(--color-downPaymentAndFees)',
       },
@@ -799,7 +812,7 @@ export default function HomeLoanEmiCalculatorPage() {
                         ))}
                       </Pie>
                       <ChartLegend
-                        content={<ChartLegendContent nameKey="name" />}
+                        content={<ChartLegendContent nameKey="name" formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />}
                       />
                     </PieChart>
                   </ChartContainer>
@@ -809,13 +822,7 @@ export default function HomeLoanEmiCalculatorPage() {
                     Total Payments Breakdown
                   </h3>
                   <ChartContainer
-                    config={{
-                      ...chartConfig,
-                      'Down Payment, Fees & One-time Expenses':
-                        chartConfig.downPaymentAndFees,
-                      'Taxes, Home Insurance & Maintenance':
-                        chartConfig.taxesAndMaintenance,
-                    }}
+                    config={chartConfig}
                     className="min-h-[250px] w-full max-w-sm mx-auto"
                   >
                     <PieChart>
@@ -835,7 +842,7 @@ export default function HomeLoanEmiCalculatorPage() {
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <Legend />
+                      <Legend formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />
                     </PieChart>
                   </ChartContainer>
                 </div>
@@ -858,8 +865,7 @@ export default function HomeLoanEmiCalculatorPage() {
                   config={chartConfig}
                   className="min-h-[400px] w-full"
                 >
-                  <BarChart
-                    accessibilityLayer
+                  <ComposedChart
                     data={amortizationSchedule}
                     margin={{ left: 12, right: 12, top: 20 }}
                   >
@@ -872,12 +878,13 @@ export default function HomeLoanEmiCalculatorPage() {
                       tickFormatter={(value) => `Year ${value}`}
                     />
                      <YAxis
-                      yAxisId="right"
-                      orientation="right"
+                      yAxisId="left"
+                      orientation="left"
                       tickFormatter={(value) => formatCurrency(value as number)}
                     />
                     <YAxis
-                      yAxisId="left"
+                      yAxisId="right"
+                      orientation="right"
                       tickFormatter={(value) => formatCurrency(value as number)}
                     />
                     <ChartTooltip
@@ -885,9 +892,10 @@ export default function HomeLoanEmiCalculatorPage() {
                       content={<ChartTooltipContent indicator="dot" formatter={(value, name) => <span>{formatCurrency(value as number)}</span>} />}
                     />
                     <ChartLegend content={<ChartLegendContent />} />
-                    <Bar dataKey="balance" fill="var(--color-balance)" yAxisId="left" name="Balance" radius={4} />
-                    <Line type="monotone" dataKey="interest" stroke="var(--color-interest)" yAxisId="right" name="Interest Paid" strokeWidth={2} dot={false} />
-                  </BarChart>
+                    <Bar dataKey="principal" fill="var(--color-principal)" yAxisId="left" name={chartConfig.principal.label} stackId="a" radius={[0, 0, 4, 4]} />
+                    <Bar dataKey="interest" fill="var(--color-interest)" yAxisId="left" name={chartConfig.interest.label} stackId="a" radius={[4, 4, 0, 0]} />
+                    <Line type="monotone" dataKey="balance" stroke="var(--color-balance)" yAxisId="right" name="Balance" strokeWidth={2} dot={false} />
+                  </ComposedChart>
                 </ChartContainer>
 
                 <div className="mt-8 overflow-x-auto">

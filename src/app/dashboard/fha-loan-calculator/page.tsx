@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pie, PieChart, Cell } from 'recharts';
+import { Pie, PieChart, Cell, Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts';
 import {
   ChartContainer,
   ChartTooltip,
@@ -198,6 +198,9 @@ export default function FhaLoanCalculatorPage() {
       insurance: { label: 'Home Insurance', color: 'hsl(var(--chart-5))' },
       mip: { label: 'Annual MIP', color: 'hsl(var(--chart-1))' },
       hoa: { label: 'HOA', color: 'hsl(var(--chart-4))' },
+      balance: { label: 'Balance', color: 'hsl(var(--chart-4))' },
+      principal: { label: 'Principal', color: 'hsl(var(--chart-2))' },
+      interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
   };
 
   const pieChartData = useMemo(() => {
@@ -365,28 +368,21 @@ export default function FhaLoanCalculatorPage() {
                    <Card>
                     <CardHeader>
                         <CardTitle className="font-headline">Amortization Schedule</CardTitle>
+                        <CardDescription>Yearly breakdown of loan balance vs. interest paid.</CardDescription>
                     </CardHeader>
-                    <CardContent className="max-h-[340px] overflow-y-auto">
-                        <Table>
-                            <TableHeader className="sticky top-0 bg-background">
-                                <TableRow>
-                                    <TableHead>Year</TableHead>
-                                    <TableHead className="text-right">Interest</TableHead>
-                                    <TableHead className="text-right">Principal</TableHead>
-                                    <TableHead className="text-right">Balance</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {amortizationSchedule.map(row => (
-                                    <TableRow key={row.year}>
-                                        <TableCell>{row.year}</TableCell>
-                                        <TableCell className="text-right">{formatCurrency(row.interest)}</TableCell>
-                                        <TableCell className="text-right">{formatCurrency(row.principal)}</TableCell>
-                                        <TableCell className="text-right">{formatCurrency(row.balance)}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                    <CardContent>
+                       <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                            <BarChart accessibilityLayer data={amortizationSchedule}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="year" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(v) => `Yr ${v}`} />
+                                <YAxis yAxisId="left" orientation="left" tickFormatter={(v) => formatCurrency(v)} />
+                                <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => formatCurrency(v)} />
+                                <Tooltip cursor={false} content={<ChartTooltipContent indicator="dot" formatter={(value, name) => <span>{formatCurrency(value as number)}</span>} />} />
+                                <Legend />
+                                <Bar dataKey="principal" fill="var(--color-principal)" yAxisId="left" name={chartConfig.principal.label} radius={4} />
+                                <Line type="monotone" dataKey="balance" stroke="var(--color-balance)" yAxisId="right" name={chartConfig.balance.label} strokeWidth={2} dot={false} />
+                            </BarChart>
+                        </ChartContainer>
                     </CardContent>
                   </Card>
               </div>

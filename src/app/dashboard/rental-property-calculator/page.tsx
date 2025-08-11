@@ -35,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pie, PieChart, Cell } from 'recharts';
+import { Pie, PieChart, Cell, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, AreaChart, Area } from 'recharts';
 import {
   ChartContainer,
   ChartTooltip,
@@ -254,16 +254,19 @@ export default function RentalPropertyCalculatorPage() {
           { name: 'Maintenance Cost', value: maint, fill: 'var(--color-maintenance)' },
           { name: 'Other Cost', value: other, fill: 'var(--color-other)' },
         ].filter(item => item.value > 0);
-    }, [results]);
+    }, [results, propertyTax, insurance, maintenance, otherCosts, vacancyRate]);
 
-    const expenseChartConfig = {
+    const chartConfig = {
         mortgage: { label: 'Mortgage', color: 'hsl(var(--chart-1))' },
         vacancy: { label: 'Vacancy', color: 'hsl(var(--chart-2))' },
         propertyTax: { label: 'Property Tax', color: 'hsl(var(--chart-3))' },
         insurance: { label: 'Total Insurance', color: 'hsl(var(--chart-4))' },
         maintenance: { label: 'Maintenance Cost', color: 'hsl(var(--chart-5))' },
         other: { label: 'Other Cost', color: 'hsl(var(--chart-6))' },
+        cashFlow: { label: 'Cash Flow', color: 'hsl(var(--chart-2))'},
+        equityAccumulated: { label: 'Equity Accumulated', color: 'hsl(var(--chart-3))'},
     }
+
 
     return (
         <>
@@ -386,17 +389,17 @@ export default function RentalPropertyCalculatorPage() {
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <h3 className="font-semibold mb-2">First Year Expense Breakdown</h3>
-                                     <ChartContainer config={expenseChartConfig} className="min-h-[300px] w-full max-w-sm">
+                                     <ChartContainer config={chartConfig} className="min-h-[300px] w-full max-w-sm">
                                         <PieChart>
                                             <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
                                             <Pie data={expenseBreakdownChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100}
                                              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                                             >
                                             {expenseBreakdownChartData.map((entry) => (
-                                                <Cell key={entry.name} fill={entry.fill} />
+                                                <Cell key={entry.name} fill={chartConfig[entry.name as keyof typeof chartConfig]?.color} />
                                             ))}
                                             </Pie>
-                                            <ChartLegend content={<ChartLegendContent />} />
+                                            <ChartLegend content={<ChartLegendContent formatter={(value) => chartConfig[value as keyof typeof chartConfig].label} />} />
                                         </PieChart>
                                     </ChartContainer>
                                 </div>
@@ -406,41 +409,54 @@ export default function RentalPropertyCalculatorPage() {
                             <CardHeader>
                                 <CardTitle className="font-headline">Breakdown Over Time</CardTitle>
                             </CardHeader>
-                            <CardContent className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Year</TableHead>
-                                            <TableHead>Annual Income</TableHead>
-                                            <TableHead>Mortgage</TableHead>
-                                            <TableHead>Expenses</TableHead>
-                                            <TableHead>Cash Flow</TableHead>
-                                            <TableHead>Cash on Cash</TableHead>
-                                            <TableHead>Equity</TableHead>
-                                            <TableHead>If Sold (Cash)</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow className="font-semibold bg-muted/50">
-                                            <TableCell>Begin</TableCell>
-                                            <TableCell></TableCell><TableCell></TableCell><TableCell></TableCell>
-                                            <TableCell>{formatCurrency(-results.initialCashInvestment)}</TableCell>
-                                            <TableCell></TableCell><TableCell></TableCell><TableCell></TableCell>
-                                        </TableRow>
-                                        {yearByYearData.map(d => (
-                                            <TableRow key={d.year}>
-                                                <TableCell>{d.year}</TableCell>
-                                                <TableCell>{formatCurrency(d.annualIncome)}</TableCell>
-                                                <TableCell>{formatCurrency(d.mortgage)}</TableCell>
-                                                <TableCell>{formatCurrency(d.expenses)}</TableCell>
-                                                <TableCell>{formatCurrency(d.cashFlow)}</TableCell>
-                                                <TableCell>{d.cashOnCashReturn.toFixed(2)}%</TableCell>
-                                                <TableCell>{formatCurrency(d.equityAccumulated)}</TableCell>
-                                                <TableCell>{formatCurrency(d.ifSoldCash)}</TableCell>
+                             <CardContent className="grid gap-6">
+                                <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                                    <AreaChart data={yearByYearData}>
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis dataKey="year" tickFormatter={(v) => `Year ${v}`} />
+                                        <YAxis tickFormatter={(v) => formatCurrency(v)} />
+                                        <Tooltip content={<ChartTooltipContent indicator="dot" formatter={(value, name) => <span>{formatCurrency(value as number)}</span>} />} />
+                                        <Legend />
+                                        <Area type="monotone" dataKey="cashFlow" stackId="1" stroke="var(--color-cashFlow)" fill="var(--color-cashFlow)" name="Cash Flow" />
+                                        <Area type="monotone" dataKey="equityAccumulated" stackId="2" stroke="var(--color-equityAccumulated)" fill="var(--color-equityAccumulated)" name="Equity" />
+                                    </AreaChart>
+                                </ChartContainer>
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Year</TableHead>
+                                                <TableHead>Annual Income</TableHead>
+                                                <TableHead>Mortgage</TableHead>
+                                                <TableHead>Expenses</TableHead>
+                                                <TableHead>Cash Flow</TableHead>
+                                                <TableHead>Cash on Cash</TableHead>
+                                                <TableHead>Equity</TableHead>
+                                                <TableHead>If Sold (Cash)</TableHead>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                                        </TableHeader>
+                                        <TableBody>
+                                            <TableRow className="font-semibold bg-muted/50">
+                                                <TableCell>Begin</TableCell>
+                                                <TableCell></TableCell><TableCell></TableCell><TableCell></TableCell>
+                                                <TableCell>{formatCurrency(-results.initialCashInvestment)}</TableCell>
+                                                <TableCell></TableCell><TableCell></TableCell><TableCell></TableCell>
+                                            </TableRow>
+                                            {yearByYearData.map(d => (
+                                                <TableRow key={d.year}>
+                                                    <TableCell>{d.year}</TableCell>
+                                                    <TableCell>{formatCurrency(d.annualIncome)}</TableCell>
+                                                    <TableCell>{formatCurrency(d.mortgage)}</TableCell>
+                                                    <TableCell>{formatCurrency(d.expenses)}</TableCell>
+                                                    <TableCell>{formatCurrency(d.cashFlow)}</TableCell>
+                                                    <TableCell>{d.cashOnCashReturn.toFixed(2)}%</TableCell>
+                                                    <TableCell>{formatCurrency(d.equityAccumulated)}</TableCell>
+                                                    <TableCell>{formatCurrency(d.ifSoldCash)}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
                             </CardContent>
                         </Card>
                     </>
