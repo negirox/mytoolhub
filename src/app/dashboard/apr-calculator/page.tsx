@@ -348,31 +348,31 @@ export default function AprCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
+                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is APR (Annual Percentage Rate)?</AccordionTrigger>
                         <AccordionContent>
                         The Annual Percentage Rate (APR) is a broader measure of the cost of borrowing money than the interest rate. It includes the interest rate plus other charges, such as broker fees, discount points, and some closing costs. This makes it a more accurate representation of the total cost of a loan.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2">
+                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>Why is APR more important than the interest rate?</AccordionTrigger>
                         <AccordionContent>
                         While a low interest rate is attractive, it doesn't tell the whole story. A loan with a lower interest rate could have higher fees, resulting in a higher APR and a more expensive loan overall. Comparing APRs between lenders gives you a more accurate, apples-to-apples comparison of loan costs.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-3">
+                     <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What are "points"?</AccordionTrigger>
                         <AccordionContent>
                         Discount points are fees paid directly to the lender at closing in exchange for a reduced interest rate. One point costs 1 percent of your loan amount. Paying points can be a good option if you plan to stay in the home long enough to realize the savings from the lower rate.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-4">
+                     <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What's the difference between loaned fees and upfront fees?</AccordionTrigger>
                         <AccordionContent>
                         Loaned fees are costs that are rolled into the total loan amount you borrow. Upfront fees (or out-of-pocket fees) are costs you must pay at closing and are not financed as part of the loan. Both types of fees are included in the APR calculation.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5">
+                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>Is a lower APR always better?</AccordionTrigger>
                         <AccordionContent>
                         Generally, yes. A lower APR means a lower total cost of borrowing. However, you should also consider the loan term. A shorter-term loan might have a slightly higher APR but could save you money in total interest because you're paying it off faster. It's important to compare loans with the same term length.
@@ -386,4 +386,3 @@ export default function AprCalculatorPage() {
     </>
   );
 }
-
