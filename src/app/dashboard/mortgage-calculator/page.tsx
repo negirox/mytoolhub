@@ -289,31 +289,31 @@ export default function MortgageCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
+                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is a mortgage?</AccordionTrigger>
                         <AccordionContent>
                         A mortgage is a loan used to purchase or maintain a home, land, or other types of real estate. The borrower agrees to pay the lender over time, typically in a series of regular payments that are divided into principal and interest. The property itself serves as collateral to secure the loan.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2">
+                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What does P&I stand for?</AccordionTrigger>
                         <AccordionContent>
                         P&I stands for Principal and Interest, which are the two components of a mortgage payment. The principal is the amount you borrowed, and the interest is the charge you pay to the lender for borrowing the money. This calculator estimates the P&I portion of your monthly payment.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-3">
+                    <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>How does the loan term affect my payment?</AccordionTrigger>
                         <AccordionContent>
                         The loan term is the length of time you have to repay the loan. A shorter term (like 15 years) will have higher monthly payments but lower total interest costs. A longer term (like 30 years) will have lower monthly payments but you'll pay significantly more in interest over the life of the loan.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-4">
+                    <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is the impact of a larger down payment?</AccordionTrigger>
                         <AccordionContent>
                         A larger down payment reduces the total amount you need to borrow. This results in a smaller monthly mortgage payment and less total interest paid over the loan's term. It can also help you avoid paying for Private Mortgage Insurance (PMI).
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5">
+                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What other costs are associated with a mortgage?</AccordionTrigger>
                         <AccordionContent>
                         Besides principal and interest, your total monthly housing payment often includes property taxes, homeowners insurance, and sometimes Private Mortgage Insurance (PMI) or homeowners association (HOA) fees. This calculator focuses only on the principal and interest.

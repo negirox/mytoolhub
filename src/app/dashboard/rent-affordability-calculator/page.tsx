@@ -26,7 +26,6 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
-import { Metadata } from 'next';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
