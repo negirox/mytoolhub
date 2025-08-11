@@ -159,9 +159,16 @@ export default function RefinanceCalculatorPage() {
     return [
       { name: 'Monthly Payment', Current: parseFloat(currentMonthlyPayment), New: results.newMonthlyPayment },
       { name: 'Total Interest', Current: results.currentTotalInterest, New: results.newTotalInterest },
-      { name: 'Loan Term (Months)', Current: results.currentLoanTermRemaining, New: parseInt(newLoanTerm) * 12 },
     ];
-  }, [results, currentMonthlyPayment, newLoanTerm]);
+  }, [results, currentMonthlyPayment]);
+  
+  const termData = useMemo(() => {
+      if(!results) return [];
+      return [
+        { name: 'Loan Term', Current: results.currentLoanTermRemaining, New: parseInt(newLoanTerm) * 12 },
+      ]
+  },[results, newLoanTerm])
+
 
   const chartConfig = {
       Current: { label: 'Current Loan', color: 'hsl(var(--chart-5))' },
@@ -329,11 +336,22 @@ export default function RefinanceCalculatorPage() {
               </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-                  <BarChart data={chartData} barCategoryGap={50}>
+                  <BarChart data={chartData} >
                     <CartesianGrid vertical={false} />
                     <XAxis dataKey="name" tickLine={false} axisLine={false} />
                     <YAxis tickFormatter={(value) => formatCurrency(value as number)} />
                     <Tooltip content={<ChartTooltipContent formatter={(value, name) => formatCurrency(value as number)} />} />
+                    <Legend />
+                    <Bar dataKey="Current" fill="var(--color-Current)" radius={4} />
+                    <Bar dataKey="New" fill="var(--color-New)" radius={4} />
+                  </BarChart>
+                </ChartContainer>
+                <ChartContainer config={chartConfig} className="min-h-[200px] w-full mt-8">
+                  <BarChart data={termData} >
+                    <CartesianGrid vertical={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                    <YAxis tickFormatter={(value) => `${value} mo`} />
+                    <Tooltip content={<ChartTooltipContent formatter={(value) => `${value} months`}/>} />
                     <Legend />
                     <Bar dataKey="Current" fill="var(--color-Current)" radius={4} />
                     <Bar dataKey="New" fill="var(--color-New)" radius={4} />
