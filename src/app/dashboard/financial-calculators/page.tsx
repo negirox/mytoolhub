@@ -164,7 +164,7 @@ const tools = [
     iconColor: 'text-fuchsia-600 dark:text-fuchsia-400'
   },
   {
-    title: 'VA Mortgage Calculator',
+    title: 'VA Loan Calculator',
     description: 'Calculate mortgage payments for VA loans.',
     href: '/dashboard/va-mortgage-calculator',
     icon: <ShieldCheck className="size-8" />,
