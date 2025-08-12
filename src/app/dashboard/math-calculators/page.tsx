@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Percent } from 'lucide-react';
+import { ArrowRight, Calculator, Percent } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -32,6 +32,16 @@ const tools = [
     textColor: 'text-purple-800 dark:text-purple-200',
     hoverBg: 'hover:bg-purple-200 dark:hover:bg-purple-900/80',
     iconColor: 'text-purple-600 dark:text-purple-400'
+  },
+  {
+    title: 'Simple Calculator',
+    description: 'A basic calculator for everyday arithmetic operations.',
+    href: '/dashboard/simple-calculator',
+    icon: <Calculator className="size-8" />,
+    bgColor: 'bg-teal-100 dark:bg-teal-900/50',
+    textColor: 'text-teal-800 dark:text-teal-200',
+    hoverBg: 'hover:bg-teal-200 dark:hover:bg-teal-900/80',
+    iconColor: 'text-teal-600 dark:text-teal-400'
   },
 ];
 
