@@ -8,9 +8,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+const isValidForBase = (str: string, base: number) => {
+    if (str === '') return true;
+    try {
+        // Use BigInt for arbitrary precision, which supports up to base 36
+        BigInt.prototype.toString.call(parseInt(str, base));
+        // Check if parsing and converting back results in the same string, handles case sensitivity for hex etc.
+        return parseInt(str, base).toString(base).toLowerCase() === str.toLowerCase();
+    } catch (e) {
+        return false;
+    }
+};
 
 const isValidBinary = (str: string) => /^[01]+$/.test(str) || str === '';
-const isValidHex = (str: string) => /^[0-9a-fA-F]+$/.test(str) || str === '';
 
 export default function BinaryCalculatorPage() {
     // Arithmetic State
@@ -19,21 +31,15 @@ export default function BinaryCalculatorPage() {
     const [operator, setOperator] = useState('+');
     const [arithmeticResult, setArithmeticResult] = useState<{ binary: string, decimal: string, calculation: string } | null>(null);
 
-    // Bin to Dec State
-    const [binToDecInput, setBinToDecInput] = useState('10101010');
-    const [binToDecResult, setBinToDecResult] = useState('');
+    // From Any to Binary
+    const [fromBaseInput, setFromBaseInput] = useState('FF');
+    const [fromBase, setFromBase] = useState('16');
+    const [fromBaseResult, setFromBaseResult] = useState('');
 
-    // Dec to Bin State
-    const [decToBinInput, setDecToBinInput] = useState('170');
-    const [decToBinResult, setDecToBinResult] = useState('');
-
-    // Bin to Hex State
-    const [binToHexInput, setBinToHexInput] = useState('1111000010101010');
-    const [binToHexResult, setBinToHexResult] = useState('');
-
-    // Hex to Bin State
-    const [hexToBinInput, setHexToBinInput] = useState('F0AA');
-    const [hexToBinResult, setHexToBinResult] = useState('');
+    // From Binary to Any
+    const [toBaseInput, setToBaseInput] = useState('11111111');
+    const [toBase, setToBase] = useState('16');
+    const [toBaseResult, setToBaseResult] = useState('');
 
 
     const handleArithmeticCalculate = () => {
@@ -67,45 +73,45 @@ export default function BinaryCalculatorPage() {
         });
     };
 
-    const handleBinToDecConvert = () => {
-        if (!isValidBinary(binToDecInput)) {
-            setBinToDecResult('Invalid Binary Input');
+    const handleFromBaseConvert = () => {
+        const base = parseInt(fromBase);
+        if (isNaN(base) || base < 2 || base > 36) {
+            setFromBaseResult('Base must be 2-36');
             return;
         }
-        setBinToDecResult(binToDecInput ? parseInt(binToDecInput, 2).toString() : '');
+        if (!isValidForBase(fromBaseInput, base)) {
+            setFromBaseResult('Invalid input for base');
+            return;
+        }
+        setFromBaseResult(fromBaseInput ? parseInt(fromBaseInput, base).toString(2) : '');
     };
 
-    const handleDecToBinConvert = () => {
-        const num = parseInt(decToBinInput, 10);
-        if (isNaN(num)) {
-            setDecToBinResult('Invalid Decimal Input');
+    const handleToBaseConvert = () => {
+        const base = parseInt(toBase);
+         if (isNaN(base) || base < 2 || base > 36) {
+            setFromBaseResult('Base must be 2-36');
             return;
         }
-        setDecToBinResult(decToBinInput ? num.toString(2) : '');
+        if (!isValidBinary(toBaseInput)) {
+            setToBaseResult('Invalid Binary Input');
+            return;
+        }
+        setToBaseResult(toBaseInput ? parseInt(toBaseInput, 2).toString(base).toUpperCase() : '');
     };
 
-     const handleBinToHexConvert = () => {
-        if (!isValidBinary(binToHexInput)) {
-            setBinToHexResult('Invalid Binary Input');
-            return;
-        }
-        setBinToHexResult(binToHexInput ? parseInt(binToHexInput, 2).toString(16).toUpperCase() : '');
-    };
-
-    const handleHexToBinConvert = () => {
-        if (!isValidHex(hexToBinInput)) {
-            setHexToBinResult('Invalid Hex Input');
-            return;
-        }
-        setHexToBinResult(hexToBinInput ? parseInt(hexToBinInput, 16).toString(2) : '');
-    };
-    
     // Auto-calculate on input change
     useMemo(handleArithmeticCalculate, [binary1, binary2, operator]);
-    useMemo(handleBinToDecConvert, [binToDecInput]);
-    useMemo(handleDecToBinConvert, [decToBinInput]);
-    useMemo(handleBinToHexConvert, [binToHexInput]);
-    useMemo(handleHexToBinConvert, [hexToBinInput]);
+    useMemo(handleFromBaseConvert, [fromBaseInput, fromBase]);
+    useMemo(handleToBaseConvert, [toBaseInput, toBase]);
+
+    const conversionTableData = Array.from({ length: 20 }, (_, i) => {
+        const decimal = i + 1;
+        return {
+            decimal: decimal,
+            binary: decimal.toString(2),
+            hex: decimal.toString(16).toUpperCase(),
+        };
+    });
 
 
     return (
@@ -147,68 +153,42 @@ export default function BinaryCalculatorPage() {
                     <div className="grid md:grid-cols-2 gap-6">
                         <Card>
                              <CardHeader>
-                                <CardTitle className="font-headline">Binary to Decimal</CardTitle>
+                                <CardTitle className="font-headline">Convert to Binary</CardTitle>
                              </CardHeader>
                              <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="bin-to-dec">Binary Value</Label>
-                                    <Input id="bin-to-dec" value={binToDecInput} onChange={e => setBinToDecInput(e.target.value)} className="font-mono"/>
+                                    <Label htmlFor="from-base-input">Value</Label>
+                                    <Input id="from-base-input" value={fromBaseInput} onChange={e => setFromBaseInput(e.target.value)} className="font-mono"/>
                                 </div>
-                                {binToDecResult && (
-                                     <div className="rounded-lg border p-4 text-center">
-                                        <Label>Decimal Result</Label>
-                                        <p className="text-xl font-bold text-primary break-all font-mono">{binToDecResult}</p>
-                                    </div>
-                                )}
-                             </CardContent>
-                        </Card>
-                         <Card>
-                             <CardHeader>
-                                <CardTitle className="font-headline">Decimal to Binary</CardTitle>
-                             </CardHeader>
-                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="dec-to-bin">Decimal Value</Label>
-                                    <Input id="dec-to-bin" type="number" value={decToBinInput} onChange={e => setDecToBinInput(e.target.value)} className="font-mono"/>
+                                    <Label htmlFor="from-base">From Base (2-36)</Label>
+                                    <Input id="from-base" type="number" min="2" max="36" value={fromBase} onChange={e => setFromBase(e.target.value)} className="font-mono"/>
                                 </div>
-                                 {decToBinResult && (
+                                {fromBaseResult && (
                                      <div className="rounded-lg border p-4 text-center">
                                         <Label>Binary Result</Label>
-                                        <p className="text-xl font-bold text-primary break-all font-mono">{decToBinResult}</p>
+                                        <p className="text-xl font-bold text-primary break-all font-mono">{fromBaseResult}</p>
                                     </div>
                                 )}
                              </CardContent>
                         </Card>
                          <Card>
                              <CardHeader>
-                                <CardTitle className="font-headline">Binary to Hexadecimal</CardTitle>
+                                <CardTitle className="font-headline">Convert from Binary</CardTitle>
                              </CardHeader>
                              <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="bin-to-hex">Binary Value</Label>
-                                    <Input id="bin-to-hex" value={binToHexInput} onChange={e => setBinToHexInput(e.target.value)} className="font-mono"/>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="to-base-input">Binary Value</Label>
+                                    <Input id="to-base-input" value={toBaseInput} onChange={e => setToBaseInput(e.target.value)} className="font-mono"/>
                                 </div>
-                                {binToHexResult && (
-                                     <div className="rounded-lg border p-4 text-center">
-                                        <Label>Hexadecimal Result</Label>
-                                        <p className="text-xl font-bold text-primary break-all font-mono">{binToHexResult}</p>
-                                    </div>
-                                )}
-                             </CardContent>
-                        </Card>
-                         <Card>
-                             <CardHeader>
-                                <CardTitle className="font-headline">Hexadecimal to Binary</CardTitle>
-                             </CardHeader>
-                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="hex-to-bin">Hexadecimal Value</Label>
-                                    <Input id="hex-to-bin" value={hexToBinInput} onChange={e => setHexToBinInput(e.target.value)} className="font-mono"/>
+                                    <Label htmlFor="to-base">To Base (2-36)</Label>
+                                    <Input id="to-base" type="number" min="2" max="36" value={toBase} onChange={e => setToBase(e.target.value)} className="font-mono"/>
                                 </div>
-                                 {hexToBinResult && (
+                                {toBaseResult && (
                                      <div className="rounded-lg border p-4 text-center">
-                                        <Label>Binary Result</Label>
-                                        <p className="text-xl font-bold text-primary break-all font-mono">{hexToBinResult}</p>
+                                        <Label>Result</Label>
+                                        <p className="text-xl font-bold text-primary break-all font-mono">{toBaseResult}</p>
                                     </div>
                                 )}
                              </CardContent>
@@ -217,26 +197,53 @@ export default function BinaryCalculatorPage() {
 
                     <Card>
                         <CardHeader>
+                            <CardTitle className="font-headline">Conversion Table</CardTitle>
+                            <CardDescription>A quick reference for decimal, binary, and hexadecimal values.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Decimal</TableHead>
+                                        <TableHead>Binary</TableHead>
+                                        <TableHead>Hexadecimal</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {conversionTableData.map(item => (
+                                        <TableRow key={item.decimal}>
+                                            <TableCell>{item.decimal}</TableCell>
+                                            <TableCell className="font-mono">{item.binary}</TableCell>
+                                            <TableCell className="font-mono">{item.hex}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
                             <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Accordion type="single" collapsible className="w-full">
                                 <AccordionItem value="item-1">
-                                    <AccordionTrigger>What is the binary number system?</AccordionTrigger>
+                                    <AccordionTrigger>What is a Number Base?</AccordionTrigger>
                                     <AccordionContent>
-                                        The binary number system is a base-2 system that uses only two digits: 0 and 1. Each digit is called a "bit." This system is the fundamental language of computers because the two states (0 and 1) can be easily represented by electronic circuits being off or on. For example, the decimal number 5 is represented as 101 in binary.
+                                       A number base is the number of unique digits used to represent numbers in a positional numeral system. The most common is base-10 (decimal), which uses digits 0-9. Binary is base-2 (digits 0-1), and hexadecimal is base-16 (digits 0-9 and A-F). This calculator can handle any base from 2 to 36.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-2">
-                                    <AccordionTrigger>How do you convert from decimal to binary?</AccordionTrigger>
+                                    <AccordionTrigger>How do you convert from another base to binary?</AccordionTrigger>
                                     <AccordionContent>
-                                        To convert a decimal number to binary, you repeatedly divide the decimal number by 2 and record the remainder. You continue until the quotient is 0. The binary representation is the sequence of remainders read from bottom to top. For example, to convert 13 to binary: 13÷2 = 6 R 1, 6÷2 = 3 R 0, 3÷2 = 1 R 1, 1÷2 = 0 R 1. Reading remainders up gives 1101.
+                                        The calculator first converts the number from its original base (e.g., hexadecimal `FF`) into its decimal equivalent (255). Then, it converts that decimal number into its binary representation (11111111). This two-step process allows for conversion between any two bases.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-3">
-                                    <AccordionTrigger>How do you convert from binary to decimal?</AccordionTrigger>
+                                    <AccordionTrigger>What is the binary number system?</AccordionTrigger>
                                     <AccordionContent>
-                                        To convert a binary number to decimal, you multiply each digit by 2 raised to the power of its position, starting from 0 on the right. Then, you add all the results. For example, the binary number 1011 is: (1 * 2³) + (0 * 2²) + (1 * 2¹) + (1 * 2⁰) = 8 + 0 + 2 + 1 = 11.
+                                        The binary number system is a base-2 system that uses only two digits: 0 and 1. Each digit is called a "bit." This system is the fundamental language of computers because the two states (0 and 1) can be easily represented by electronic circuits being off or on. For example, the decimal number 5 is represented as 101 in binary.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-4">
