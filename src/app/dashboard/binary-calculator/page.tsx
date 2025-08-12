@@ -12,16 +12,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 const isValidForBase = (str: string, base: number) => {
     if (str === '') return true;
-    try {
-        // Using parseInt and checking against re-stringified version is a robust way to validate.
-        // It handles cases like 'G' being valid for base 17 but not base 16.
-        if (parseInt(str, base).toString(base).toLowerCase() !== str.toLowerCase()) {
-            return false;
-        }
-        return true;
-    } catch (e) {
-        return false;
-    }
+    if (base < 2 || base > 36) return false;
+
+    // Create a regex pattern for the given base
+    // For base 16, this would be /^[0-9a-f]+$/i
+    const validChars = '0123456789abcdefghijklmnopqrstuvwxyz'.substring(0, base);
+    const pattern = new RegExp(`^[${validChars}]+$`, 'i');
+    
+    return pattern.test(str);
 };
 
 const isValidBinary = (str: string) => /^[01]+$/.test(str) || str === '';
