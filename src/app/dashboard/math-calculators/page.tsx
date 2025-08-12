@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript } from 'lucide-react';
+import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript, Cpu } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -93,6 +93,16 @@ const tools = [
     hoverBg: 'hover:bg-rose-200 dark:hover:bg-rose-900/80',
     iconColor: 'text-rose-600 dark:text-rose-400'
   },
+  {
+    title: 'Binary Calculator',
+    description: 'Perform arithmetic and conversions with binary numbers.',
+    href: '/dashboard/binary-calculator',
+    icon: <Cpu className="size-8" />,
+    bgColor: 'bg-slate-100 dark:bg-slate-900/50',
+    textColor: 'text-slate-800 dark:text-slate-200',
+    hoverBg: 'hover:bg-slate-200 dark:hover:bg-slate-900/80',
+    iconColor: 'text-slate-600 dark:text-slate-400'
+  },
 ];
 
 export default function MathCalculatorsPage() {
@@ -102,7 +112,7 @@ export default function MathCalculatorsPage() {
         <h1 className="font-headline text-xl font-semibold">Math Calculators</h1>
       </header>
       <main className="flex-1 p-4 md:p-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {tools.map((tool) => (
               <Tooltip key={tool.href}>
                 <TooltipTrigger asChild>
