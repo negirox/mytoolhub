@@ -375,31 +375,31 @@ export default function AmortizationCalculatorPage() {
                         <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                             <AccordionTrigger>What is loan amortization?</AccordionTrigger>
                             <AccordionContent>
-                                Loan amortization is the process of spreading out a loan into a series of fixed payments over time. A portion of each payment goes toward the loan's principal (the amount you borrowed) and a portion goes toward interest.
+                                Loan amortization is the process of spreading out a loan into a series of fixed payments over time. A portion of each payment goes toward the loan's principal (the amount you borrowed) and a portion goes toward interest. For example, a $1,000 payment on a mortgage might include $300 towards principal and $700 towards interest.
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                             <AccordionTrigger>Why do I pay more interest at the beginning of my loan?</AccordionTrigger>
                             <AccordionContent>
-                                In the early years of a loan, the outstanding principal balance is at its highest. Since interest is calculated on the current balance, the interest component of your payment is larger at the start. As you pay down the principal, the interest portion of each payment decreases.
+                                In the early years of a loan, the outstanding principal balance is at its highest. Since interest is calculated on the current balance, the interest component of your payment is larger at the start. As you pay down the principal, the interest portion of each payment decreases, and more of your payment goes towards the principal. For a 30-year mortgage, it might take over a decade for the principal portion of your payment to become larger than the interest portion.
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
                             <AccordionTrigger>How can I use this amortization schedule?</AccordionTrigger>
                             <AccordionContent>
-                                You can use this schedule to understand exactly where your money is going with each payment. It helps you see how much you'll pay in total interest over the life of the loan and visualize your progress in paying down your debt.
+                                You can use this schedule to understand exactly where your money is going with each payment. It helps you see how much you'll pay in total interest over the life of the loan and visualize your progress in paying down your debt. It's also useful for tax purposes, as mortgage interest is often tax-deductible.
                             </AccordionContent>
                         </AccordionItem>
                          <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                             <AccordionTrigger>What is an amortization schedule?</AccordionTrigger>
                             <AccordionContent>
-                            An amortization schedule is a table detailing each periodic payment on a loan. It breaks down each payment into its principal and interest components and shows the remaining balance of the loan after each payment is made. This calculator provides a yearly and monthly schedule.
+                            An amortization schedule is a table detailing each periodic payment on a loan. It breaks down each payment into its principal and interest components and shows the remaining balance of the loan after each payment is made. This calculator provides a yearly and monthly schedule to give you both a high-level overview and a detailed breakdown.
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                             <AccordionTrigger>Can I pay off my loan faster?</AccordionTrigger>
                             <AccordionContent>
-                                Yes. Making extra payments directly towards the principal can help you pay off your loan faster and save a significant amount on total interest. Check our "EMI Calculator" for a prepayment feature to see how this works.
+                                Yes. Making extra payments directly towards the principal can help you pay off your loan faster and save a significant amount on total interest. For example, paying an extra $100 per month on a $200,000, 30-year loan at 6% interest could save you over $50,000 and help you pay off the loan nearly 5 years earlier. Check our "EMI Calculator" for a prepayment feature to see how this works.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>

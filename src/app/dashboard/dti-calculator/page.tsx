@@ -285,7 +285,7 @@ export default function DtiCalculatorPage() {
                                 </p>
                             </div>
                             <div className="w-full max-w-md">
-                                <Progress value={results.dti} className="h-4 [&>div]:bg-red-500" style={{'--progress-color': dtiCategory.color} as React.CSSProperties} />
+                                <Progress value={results.dti} style={{'--progress-color': dtiCategory.color} as React.CSSProperties} />
                                 <div className="mt-2 flex justify-between text-xs text-muted-foreground">
                                     <span>0%</span>
                                     <span>35%</span>
