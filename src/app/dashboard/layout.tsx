@@ -28,8 +28,6 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 function Logo() {
   return (
@@ -168,9 +166,9 @@ export default function DashboardLayout({
                 <Menu />
                 </SidebarTrigger>
             </header>
-            <main className="flex-1">
+            <div className="flex-1">
                 {children}
-            </main>
+            </div>
             <footer className="mt-auto border-t bg-background/80 py-4 text-center text-xs text-muted-foreground">
                 <div className="container mx-auto">
                     <p>&copy; {new Date().getFullYear()} MyToolHub. All Rights Reserved.</p>
