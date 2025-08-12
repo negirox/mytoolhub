@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript, Cpu, Atom } from 'lucide-react';
+import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript, Cpu, Atom, LogIn } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -122,6 +122,16 @@ const tools = [
     textColor: 'text-indigo-800 dark:text-indigo-200',
     hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
     iconColor: 'text-indigo-600 dark:text-indigo-400'
+  },
+  {
+    title: 'Log Calculator',
+    description: 'Solve for any variable in a logarithmic equation (log_b(x) = y).',
+    href: '/dashboard/log-calculator',
+    icon: <LogIn className="size-8" />, 
+    bgColor: 'bg-pink-100 dark:bg-pink-900/50',
+    textColor: 'text-pink-800 dark:text-pink-200',
+    hoverBg: 'hover:bg-pink-200 dark:hover:bg-pink-900/80',
+    iconColor: 'text-pink-600 dark:text-pink-400'
   },
 ];
 
