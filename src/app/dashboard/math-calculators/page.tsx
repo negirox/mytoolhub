@@ -113,6 +113,16 @@ const tools = [
     hoverBg: 'hover:bg-lime-200 dark:hover:bg-lime-900/80',
     iconColor: 'text-lime-600 dark:text-lime-400'
   },
+  {
+    title: 'Quadratic Formula Calculator',
+    description: 'Solve quadratic equations and see the step-by-step solution.',
+    href: '/dashboard/quadratic-formula-calculator',
+    icon: <Superscript className="size-8" />, // Using Superscript again as it fits
+    bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
+    textColor: 'text-indigo-800 dark:text-indigo-200',
+    hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
+    iconColor: 'text-indigo-600 dark:text-indigo-400'
+  },
 ];
 
 export default function MathCalculatorsPage() {
