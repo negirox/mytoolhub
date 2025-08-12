@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, HeartPulse, Landmark, Wrench } from 'lucide-react';
+import { ArrowRight, HeartPulse, Landmark, Wrench, Calculator } from 'lucide-react';
 import { Clock } from '@/components/ui/clock';
 import {
   Tooltip,
@@ -44,6 +44,16 @@ const categories = [
     textColor: 'text-green-800 dark:text-green-200',
     hoverBg: 'hover:bg-green-200 dark:hover:bg-green-900/80',
     iconColor: 'text-green-600 dark:text-green-400'
+  },
+  {
+    title: 'Math Calculators',
+    description: 'A collection of handy calculators for everyday math problems, from percentages to simple equations.',
+    href: '/dashboard/math-calculators',
+    icon: <Calculator className="size-8" />,
+    bgColor: 'bg-purple-100 dark:bg-purple-900/50',
+    textColor: 'text-purple-800 dark:text-purple-200',
+    hoverBg: 'hover:bg-purple-200 dark:hover:bg-purple-900/80',
+    iconColor: 'text-purple-600 dark:text-purple-400'
   },
    {
     title: 'General Utilities',

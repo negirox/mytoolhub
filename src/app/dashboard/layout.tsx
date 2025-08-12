@@ -23,6 +23,7 @@ import {
   Info,
   ShieldCheck,
   Github,
+  Calculator,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -55,6 +56,11 @@ const NAV_GROUPS = [
     heading: 'Financial Calculators',
     href: '/dashboard/financial-calculators',
     icon: <Landmark />,
+  },
+  {
+    heading: 'Math Calculators',
+    href: '/dashboard/math-calculators',
+    icon: <Calculator />,
   },
   {
     heading: 'General Utilities',
