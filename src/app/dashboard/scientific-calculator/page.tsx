@@ -170,60 +170,56 @@ export default function ScientificCalculatorPage() {
                 <div className="mb-4 rounded-lg border bg-muted p-4 text-right">
                   <div className="text-3xl font-bold break-all min-h-[40px]">{input || '0'}</div>
                 </div>
-                <div className="grid grid-cols-7 gap-2">
-                    <CalculatorButton onClick={() => handleFunctionClick('sin')}>sin</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('cos')}>cos</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('tan')}>tan</CalculatorButton>
-                    <CalculatorButton onClick={() => setIsDegrees(!isDegrees)} variant="outline">{isDegrees ? 'Deg' : 'Rad'}</CalculatorButton>
-                    <CalculatorButton onClick={handleDelete}><Eraser className="size-6"/></CalculatorButton>
-                    <CalculatorButton onClick={handleClear} variant="destructive">C</CalculatorButton>
-                    <CalculatorButton onClick={handleCalculate} variant="default" className="col-start-7">=</CalculatorButton>
-                    
-                    <CalculatorButton onClick={() => handleFunctionClick('sin⁻¹')}>sin⁻¹</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('cos⁻¹')}>cos⁻¹</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('tan⁻¹')}>tan⁻¹</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('π')}>π</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('e')}>e</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('(')}>(</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick(')')}>)</CalculatorButton>
+                <div className="grid grid-cols-6 gap-2">
+                  <CalculatorButton onClick={() => handleButtonClick('(')}>(</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick(')')}>)</CalculatorButton>
+                  <CalculatorButton onClick={() => handleMemory('MR')}>MR</CalculatorButton>
+                  <CalculatorButton onClick={() => handleMemory('M+')}>M+</CalculatorButton>
+                  <CalculatorButton onClick={() => handleMemory('M-')}>M-</CalculatorButton>
+                  <CalculatorButton onClick={handleDelete}><Eraser className="size-6" /></CalculatorButton>
 
-                    <CalculatorButton onClick={() => handleButtonClick('^')}>xʸ</CalculatorButton>
-                    <CalculatorButton onClick={() => handleSpecialFunction('x³')}>x³</CalculatorButton>
-                    <CalculatorButton onClick={() => handleSpecialFunction('x²')}>x²</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('e^')}>eˣ</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('10^')}>10ˣ</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('7')}>7</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('8')}>8</CalculatorButton>
-                    
-                    <CalculatorButton onClick={() => handleButtonClick(' y√ ')}>ʸ√x</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('³√')}>³√x</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('√')}>√x</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('ln')}>ln</CalculatorButton>
-                    <CalculatorButton onClick={() => handleFunctionClick('log')}>log</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('9')}>9</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('÷')} variant="default">÷</CalculatorButton>
-                    
-                    <CalculatorButton onClick={() => handleSpecialFunction('n!')}>n!</CalculatorButton>
-                    <CalculatorButton onClick={() => handleSpecialFunction('1/x')}>1/x</CalculatorButton>
-                    <CalculatorButton onClick={() => handleSpecialFunction('%')}>%</CalculatorButton>
-                    <CalculatorButton onClick={() => handleMemory('M-')}>M-</CalculatorButton>
-                    <CalculatorButton onClick={() => handleMemory('M+')}>M+</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('4')}>4</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('5')}>5</CalculatorButton>
-                    
-                    <CalculatorButton onClick={() => handleButtonClick('6')}>6</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('-')} variant="default">-</CalculatorButton>
-                    <CalculatorButton onClick={() => handleMemory('MR')}>MR</CalculatorButton>
-                    <CalculatorButton onClick={() => handleSpecialFunction('+/-')}>±</CalculatorButton>
-                    <CalculatorButton onClick={() => setInput(String(Math.random()))}>RND</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('1')}>1</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('2')}>2</CalculatorButton>
+                  <CalculatorButton onClick={() => handleSpecialFunction('x²')}>x²</CalculatorButton>
+                  <CalculatorButton onClick={() => handleSpecialFunction('x³')}>x³</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('^')}>xʸ</CalculatorButton>
+                  <CalculatorButton onClick={() => handleFunctionClick('e^')}>eˣ</CalculatorButton>
+                  <CalculatorButton onClick={() => handleFunctionClick('10^')}>10ˣ</CalculatorButton>
+                  <CalculatorButton onClick={handleClear} variant="destructive">C</CalculatorButton>
 
-                    <CalculatorButton onClick={() => handleButtonClick('3')}>3</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('+')} variant="default">+</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('0')} className="col-span-2">0</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('.')}>.</CalculatorButton>
-                    <CalculatorButton onClick={() => handleButtonClick('E')}>EXP</CalculatorButton>
+                  <CalculatorButton onClick={() => handleSpecialFunction('1/x')}>1/x</CalculatorButton>
+                  <CalculatorButton onClick={() => handleFunctionClick('√')}>√x</CalculatorButton>
+                  <CalculatorButton onClick={() => handleFunctionClick('³√')}>³√x</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick(' y√ ')}>ʸ√x</CalculatorButton>
+                  <CalculatorButton onClick={() => handleSpecialFunction('n!')}>n!</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('÷')} variant="default">÷</CalculatorButton>
+
+                  <CalculatorButton onClick={() => handleFunctionClick('sin')}>sin</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('7')}>7</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('8')}>8</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('9')}>9</CalculatorButton>
+                  <CalculatorButton onClick={() => handleSpecialFunction('%')}>%</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('×')} variant="default">×</CalculatorButton>
+
+                  <CalculatorButton onClick={() => handleFunctionClick('cos')}>cos</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('4')}>4</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('5')}>5</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('6')}>6</CalculatorButton>
+                  <CalculatorButton onClick={() => handleSpecialFunction('+/-')}>±</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('-')} variant="default">-</CalculatorButton>
+
+                  <CalculatorButton onClick={() => handleFunctionClick('tan')}>tan</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('1')}>1</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('2')}>2</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('3')}>3</CalculatorButton>
+                  <CalculatorButton onClick={() => setInput(String(Math.random()))}>RND</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('+')} variant="default">+</CalculatorButton>
+
+                  <CalculatorButton onClick={() => setIsDegrees(!isDegrees)} variant="outline">{isDegrees ? 'Deg' : 'Rad'}</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('0')}>0</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('.')}>.</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('π')}>π</CalculatorButton>
+                  <CalculatorButton onClick={() => handleButtonClick('e')}>e</CalculatorButton>
+                  <CalculatorButton onClick={handleCalculate} variant="default">=</CalculatorButton>
+
                 </div>
               </CardContent>
             </Card>
