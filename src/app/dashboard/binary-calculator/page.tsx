@@ -13,10 +13,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 const isValidForBase = (str: string, base: number) => {
     if (str === '') return true;
     try {
-        // Use BigInt for arbitrary precision, which supports up to base 36
-        BigInt.prototype.toString.call(parseInt(str, base));
-        // Check if parsing and converting back results in the same string, handles case sensitivity for hex etc.
-        return parseInt(str, base).toString(base).toLowerCase() === str.toLowerCase();
+        // Using parseInt and checking against re-stringified version is a robust way to validate.
+        // It handles cases like 'G' being valid for base 17 but not base 16.
+        if (parseInt(str, base).toString(base).toLowerCase() !== str.toLowerCase()) {
+            return false;
+        }
+        return true;
     } catch (e) {
         return false;
     }
@@ -231,7 +233,7 @@ export default function BinaryCalculatorPage() {
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>What is a Number Base?</AccordionTrigger>
                                     <AccordionContent>
-                                       A number base is the number of unique digits used to represent numbers in a positional numeral system. The most common is base-10 (decimal), which uses digits 0-9. Binary is base-2 (digits 0-1), and hexadecimal is base-16 (digits 0-9 and A-F). This calculator can handle any base from 2 to 36.
+                                       A number base is the number of unique digits used to represent numbers in a positional numeral system. The most common is base-10 (decimal), which uses digits 0-9. Binary is base-2 (digits 0-1), and hexadecimal is base-16 (digits 0-9 and A-F). This calculator can handle any base from 2 to 36. For example, base 36 uses the digits 0-9 and the letters A-Z.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-2">
@@ -261,7 +263,7 @@ export default function BinaryCalculatorPage() {
                                  <AccordionItem value="item-5">
                                     <AccordionTrigger>What is the hexadecimal system?</AccordionTrigger>
                                     <AccordionContent>
-                                        The hexadecimal system is a base-16 number system. It uses 16 symbols: the numbers 0-9 and the letters A-F to represent values 10-15. It's commonly used in computing because it's a more human-readable way to represent long binary numbers. For example, the color white is often represented as #FFFFFF in hex.
+                                        The hexadecimal system is a base-16 number system. It uses 16 symbols: the numbers 0-9 and the letters A-F to represent values 10-15. It's commonly used in computing because it's a more human-readable way to represent long binary numbers. For example, the color white is often represented as #FFFFFF in hex, which is much shorter than its binary equivalent.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-6">
