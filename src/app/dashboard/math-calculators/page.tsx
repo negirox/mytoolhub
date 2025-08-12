@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Percent, FlaskConical, Divide } from 'lucide-react';
+import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -62,6 +62,16 @@ const tools = [
     textColor: 'text-red-800 dark:text-red-200',
     hoverBg: 'hover:bg-red-200 dark:hover:bg-red-900/80',
     iconColor: 'text-red-600 dark:text-red-400'
+  },
+   {
+    title: 'Random Number Generator',
+    description: 'Generate random numbers with advanced options.',
+    href: '/dashboard/random-number-generator',
+    icon: <Shuffle className="size-8" />,
+    bgColor: 'bg-green-100 dark:bg-green-900/50',
+    textColor: 'text-green-800 dark:text-green-200',
+    hoverBg: 'hover:bg-green-200 dark:hover:bg-green-900/80',
+    iconColor: 'text-green-600 dark:text-green-400'
   },
 ];
 
