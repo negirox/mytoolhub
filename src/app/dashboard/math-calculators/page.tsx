@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript, Cpu, Radioactivity } from 'lucide-react';
+import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript, Cpu, Atom } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -107,7 +107,7 @@ const tools = [
     title: 'Half-Life Calculator',
     description: 'Calculate substance decay with the half-life formula.',
     href: '/dashboard/half-life-calculator',
-    icon: <Radioactivity className="size-8" />,
+    icon: <Atom className="size-8" />,
     bgColor: 'bg-lime-100 dark:bg-lime-900/50',
     textColor: 'text-lime-800 dark:text-lime-200',
     hoverBg: 'hover:bg-lime-200 dark:hover:bg-lime-900/80',

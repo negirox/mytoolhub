@@ -14,9 +14,9 @@ export default function HalfLifeCalculatorPage() {
     // Main calculator state
     const [initialQty, setInitialQty] = useState('100');
     const [remainingQty, setRemainingQty] = useState('');
-    const [time, setTime] = useState('50');
+    const [time, setTime] = useState('');
     const [halfLife, setHalfLife] = useState('10');
-    const [lastChanged, setLastChanged] = useState<'N0' | 'Nt' | 't' | 't12'>('t12');
+    const [lastChanged, setLastChanged] = useState<'N0' | 'Nt' | 't' | 't12'>('N0');
 
     // Conversion calculator state
     const [convHalfLife, setConvHalfLife] = useState('10');
@@ -91,7 +91,7 @@ export default function HalfLifeCalculatorPage() {
                         <CardHeader>
                             <CardTitle className="font-headline">Half-Life Decay Calculator</CardTitle>
                             <CardDescription>
-                                This tool can calculate any one of the values from the other three in the half-life formula: N(t) = N₀ * (1/2)^(t/T). Enter any three values to solve for the fourth.
+                                This tool can calculate any one of the values from the other three in the half-life formula: N(t) = N₀ * (1/2)^(t/T). Enter any three values to solve for the fourth. The calculation updates automatically.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
