@@ -73,6 +73,16 @@ const tools = [
     hoverBg: 'hover:bg-green-200 dark:hover:bg-green-900/80',
     iconColor: 'text-green-600 dark:text-green-400'
   },
+  {
+    title: 'Percent Error Calculator',
+    description: 'Calculate the percent error between an observed and true value.',
+    href: '/dashboard/percent-error-calculator',
+    icon: <Percent className="size-8" />,
+    bgColor: 'bg-amber-100 dark:bg-amber-900/50',
+    textColor: 'text-amber-800 dark:text-amber-200',
+    hoverBg: 'hover:bg-amber-200 dark:hover:bg-amber-900/80',
+    iconColor: 'text-amber-600 dark:text-amber-400'
+  },
 ];
 
 export default function MathCalculatorsPage() {
