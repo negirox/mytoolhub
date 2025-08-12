@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Percent } from 'lucide-react';
+import { ArrowRight, Calculator, Percent, FlaskConical, Divide } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -42,6 +42,26 @@ const tools = [
     textColor: 'text-teal-800 dark:text-teal-200',
     hoverBg: 'hover:bg-teal-200 dark:hover:bg-teal-900/80',
     iconColor: 'text-teal-600 dark:text-teal-400'
+  },
+  {
+    title: 'Scientific Calculator',
+    description: 'Perform advanced calculations with scientific functions.',
+    href: '/dashboard/scientific-calculator',
+    icon: <FlaskConical className="size-8" />,
+    bgColor: 'bg-blue-100 dark:bg-blue-900/50',
+    textColor: 'text-blue-800 dark:text-blue-200',
+    hoverBg: 'hover:bg-blue-200 dark:hover:bg-blue-900/80',
+    iconColor: 'text-blue-600 dark:text-blue-400'
+  },
+  {
+    title: 'Fraction Calculator',
+    description: 'Add, subtract, multiply, and divide fractions easily.',
+    href: '/dashboard/fraction-calculator',
+    icon: <Divide className="size-8" />,
+    bgColor: 'bg-red-100 dark:bg-red-900/50',
+    textColor: 'text-red-800 dark:text-red-200',
+    hoverBg: 'hover:bg-red-200 dark:hover:bg-red-900/80',
+    iconColor: 'text-red-600 dark:text-red-400'
   },
 ];
 
