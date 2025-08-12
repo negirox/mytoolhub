@@ -7,6 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+
 
 // Function to parse potentially fractional input
 const parseValue = (input: string): number => {
@@ -27,16 +34,18 @@ const formatNumber = (num: number): string => {
         return num.toString();
     }
     // Limit precision for display to avoid long repeating decimals
-    return num.toPrecision(8).replace(/\.?0+$/, ""); 
+    const precision = Math.max(1, Math.min(8, 8 - Math.floor(Math.log10(Math.abs(num)))));
+    return num.toPrecision(precision).replace(/\.?0+$/, ""); 
 };
 
 export default function QuadraticFormulaCalculatorPage() {
     const [a, setA] = useState('1');
-    const [b, setB] = useState('4');
+    const [b, setB] = useState('5');
     const [c, setC] = useState('4');
 
     const [solution, setSolution] = useState<string | null>(null);
     const [steps, setSteps] = useState<any>(null);
+    const [graphData, setGraphData] = useState<any[]>([]);
 
     const calculate = () => {
         const valA = parseValue(a);
@@ -46,6 +55,7 @@ export default function QuadraticFormulaCalculatorPage() {
         if (isNaN(valA) || isNaN(valB) || isNaN(valC) || valA === 0) {
             setSolution('Invalid input. Ensure "a" is not zero.');
             setSteps(null);
+            setGraphData([]);
             return;
         }
 
@@ -80,13 +90,23 @@ export default function QuadraticFormulaCalculatorPage() {
             const realPart = -valB / (2 * valA);
             const imaginaryPart = sqrtD / (2 * valA);
             finalSolution = `x = ${formatNumber(realPart)} ± ${formatNumber(imaginaryPart)}i`;
-            currentSteps.sqrtDiscriminant = `${formatNumber(sqrtD)}i`;
+            currentSteps.sqrtDiscriminant = `${formatNumber(imaginaryPart)}i`;
             currentSteps.x1 = `${formatNumber(realPart)} + ${formatNumber(imaginaryPart)}i`;
             currentSteps.x2 = `${formatNumber(realPart)} - ${formatNumber(imaginaryPart)}i`;
         }
         
         setSolution(finalSolution);
         setSteps(currentSteps);
+
+        // Generate data for graph
+        const vertexX = -valB / (2 * valA);
+        const data = [];
+        for (let i = -10; i <= 10; i++) {
+            const x = vertexX + i;
+            const y = valA * x * x + valB * x + valC;
+            data.push({ x: x.toFixed(2), y: y.toFixed(2) });
+        }
+        setGraphData(data);
     };
 
     return (
@@ -171,6 +191,34 @@ export default function QuadraticFormulaCalculatorPage() {
 
                         </CardContent>
                     </Card>
+                    
+                    {graphData.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="font-headline">Graph of the Equation</CardTitle>
+                                <CardDescription>This graph shows the parabola for y = {a}x² + {b}x + {c}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <ChartContainer config={{}} className="min-h-[400px] w-full">
+                                    <LineChart
+                                        data={graphData}
+                                        margin={{
+                                            top: 5, right: 30, left: 20, bottom: 5,
+                                        }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="x" label={{ value: 'x', position: 'insideBottomRight', offset: -5 }} />
+                                        <YAxis label={{ value: 'y', angle: -90, position: 'insideLeft' }}/>
+                                        <Tooltip content={<ChartTooltipContent />} />
+                                        <Legend />
+                                        <ReferenceLine y={0} stroke="#666" strokeDasharray="5 5" />
+                                        <Line type="monotone" dataKey="y" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+                                    </LineChart>
+                                </ChartContainer>
+                            </CardContent>
+                        </Card>
+                    )}
+
 
                     <Card>
                         <CardHeader>
