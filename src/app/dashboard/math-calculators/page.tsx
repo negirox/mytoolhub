@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle } from 'lucide-react';
+import { ArrowRight, Calculator, Percent, FlaskConical, Divide, Shuffle, Superscript } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -82,6 +82,16 @@ const tools = [
     textColor: 'text-amber-800 dark:text-amber-200',
     hoverBg: 'hover:bg-amber-200 dark:hover:bg-amber-900/80',
     iconColor: 'text-amber-600 dark:text-amber-400'
+  },
+   {
+    title: 'Exponent Calculator',
+    description: 'Solve for base, exponent, or result with this versatile calculator.',
+    href: '/dashboard/exponent-calculator',
+    icon: <Superscript className="size-8" />,
+    bgColor: 'bg-rose-100 dark:bg-rose-900/50',
+    textColor: 'text-rose-800 dark:text-rose-200',
+    hoverBg: 'hover:bg-rose-200 dark:hover:bg-rose-900/80',
+    iconColor: 'text-rose-600 dark:text-rose-400'
   },
 ];
 
