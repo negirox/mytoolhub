@@ -252,13 +252,13 @@ export default function UnitConverterPage() {
                 <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>Why do we need unit converters?</AccordionTrigger>
                   <AccordionContent>
-                    Unit converters are essential tools for scientists, engineers, students, and anyone who needs to work with measurements from different systems. They eliminate manual calculation errors and save time, especially when dealing with complex conversions in fields like international trade, cooking, or scientific research.
+                    Unit converters are essential tools for scientists, engineers, students, and anyone who needs to work with measurements from different systems. They eliminate manual calculation errors and save time, especially when dealing with complex conversions in fields like international trade, cooking (e.g., converting cups to grams), or scientific research.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>What is the difference between Imperial and Metric systems?</AccordionTrigger>
                   <AccordionContent>
-                    The Metric system (used by most of the world) is a decimal-based system where units are related by powers of 10 (e.g., 100 centimeters in a meter). The Imperial system (used primarily in the United States) has units with less uniform relationships (e.g., 12 inches in a foot, 3 feet in a yard).
+                    The Metric system (used by most of the world) is a decimal-based system where units are related by powers of 10 (e.g., 100 centimeters in a meter). The Imperial system (used primarily in the United States) has units with less uniform relationships (e.g., 12 inches in a foot, 3 feet in a yard). This calculator helps bridge the gap between them.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
@@ -270,19 +270,19 @@ export default function UnitConverterPage() {
                 <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>What is a 'base unit' in conversions?</AccordionTrigger>
                   <AccordionContent>
-                    In many conversion systems, a 'base unit' is a standard unit for a particular measurement category. For example, the meter is the base unit for length in the International System of Units (SI). Our converter first converts the 'from' value to a common base unit and then converts that base value to the 'to' unit for accuracy.
+                    In many conversion systems, a 'base unit' is a standard unit for a particular measurement category. For example, the meter is the base unit for length in the International System of Units (SI). Our converter first converts the 'from' value to a common base unit (like meters for length or kilograms for weight) and then converts that base value to the 'to' unit for accuracy.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>How is area converted?</AccordionTrigger>
                   <AccordionContent>
-                    Area is a measure of two-dimensional space. When converting area units, the conversion factor is squared. For instance, since 1 foot = 0.3048 meters, 1 square foot = (0.3048)^2 = 0.0929 square meters.
+                    Area is a measure of two-dimensional space. When converting area units, the conversion factor is squared. For instance, since 1 foot = 0.3048 meters, 1 square foot = (0.3048)² = 0.0929 square meters.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-6" className="bg-pink-50 dark:bg-pink-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>How is volume converted?</AccordionTrigger>
                   <AccordionContent>
-                    Volume measures three-dimensional space. Similar to area, the conversion factor for length is cubed. For example, if 1 foot = 0.3048 meters, then 1 cubic foot = (0.3048)^3 = 0.0283 cubic meters.
+                    Volume measures three-dimensional space. Similar to area, the conversion factor for length is cubed. For example, if 1 foot = 0.3048 meters, then 1 cubic foot = (0.3048)³ = 0.0283 cubic meters.
                   </AccordionContent>
                 </AccordionItem>
                  <AccordionItem value="item-7" className="bg-red-50 dark:bg-red-900/20 rounded-lg px-4 mb-2">
@@ -306,7 +306,7 @@ export default function UnitConverterPage() {
                  <AccordionItem value="item-10" className="bg-cyan-50 dark:bg-cyan-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>Why are there different gallons (e.g., US vs. Imperial)?</AccordionTrigger>
                   <AccordionContent>
-                    Historical reasons led to the development of different measurement systems. The US gallon and the Imperial (UK) gallon, for example, were both defined centuries ago but were standardized to different volumes. The US gallon is smaller (about 3.785 liters) than the Imperial gallon (about 4.546 liters).
+                    Historical reasons led to the development of different measurement systems. The US gallon and the Imperial (UK) gallon, for example, were both defined centuries ago but were standardized to different volumes. The US gallon is smaller (about 3.785 liters) than the Imperial gallon (about 4.546 liters). This calculator uses the US gallon.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
