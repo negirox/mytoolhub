@@ -36,6 +36,12 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
+import type { Metadata } from 'next';
+
+// export const metadata: Metadata = {
+//   title: 'Amortization Calculator',
+//   description: 'Generate a detailed loan amortization schedule to see a breakdown of your payments, principal, and interest over time.',
+// };
 
 
 interface MonthlyAmortizationData {
