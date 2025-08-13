@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/health-and-fitness</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/financial-calculators</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/math-calculators</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/general-utilities</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/about</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/privacy</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/bmi-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/calorie-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/protein-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/fat-intake-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/emi-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/home-loan-emi-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/credit-card-emi-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/tax-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/mortgage-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/amortization-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/mortgage-payoff-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/house-affordability-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/rent-affordability-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/dti-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/rental-property-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/refinance-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/apr-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/fha-loan-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/va-mortgage-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/down-payment-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/rent-vs-buy-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/percentage-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/simple-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/scientific-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/fraction-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/random-number-generator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/percent-error-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/exponent-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/binary-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/half-life-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/quadratic-formula-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/log-calculator</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/currency-converter</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://mytoolhub.vercel.app/dashboard/unit-converter</loc>
+  <lastmod>2025-08-13T17:24:24+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+
+
+</urlset>
