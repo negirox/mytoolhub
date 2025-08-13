@@ -36,6 +36,12 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import type { Metadata } from 'next';
+
+// export const metadata: Metadata = {
+//   title: 'APR Calculator',
+//   description: 'Calculate the Annual Percentage Rate (APR) to understand the true cost of a loan, including interest and fees.',
+// };
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
