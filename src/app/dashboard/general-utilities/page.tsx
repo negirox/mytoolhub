@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Ruler, Wallet } from 'lucide-react';
+import { ArrowRight, Ruler, Wallet, Bed } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -19,7 +19,7 @@ import React from 'react';
 
 export const metadata: Metadata = {
     title: 'General Utilities | MyToolHub',
-    description: 'A collection of general utility converters for everyday calculations.'
+    description: 'A collection of general utility converters and calculators for everyday use.'
 };
 
 const tools = [
@@ -43,6 +43,16 @@ const tools = [
     hoverBg: 'hover:bg-orange-200 dark:hover:bg-orange-900/80',
     iconColor: 'text-orange-600 dark:text-orange-400'
   },
+    {
+    title: 'Sleep Calculator',
+    description: 'Find your optimal bedtime or wake-up time based on sleep cycles.',
+    href: '/dashboard/sleep-calculator',
+    icon: <Bed className="size-8" />,
+    bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
+    textColor: 'text-indigo-800 dark:text-indigo-200',
+    hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
+    iconColor: 'text-indigo-600 dark:text-indigo-400'
+  },
 ];
 
 export default function GeneralUtilitiesPage() {
@@ -52,7 +62,7 @@ export default function GeneralUtilitiesPage() {
         <h1 className="font-headline text-xl font-semibold">General Utilities</h1>
       </header>
       <main className="flex-1 p-4 md:p-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {tools.map((tool) => (
               <Tooltip key={tool.href}>
                 <TooltipTrigger asChild>
