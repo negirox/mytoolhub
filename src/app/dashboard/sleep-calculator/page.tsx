@@ -7,9 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Clock, Bed, Sunrise, Sunset } from 'lucide-react';
+import { Clock, Bed, Sunrise, Moon, Star } from 'lucide-react';
 
 // export const metadata: Metadata = {
 //   title: 'Sleep Calculator',
@@ -20,7 +19,6 @@ const TIME_TO_FALL_ASLEEP = 15; // minutes
 const SLEEP_CYCLE_DURATION = 90; // minutes
 
 export default function SleepCalculatorPage() {
-  const [activeTab, setActiveTab] = useState('wake-up');
   const [wakeUpTime, setWakeUpTime] = useState('07:00');
   const [bedTimes, setBedTimes] = useState<string[]>([]);
   const [wakeUpTimes, setWakeUpTimes] = useState<string[]>([]);
@@ -45,7 +43,7 @@ export default function SleepCalculatorPage() {
         }
     });
 
-    setBedTimes(newBedTimes.map(bt => `For ${bt.cycles} cycles (${bt.duration}), go to bed at: ${bt.time}`));
+    setBedTimes(newBedTimes.map(bt => `To get ${bt.cycles} sleep cycles (${bt.duration}), go to bed at ${bt.time}.`));
   };
   
   const calculateWakeUpTimes = () => {
@@ -73,67 +71,62 @@ export default function SleepCalculatorPage() {
       </header>
       <main className="flex-1 p-4 md:p-6">
         <div className="grid gap-6">
-          <Card className="bg-gradient-to-br from-indigo-50 via-background to-background dark:from-indigo-900/20">
-            <CardHeader>
-              <CardTitle className="font-headline text-3xl text-primary">Sleep Cycle Calculator</CardTitle>
-              <CardDescription>
-                Calculate your ideal bedtime or wake-up time based on natural 90-minute sleep cycles to wake up feeling refreshed and energized.
+          <Card className="bg-gradient-to-b from-slate-900 to-indigo-900 text-white">
+            <CardHeader className="text-center items-center py-10">
+                 <div className="flex items-center gap-4">
+                    <Moon className="size-12 text-yellow-300 animate-pulse" />
+                    <CardTitle className="font-headline text-5xl tracking-tighter">Sleep Calculator</CardTitle>
+                    <div className="flex flex-col">
+                        <Star className="size-4 text-yellow-300 animate-ping" />
+                        <Star className="size-3 text-yellow-300 animate-pulse" />
+                    </div>
+                </div>
+              <CardDescription className="text-indigo-200 max-w-xl">
+                Wake up between sleep cycles and feel refreshed. Enter your desired wake-up time or calculate from now to find your optimal sleep schedule.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-lg mx-auto">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="wake-up">I want to wake up at...</TabsTrigger>
-                        <TabsTrigger value="bedtime">If I go to bed now...</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="wake-up" className="mt-4">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><Sunrise className="text-yellow-500" /> Wake-Up Time</CardTitle>
-                                <CardDescription>Enter the time you need to wake up, and we'll suggest the best times to go to sleep.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="wake-up-time">I need to wake up at:</Label>
-                                    <Input id="wake-up-time" type="time" value={wakeUpTime} onChange={e => setWakeUpTime(e.target.value)} className="max-w-xs" />
-                                </div>
-                                <Button onClick={calculateBedTimes} className="w-full md:w-auto">Calculate Bedtimes</Button>
-                                {bedTimes.length > 0 && (
-                                    <div className="pt-4 space-y-2">
-                                        <h3 className="font-semibold text-lg">Recommended Bedtimes:</h3>
-                                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            {bedTimes.map((time, index) => (
-                                                <li key={index} className="p-3 rounded-md bg-muted text-sm">{time}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                    <TabsContent value="bedtime" className="mt-4">
-                        <Card>
-                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><Sunset className="text-orange-500"/> Bedtime</CardTitle>
-                                <CardDescription>If you go to bed right now, here are the best times to wake up.</CardDescription>
-                            </CardHeader>
-                             <CardContent className="space-y-4">
-                                <p className="text-muted-foreground">Assuming you fall asleep in about 15 minutes, you should aim to wake up at one of the following times:</p>
-                                <Button onClick={calculateWakeUpTimes} className="w-full md:w-auto">Calculate Wake-Up Times</Button>
-                                 {wakeUpTimes.length > 0 && (
-                                    <div className="pt-4 space-y-2">
-                                        <h3 className="font-semibold text-lg">Recommended Wake-Up Times:</h3>
-                                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            {wakeUpTimes.map((time, index) => (
-                                                <li key={index} className="p-3 rounded-md bg-muted text-sm">{time}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                </Tabs>
+            <CardContent className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    {/* Wake Up At Section */}
+                    <div className="space-y-4 rounded-lg bg-black/20 p-6">
+                         <h2 className="text-xl font-semibold text-center">What time do you want to wake up?</h2>
+                         <div className="space-y-2">
+                             <Label htmlFor="wake-up-time" className="sr-only">Wake up time</Label>
+                             <Input id="wake-up-time" type="time" value={wakeUpTime} onChange={e => setWakeUpTime(e.target.value)} className="bg-slate-800 border-indigo-600 text-white w-full" />
+                         </div>
+                         <Button onClick={calculateBedTimes} className="w-full bg-yellow-300 text-slate-900 hover:bg-yellow-400">
+                             <Bed className="mr-2" /> Calculate Bedtime
+                         </Button>
+                         {bedTimes.length > 0 && (
+                            <div className="pt-4 space-y-2">
+                                <h3 className="font-semibold">You should go to bed at one of the following times:</h3>
+                                <ul className="space-y-1 text-sm">
+                                    {bedTimes.map((time, index) => (
+                                        <li key={index} className="p-2 rounded-md bg-indigo-900/50">{time}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                         )}
+                    </div>
+                    {/* Go to Bed Now Section */}
+                    <div className="space-y-4 rounded-lg bg-black/20 p-6 flex flex-col justify-between">
+                         <h2 className="text-xl font-semibold text-center">If you want to go to bed now...</h2>
+                         <p className="text-center text-indigo-300 text-sm flex-grow">Click below to find the best times to set your alarm, assuming you fall asleep in about 15 minutes.</p>
+                         <Button onClick={calculateWakeUpTimes} className="w-full bg-yellow-300 text-slate-900 hover:bg-yellow-400">
+                            <Sunrise className="mr-2"/> Calculate Wake-up Time
+                         </Button>
+                         {wakeUpTimes.length > 0 && (
+                            <div className="pt-4 space-y-2">
+                                <h3 className="font-semibold">You should wake up at one of the following times:</h3>
+                                <ul className="space-y-1 text-sm">
+                                    {wakeUpTimes.map((time, index) => (
+                                        <li key={index} className="p-2 rounded-md bg-indigo-900/50">{time}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                         )}
+                    </div>
+                </div>
             </CardContent>
           </Card>
            <Card>
