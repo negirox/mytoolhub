@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Ruler, Wallet, Bed } from 'lucide-react';
+import { ArrowRight, Ruler, Wallet, Bed, Image as ImageIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -43,7 +43,7 @@ const tools = [
     hoverBg: 'hover:bg-orange-200 dark:hover:bg-orange-900/80',
     iconColor: 'text-orange-600 dark:text-orange-400'
   },
-    {
+  {
     title: 'Sleep Calculator',
     description: 'Find your optimal bedtime or wake-up time based on sleep cycles.',
     href: '/sleep-calculator',
@@ -52,6 +52,16 @@ const tools = [
     textColor: 'text-indigo-800 dark:text-indigo-200',
     hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
     iconColor: 'text-indigo-600 dark:text-indigo-400'
+  },
+  {
+    title: 'Image Resizer',
+    description: 'Resize and crop images directly in your browser.',
+    href: '/image-resizer',
+    icon: <ImageIcon className="size-8" />,
+    bgColor: 'bg-sky-100 dark:bg-sky-900/50',
+    textColor: 'text-sky-800 dark:text-sky-200',
+    hoverBg: 'hover:bg-sky-200 dark:hover:bg-sky-900/80',
+    iconColor: 'text-sky-600 dark:text-sky-400'
   },
 ];
 
