@@ -26,7 +26,7 @@ const tools = [
   {
     title: 'BMI Calculator',
     description: 'Calculate your Body Mass Index to assess your weight status.',
-    href: '/dashboard/bmi-calculator',
+    href: '/bmi-calculator',
     icon: <Scale className="size-8" />,
     bgColor: 'bg-blue-100 dark:bg-blue-900/50',
     textColor: 'text-blue-800 dark:text-blue-200',
@@ -36,7 +36,7 @@ const tools = [
   {
     title: 'Calorie Calculator',
     description: 'Estimate your daily calorie needs for maintenance, fat loss, or muscle gain.',
-    href: '/dashboard/calorie-calculator',
+    href: '/calorie-calculator',
     icon: <Calculator className="size-8" />,
     bgColor: 'bg-green-100 dark:bg-green-900/50',
     textColor: 'text-green-800 dark:text-green-200',
@@ -46,7 +46,7 @@ const tools = [
    {
     title: 'Protein Calculator',
     description: 'Calculate your optimal daily protein intake based on your goals.',
-    href: '/dashboard/protein-calculator',
+    href: '/protein-calculator',
     icon: <EggFried className="size-8" />,
     bgColor: 'bg-yellow-100 dark:bg-yellow-900/50',
     textColor: 'text-yellow-800 dark:text-yellow-200',
@@ -56,7 +56,7 @@ const tools = [
    {
     title: 'Fat Intake Calculator',
     description: 'Determine your recommended daily fat intake for a balanced diet.',
-    href: '/dashboard/fat-intake-calculator',
+    href: '/fat-intake-calculator',
     icon: <Percent className="size-8" />,
     bgColor: 'bg-purple-100 dark:bg-purple-900/50',
     textColor: 'text-purple-800 dark:text-purple-200',

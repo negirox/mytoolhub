@@ -26,7 +26,7 @@ const tools = [
   {
     title: 'Percentage Calculator',
     description: 'Calculate percentages for various scenarios.',
-    href: '/dashboard/percentage-calculator',
+    href: '/percentage-calculator',
     icon: <Percent className="size-8" />,
     bgColor: 'bg-purple-100 dark:bg-purple-900/50',
     textColor: 'text-purple-800 dark:text-purple-200',
@@ -36,7 +36,7 @@ const tools = [
   {
     title: 'Simple Calculator',
     description: 'A basic calculator for everyday arithmetic operations.',
-    href: '/dashboard/simple-calculator',
+    href: '/simple-calculator',
     icon: <Calculator className="size-8" />,
     bgColor: 'bg-teal-100 dark:bg-teal-900/50',
     textColor: 'text-teal-800 dark:text-teal-200',
@@ -46,7 +46,7 @@ const tools = [
   {
     title: 'Scientific Calculator',
     description: 'Perform advanced calculations with scientific functions.',
-    href: '/dashboard/scientific-calculator',
+    href: '/scientific-calculator',
     icon: <FlaskConical className="size-8" />,
     bgColor: 'bg-blue-100 dark:bg-blue-900/50',
     textColor: 'text-blue-800 dark:text-blue-200',
@@ -56,7 +56,7 @@ const tools = [
   {
     title: 'Fraction Calculator',
     description: 'Add, subtract, multiply, and divide fractions easily.',
-    href: '/dashboard/fraction-calculator',
+    href: '/fraction-calculator',
     icon: <Divide className="size-8" />,
     bgColor: 'bg-red-100 dark:bg-red-900/50',
     textColor: 'text-red-800 dark:text-red-200',
@@ -66,7 +66,7 @@ const tools = [
    {
     title: 'Random Number Generator',
     description: 'Generate random numbers with advanced options.',
-    href: '/dashboard/random-number-generator',
+    href: '/random-number-generator',
     icon: <Shuffle className="size-8" />,
     bgColor: 'bg-green-100 dark:bg-green-900/50',
     textColor: 'text-green-800 dark:text-green-200',
@@ -76,7 +76,7 @@ const tools = [
   {
     title: 'Percent Error Calculator',
     description: 'Calculate the percent error between an observed and true value.',
-    href: '/dashboard/percent-error-calculator',
+    href: '/percent-error-calculator',
     icon: <Percent className="size-8" />,
     bgColor: 'bg-amber-100 dark:bg-amber-900/50',
     textColor: 'text-amber-800 dark:text-amber-200',
@@ -86,7 +86,7 @@ const tools = [
    {
     title: 'Exponent Calculator',
     description: 'Solve for base, exponent, or result with this versatile calculator.',
-    href: '/dashboard/exponent-calculator',
+    href: '/exponent-calculator',
     icon: <Superscript className="size-8" />,
     bgColor: 'bg-rose-100 dark:bg-rose-900/50',
     textColor: 'text-rose-800 dark:text-rose-200',
@@ -96,7 +96,7 @@ const tools = [
   {
     title: 'Binary Calculator',
     description: 'Perform arithmetic and conversions with binary numbers.',
-    href: '/dashboard/binary-calculator',
+    href: '/binary-calculator',
     icon: <Cpu className="size-8" />,
     bgColor: 'bg-slate-100 dark:bg-slate-900/50',
     textColor: 'text-slate-800 dark:text-slate-200',
@@ -106,7 +106,7 @@ const tools = [
   {
     title: 'Half-Life Calculator',
     description: 'Calculate substance decay with the half-life formula.',
-    href: '/dashboard/half-life-calculator',
+    href: '/half-life-calculator',
     icon: <Atom className="size-8" />,
     bgColor: 'bg-lime-100 dark:bg-lime-900/50',
     textColor: 'text-lime-800 dark:text-lime-200',
@@ -116,7 +116,7 @@ const tools = [
   {
     title: 'Quadratic Formula Calculator',
     description: 'Solve quadratic equations and see the step-by-step solution.',
-    href: '/dashboard/quadratic-formula-calculator',
+    href: '/quadratic-formula-calculator',
     icon: <Superscript className="size-8" />, // Using Superscript again as it fits
     bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
     textColor: 'text-indigo-800 dark:text-indigo-200',
@@ -126,7 +126,7 @@ const tools = [
   {
     title: 'Log Calculator',
     description: 'Solve for any variable in a logarithmic equation (log_b(x) = y).',
-    href: '/dashboard/log-calculator',
+    href: '/log-calculator',
     icon: <LogIn className="size-8" />, 
     bgColor: 'bg-pink-100 dark:bg-pink-900/50',
     textColor: 'text-pink-800 dark:text-pink-200',

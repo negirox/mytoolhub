@@ -26,7 +26,7 @@ const tools = [
   {
     title: 'EMI Calculator',
     description: 'Calculate your Equated Monthly Installment for any loan.',
-    href: '/dashboard/emi-calculator',
+    href: '/emi-calculator',
     icon: <Landmark className="size-8" />,
     bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
     textColor: 'text-indigo-800 dark:text-indigo-200',
@@ -36,7 +36,7 @@ const tools = [
    {
     title: 'Home Loan Calculator',
     description: 'Detailed home loan EMI and expense calculator.',
-    href: '/dashboard/home-loan-emi-calculator',
+    href: '/home-loan-emi-calculator',
     icon: <Home className="size-8" />,
     bgColor: 'bg-pink-100 dark:bg-pink-900/50',
     textColor: 'text-pink-800 dark:text-pink-200',
@@ -46,7 +46,7 @@ const tools = [
    {
     title: 'Credit Card EMI Calculator',
     description: 'Calculate credit card EMIs with processing fees and GST.',
-    href: '/dashboard/credit-card-emi-calculator',
+    href: '/credit-card-emi-calculator',
     icon: <CreditCard className="size-8" />,
     bgColor: 'bg-rose-100 dark:bg-rose-900/50',
     textColor: 'text-rose-800 dark:text-rose-200',
@@ -56,7 +56,7 @@ const tools = [
   {
     title: 'Tax Calculator',
     description: 'A simple tax calculator for Indian tax regimes.',
-    href: '/dashboard/tax-calculator',
+    href: '/tax-calculator',
     icon: <Percent className="size-8" />,
     bgColor: 'bg-cyan-100 dark:bg-cyan-900/50',
     textColor: 'text-cyan-800 dark:text-cyan-200',
@@ -66,7 +66,7 @@ const tools = [
   {
     title: 'Mortgage Calculator',
     description: 'Estimate your monthly mortgage payments.',
-    href: '/dashboard/mortgage-calculator',
+    href: '/mortgage-calculator',
     icon: <Home className="size-8" />,
     bgColor: 'bg-purple-100 dark:bg-purple-900/50',
     textColor: 'text-purple-800 dark:text-purple-200',
@@ -76,7 +76,7 @@ const tools = [
    {
     title: 'Amortization Calculator',
     description: 'See a detailed breakdown of your loan payments over time.',
-    href: '/dashboard/amortization-calculator',
+    href: '/amortization-calculator',
     icon: <Calculator className="size-8" />,
     bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
     textColor: 'text-indigo-800 dark:text-indigo-200',
@@ -86,7 +86,7 @@ const tools = [
    {
     title: 'Mortgage Payoff Calculator',
     description: 'Calculate how extra payments can shorten your mortgage term.',
-    href: '/dashboard/mortgage-payoff-calculator',
+    href: '/mortgage-payoff-calculator',
     icon: <ChevronsRight className="size-8" />,
     bgColor: 'bg-pink-100 dark:bg-pink-900/50',
     textColor: 'text-pink-800 dark:text-pink-200',
@@ -96,7 +96,7 @@ const tools = [
   {
     title: 'House Affordability Calculator',
     description: 'Determine how much house you can afford.',
-    href: '/dashboard/house-affordability-calculator',
+    href: '/house-affordability-calculator',
     icon: <House className="size-8" />,
     bgColor: 'bg-green-100 dark:bg-green-900/50',
     textColor: 'text-green-800 dark:text-green-200',
@@ -106,7 +106,7 @@ const tools = [
   {
     title: 'Rent Affordability Calculator',
     description: 'Calculate your affordable monthly rent spending.',
-    href: '/dashboard/rent-affordability-calculator',
+    href: '/rent-affordability-calculator',
     icon: <Banknote className="size-8" />,
     bgColor: 'bg-teal-100 dark:bg-teal-900/50',
     textColor: 'text-teal-800 dark:text-teal-200',
@@ -116,7 +116,7 @@ const tools = [
   {
     title: 'Debt-to-Income Ratio Calculator',
     description: 'Calculate your debt-to-income (DTI) ratio to assess financial health.',
-    href: '/dashboard/dti-calculator',
+    href: '/dti-calculator',
     icon: <CirclePercent className="size-8" />,
     bgColor: 'bg-orange-100 dark:bg-orange-900/50',
     textColor: 'text-orange-800 dark:text-orange-200',
@@ -126,7 +126,7 @@ const tools = [
   {
     title: 'Rental Property Calculator',
     description: 'Analyze potential real estate investments.',
-    href: '/dashboard/rental-property-calculator',
+    href: '/rental-property-calculator',
     icon: <Building className="size-8" />,
     bgColor: 'bg-sky-100 dark:bg-sky-900/50',
     textColor: 'text-sky-800 dark:text-sky-200',
@@ -136,7 +136,7 @@ const tools = [
   {
     title: 'Refinance Calculator',
     description: 'See if refinancing your mortgage is right for you.',
-    href: '/dashboard/refinance-calculator',
+    href: '/refinance-calculator',
     icon: <Repeat className="size-8" />,
     bgColor: 'bg-blue-100 dark:bg-blue-900/50',
     textColor: 'text-blue-800 dark:text-blue-200',
@@ -146,7 +146,7 @@ const tools = [
   {
     title: 'APR Calculator',
     description: 'Calculate the Annual Percentage Rate for a loan.',
-    href: '/dashboard/apr-calculator',
+    href: '/apr-calculator',
     icon: <Percent className="size-8" />,
     bgColor: 'bg-amber-100 dark:bg-amber-900/50',
     textColor: 'text-amber-800 dark:text-amber-200',
@@ -156,7 +156,7 @@ const tools = [
   {
     title: 'FHA Loan Calculator',
     description: 'Estimate payments for an FHA-insured mortgage.',
-    href: '/dashboard/fha-loan-calculator',
+    href: '/fha-loan-calculator',
     icon: <ShieldCheck className="size-8" />,
     bgColor: 'bg-fuchsia-100 dark:bg-fuchsia-900/50',
     textColor: 'text-fuchsia-800 dark:text-fuchsia-200',
@@ -166,7 +166,7 @@ const tools = [
   {
     title: 'VA Loan Calculator',
     description: 'Calculate mortgage payments for VA loans.',
-    href: '/dashboard/va-mortgage-calculator',
+    href: '/va-mortgage-calculator',
     icon: <ShieldCheck className="size-8" />,
     bgColor: 'bg-violet-100 dark:bg-violet-900/50',
     textColor: 'text-violet-800 dark:text-violet-200',
@@ -176,7 +176,7 @@ const tools = [
   {
     title: 'Down Payment Calculator',
     description: 'Calculate the required down payment for a home.',
-    href: '/dashboard/down-payment-calculator',
+    href: '/down-payment-calculator',
     icon: <Banknote className="size-8" />,
     bgColor: 'bg-emerald-100 dark:bg-emerald-900/50',
     textColor: 'text-emerald-800 dark:text-emerald-200',
@@ -186,7 +186,7 @@ const tools = [
   {
     title: 'Rent vs. Buy Calculator',
     description: 'Compare the costs of renting vs. buying a home.',
-    href: '/dashboard/rent-vs-buy-calculator',
+    href: '/rent-vs-buy-calculator',
     icon: <HelpCircle className="size-8" />,
     bgColor: 'bg-gray-100 dark:bg-gray-900/50',
     textColor: 'text-gray-800 dark:text-gray-200',
