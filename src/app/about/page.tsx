@@ -129,7 +129,7 @@ export default function AboutPage() {
                 <div>
                     <h3 className="font-bold mb-2">Explore More Projects</h3>
                     <ul className="list-disc pl-5 space-y-2 text-sm">
-                        <li><a href="https://mytoolhub.vercel.app" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">mytoolhub.vercel.app</a></li>
+                        <li><a href="https://algo-viz-nu.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">algo-viz-nu.vercel.app</a></li>
                         <li><a href="https://neon-ime.vercel.app" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">neon-ime.vercel.app</a></li>
                         <li><a href="https://atmosphere-iq.vercel.app" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">atmosphere-iq.vercel.app</a></li>
                     </ul>
