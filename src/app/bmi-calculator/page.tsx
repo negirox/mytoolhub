@@ -24,12 +24,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
-import type { Metadata } from 'next';
-
-// export const metadata: Metadata = {
-//   title: 'BMI Calculator | MyToolHub',
-//   description: 'Calculate your Body Mass Index (BMI) to check if your weight is healthy. Understand your results with our easy-to-use calculator and charts.',
-// };
 
 type UnitSystem = 'metric' | 'imperial';
 

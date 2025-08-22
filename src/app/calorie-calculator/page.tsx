@@ -26,16 +26,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
-
-
-// export const metadata: Metadata = {
-//   title: 'Calorie Calculator | MyToolHub',
-//   description: 'Estimate your daily calorie needs for maintenance, weight loss, or weight gain based on your age, gender, weight, height, and activity level.',
-// };
-
 
 type UnitSystem = 'metric' | 'imperial';
 type Gender = 'male' | 'female';

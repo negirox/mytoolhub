@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import type { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,11 +10,6 @@ import { Switch } from '@/components/ui/switch';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Upload, Download, Ratio, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-// export const metadata: Metadata = {
-//   title: 'Image Resizer',
-//   description: 'Quickly resize, and change aspect ratio of your images directly in your browser. A secure and private client-side tool.',
-// };
 
 export default function ImageResizerPage() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);

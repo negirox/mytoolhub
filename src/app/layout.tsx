@@ -1,7 +1,6 @@
 
 'use client';
 
-import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import Script from 'next/script';
@@ -33,50 +32,6 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
-
-// export const metadata: Metadata = {
-//   metadataBase: new URL(siteUrl),
-//   title: {
-//     template: '%s | MyToolHub',
-//     default: 'MyToolHub - Free Online Calculators & Converters',
-//   },
-//   description: 'A free, powerful hub of client-side tools including BMI, Calorie, EMI, and Currency Converters. Fast, secure, and easy to use.',
-//   keywords: ['calculator', 'converter', 'bmi', 'emi', 'currency', 'calorie', 'free tools', 'online tools', 'financial calculator', 'health calculator'],
-//   authors: [{ name: 'Negirox', url: 'https://github.com/negirox' }],
-//   creator: 'Negirox',
-//   publisher: 'Negirox',
-//   robots: {
-//     index: true,
-//     follow: true,
-//   },
-//   openGraph: {
-//     title: 'MyToolHub - Free Online Calculators & Converters',
-//     description: 'A comprehensive collection of free, client-side tools for health, finance, and general utility.',
-//     url: siteUrl,
-//     siteName: 'MyToolHub',
-//     images: [
-//       {
-//         url: `${siteUrl}/og-image.png`, // Assuming you will add an og-image.png to your public folder
-//         width: 1200,
-//         height: 630,
-//         alt: 'MyToolHub - Free Online Calculators & Converters',
-//       },
-//     ],
-//     locale: 'en_US',
-//     type: 'website',
-//   },
-//   twitter: {
-//     card: 'summary_large_image',
-//     title: 'MyToolHub - Free Online Calculators & Converters',
-//     description: 'A comprehensive collection of free, client-side tools for health, finance, and general utility.',
-//     images: [`${siteUrl}/og-image.png`],
-//   },
-//   alternates: {
-//     canonical: siteUrl,
-//   },
-// };
 
 function Logo() {
   return (
@@ -141,8 +96,23 @@ export default function RootLayout({
       <head>
         <title>MyToolHub - Free Online Calculators & Converters</title>
         <meta name="description" content="A free, powerful hub of client-side tools including BMI, Calorie, EMI, and Currency Converters. Fast, secure, and easy to use." />
+        <meta name="keywords" content="calculator, converter, bmi, emi, currency, calorie, free tools, online tools, financial calculator, health calculator" />
+        <meta name="author" content="Negirox" />
+        <meta name="creator" content="Negirox" />
+        <meta name="publisher" content="Negirox" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="MyToolHub - Free Online Calculators & Converters" />
+        <meta property="og:description" content="A comprehensive collection of free, client-side tools for health, finance, and general utility." />
+        <meta property="og:url" content="https://mytoolhub.vercel.app" />
+        <meta property="og:site_name" content="MyToolHub" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="MyToolHub - Free Online Calculators & Converters" />
+        <meta name="twitter:description" content="A comprehensive collection of free, client-side tools for health, finance, and general utility." />
         <meta name="google-adsense-account" content="ca-pub-9187440931404634" />
         <meta name="google-site-verification" content="Ho2zcxC6OxfZE7x7sKnI0PfZHMuQpwYWvmnmjAdcUqg" />
+        <link rel="canonical" href="https://mytoolhub.vercel.app" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
