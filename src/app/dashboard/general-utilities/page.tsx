@@ -26,7 +26,7 @@ const tools = [
   {
     title: 'Currency Converter',
     description: 'Convert between different currencies with real-time rates.',
-    href: '/dashboard/currency-converter',
+    href: '/currency-converter',
     icon: <Wallet className="size-8" />,
     bgColor: 'bg-teal-100 dark:bg-teal-900/50',
     textColor: 'text-teal-800 dark:text-teal-200',
@@ -36,7 +36,7 @@ const tools = [
   {
     title: 'Unit Converter',
     description: 'Convert length, weight, area, volume, and more.',
-    href: '/dashboard/unit-converter',
+    href: '/unit-converter',
     icon: <Ruler className="size-8" />,
     bgColor: 'bg-orange-100 dark:bg-orange-900/50',
     textColor: 'text-orange-800 dark:text-orange-200',
@@ -46,7 +46,7 @@ const tools = [
     {
     title: 'Sleep Calculator',
     description: 'Find your optimal bedtime or wake-up time based on sleep cycles.',
-    href: '/dashboard/sleep-calculator',
+    href: '/sleep-calculator',
     icon: <Bed className="size-8" />,
     bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
     textColor: 'text-indigo-800 dark:text-indigo-200',

@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Calculator, EggFried, Percent, Scale } from 'lucide-react';
+import { ArrowRight, Ruler, Wallet, Bed, Image as ImageIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import {
   Tooltip,
@@ -18,61 +18,61 @@ import {
 import React from 'react';
 
 export const metadata: Metadata = {
-    title: 'Health & Fitness Calculators | MyToolHub',
-    description: 'A collection of health and fitness calculators to help you track your progress and stay healthy.'
+    title: 'General Utilities | MyToolHub',
+    description: 'A collection of general utility converters and calculators for everyday use.'
 };
 
 const tools = [
   {
-    title: 'BMI Calculator',
-    description: 'Calculate your Body Mass Index to assess your weight status.',
-    href: '/bmi-calculator',
-    icon: <Scale className="size-8" />,
-    bgColor: 'bg-blue-100 dark:bg-blue-900/50',
-    textColor: 'text-blue-800 dark:text-blue-200',
-    hoverBg: 'hover:bg-blue-200 dark:hover:bg-blue-900/80',
-    iconColor: 'text-blue-600 dark:text-blue-400'
+    title: 'Currency Converter',
+    description: 'Convert between different currencies with real-time rates.',
+    href: '/currency-converter',
+    icon: <Wallet className="size-8" />,
+    bgColor: 'bg-teal-100 dark:bg-teal-900/50',
+    textColor: 'text-teal-800 dark:text-teal-200',
+    hoverBg: 'hover:bg-teal-200 dark:hover:bg-teal-900/80',
+    iconColor: 'text-teal-600 dark:text-teal-400'
   },
   {
-    title: 'Calorie Calculator',
-    description: 'Estimate your daily calorie needs for maintenance, fat loss, or muscle gain.',
-    href: '/calorie-calculator',
-    icon: <Calculator className="size-8" />,
-    bgColor: 'bg-green-100 dark:bg-green-900/50',
-    textColor: 'text-green-800 dark:text-green-200',
-    hoverBg: 'hover:bg-green-200 dark:hover:bg-green-900/80',
-    iconColor: 'text-green-600 dark:text-green-400'
+    title: 'Unit Converter',
+    description: 'Convert length, weight, area, volume, and more.',
+    href: '/unit-converter',
+    icon: <Ruler className="size-8" />,
+    bgColor: 'bg-orange-100 dark:bg-orange-900/50',
+    textColor: 'text-orange-800 dark:text-orange-200',
+    hoverBg: 'hover:bg-orange-200 dark:hover:bg-orange-900/80',
+    iconColor: 'text-orange-600 dark:text-orange-400'
   },
-   {
-    title: 'Protein Calculator',
-    description: 'Calculate your optimal daily protein intake based on your goals.',
-    href: '/protein-calculator',
-    icon: <EggFried className="size-8" />,
-    bgColor: 'bg-yellow-100 dark:bg-yellow-900/50',
-    textColor: 'text-yellow-800 dark:text-yellow-200',
-    hoverBg: 'hover:bg-yellow-200 dark:hover:bg-yellow-900/80',
-    iconColor: 'text-yellow-600 dark:text-yellow-400'
+  {
+    title: 'Sleep Calculator',
+    description: 'Find your optimal bedtime or wake-up time based on sleep cycles.',
+    href: '/sleep-calculator',
+    icon: <Bed className="size-8" />,
+    bgColor: 'bg-indigo-100 dark:bg-indigo-900/50',
+    textColor: 'text-indigo-800 dark:text-indigo-200',
+    hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
+    iconColor: 'text-indigo-600 dark:text-indigo-400'
   },
-   {
-    title: 'Fat Intake Calculator',
-    description: 'Determine your recommended daily fat intake for a balanced diet.',
-    href: '/fat-intake-calculator',
-    icon: <Percent className="size-8" />,
-    bgColor: 'bg-purple-100 dark:bg-purple-900/50',
-    textColor: 'text-purple-800 dark:text-purple-200',
-    hoverBg: 'hover:bg-purple-200 dark:hover:bg-purple-900/80',
-    iconColor: 'text-purple-600 dark:text-purple-400'
+  {
+    title: 'Image Resizer',
+    description: 'Resize and crop images directly in your browser.',
+    href: '/image-resizer',
+    icon: <ImageIcon className="size-8" />,
+    bgColor: 'bg-sky-100 dark:bg-sky-900/50',
+    textColor: 'text-sky-800 dark:text-sky-200',
+    hoverBg: 'hover:bg-sky-200 dark:hover:bg-sky-900/80',
+    iconColor: 'text-sky-600 dark:text-sky-400'
   },
 ];
 
-export default function HealthAndFitnessPage() {
+export default function GeneralUtilitiesPage() {
   return (
     <TooltipProvider>
       <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
-        <h1 className="font-headline text-xl font-semibold">Health & Fitness Calculators</h1>
+        <h1 className="font-headline text-xl font-semibold">General Utilities</h1>
       </header>
       <main className="flex-1 p-4 md:p-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {tools.map((tool) => (
               <Tooltip key={tool.href}>
                 <TooltipTrigger asChild>
