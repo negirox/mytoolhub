@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import Link from 'next/link';
 
 export default function ExponentCalculatorPage() {
     const [base, setBase] = useState('2');
@@ -161,7 +162,7 @@ export default function ExponentCalculatorPage() {
                                 <AccordionItem value="item-2">
                                     <AccordionTrigger>How does this calculator solve for the exponent?</AccordionTrigger>
                                     <AccordionContent>
-                                        To find a missing exponent (e.g., 2ˣ = 32), the calculator uses logarithms. The formula is x = log(result) / log(base). A logarithm is the inverse operation of exponentiation, essentially asking "what exponent produces this result?".
+                                        To find a missing exponent (e.g., 2ˣ = 32), the calculator uses logarithms. The formula is x = log(result) / log(base). A logarithm is the inverse operation of exponentiation, essentially asking "what exponent produces this result?". For more, check out our <Link href="/log-calculator" className="text-primary underline">Log Calculator</Link>.
                                     </AccordionContent>
                                 </AccordionItem>
                                 <AccordionItem value="item-3">
