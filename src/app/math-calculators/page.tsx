@@ -19,7 +19,7 @@ import React from 'react';
 
 export const metadata: Metadata = {
     title: 'Math Calculators | MyToolHub',
-    description: 'A collection of math calculators for various calculations like percentages, fractions, and more.'
+    description: 'A collection of math calculators for various calculations like percentages, fractions, exponents, logarithms and more.'
 };
 
 const tools = [
@@ -93,6 +93,16 @@ const tools = [
     hoverBg: 'hover:bg-rose-200 dark:hover:bg-rose-900/80',
     iconColor: 'text-rose-600 dark:text-rose-400'
   },
+   {
+    title: 'Log Calculator',
+    description: 'Solve for any variable in a logarithmic equation (log_b(x) = y).',
+    href: '/log-calculator',
+    icon: <LogIn className="size-8" />, 
+    bgColor: 'bg-pink-100 dark:bg-pink-900/50',
+    textColor: 'text-pink-800 dark:text-pink-200',
+    hoverBg: 'hover:bg-pink-200 dark:hover:bg-pink-900/80',
+    iconColor: 'text-pink-600 dark:text-pink-400'
+  },
   {
     title: 'Binary Calculator',
     description: 'Perform arithmetic and conversions with binary numbers.',
@@ -122,16 +132,6 @@ const tools = [
     textColor: 'text-indigo-800 dark:text-indigo-200',
     hoverBg: 'hover:bg-indigo-200 dark:hover:bg-indigo-900/80',
     iconColor: 'text-indigo-600 dark:text-indigo-400'
-  },
-  {
-    title: 'Log Calculator',
-    description: 'Solve for any variable in a logarithmic equation (log_b(x) = y).',
-    href: '/log-calculator',
-    icon: <LogIn className="size-8" />, 
-    bgColor: 'bg-pink-100 dark:bg-pink-900/50',
-    textColor: 'text-pink-800 dark:text-pink-200',
-    hoverBg: 'hover:bg-pink-200 dark:hover:bg-pink-900/80',
-    iconColor: 'text-pink-600 dark:text-pink-400'
   },
 ];
 
