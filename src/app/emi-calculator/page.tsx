@@ -1,0 +1,681 @@
+
+'use client';
+
+import { useState, useMemo, useEffect, useContext, useCallback } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Pie,
+  PieChart,
+  Cell,
+} from 'recharts';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+} from '@/components/ui/collapsible';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+
+
+type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
+interface MonthlyAmortizationData {
+  month: number;
+  principal: number;
+  interest: number;
+  extraPayment: number;
+  totalPayment: number;
+  balance: number;
+}
+interface AmortizationData {
+  year: number;
+  principal: number; // yearly principal
+  interest: number; // yearly interest
+  totalPayment: number; // yearly total payment
+  extraPayment: number; // yearly extra payment
+  balance: number;
+  loanPaidToDate: number;
+  monthlyData: MonthlyAmortizationData[];
+}
+
+const currencyLocales: Record<Currency, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE',
+};
+const currencySymbols: Record<Currency, string> = {
+  INR: '₹',
+  USD: '$',
+  EUR: '€',
+};
+
+export default function EmiCalculatorPage() {
+  const currencyContext = useContext(CurrencyContext);
+  if (!currencyContext) {
+    throw new Error('useContext must be used within a CurrencyProvider');
+  }
+  const { globalCurrency } = currencyContext;
+
+  const [principal, setPrincipal] = useState('1000000');
+  const [interestRate, setInterestRate] = useState('8.5');
+  const [tenure, setTenure] = useState('20');
+  const [currency, setCurrency] = useState<Currency>(globalCurrency);
+
+  // Advanced Options State
+  const [prepaymentFrequency, setPrepaymentFrequency] =
+    useState<PrepaymentFrequency>('none');
+  const [prepaymentAmount, setPrepaymentAmount] = useState('0');
+
+  useEffect(() => {
+    setCurrency(globalCurrency);
+  }, [globalCurrency]);
+
+  const formatCurrency = useCallback((value: number) => {
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }, [currency]);
+
+  const { emi, totalInterest, totalPayment, amortizationData } = useMemo(() => {
+    const p = parseFloat(principal);
+    const r = parseFloat(interestRate) / 12 / 100;
+    const n = parseFloat(tenure) * 12;
+    const extra = parseFloat(prepaymentAmount) || 0;
+
+    if (p <= 0 || r < 0 || n <= 0 || isNaN(p) || isNaN(r) || isNaN(n)) {
+      return { emi: null, totalInterest: null, totalPayment: null, amortizationData: [] };
+    }
+    
+    if (r === 0) {
+        const emiValue = p / n;
+        return { emi: emiValue, totalInterest: 0, totalPayment: p, amortizationData: [] }; // Simplified for zero interest
+    }
+
+    const emiValue = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+
+    let balance = p;
+    let totalInterestPaid = 0;
+    let totalPrincipalPaid = 0;
+    
+    const yearlyData: { [key: number]: Omit<AmortizationData, 'year' | 'balance' | 'loanPaidToDate'> & {monthlyData: MonthlyAmortizationData[]} } = {};
+
+    let originalMonths = n;
+
+    for (let month = 1; month <= originalMonths && balance > 0; month++) {
+      const interestForMonth = balance * r;
+      let principalForMonth = emiValue - interestForMonth;
+
+      let extraPaymentForMonth = 0;
+      if (prepaymentFrequency !== 'none' && extra > 0) {
+        const freqMap = { monthly: 1, quarterly: 3, yearly: 12 };
+        if (month % freqMap[prepaymentFrequency] === 0) {
+          extraPaymentForMonth = Math.min(extra, balance - principalForMonth);
+        }
+      }
+      
+      let currentMonthPayment = emiValue + extraPaymentForMonth;
+      if (balance < principalForMonth) {
+        principalForMonth = balance;
+        currentMonthPayment = balance + interestForMonth;
+      }
+      if (balance <= (principalForMonth + extraPaymentForMonth)) {
+         extraPaymentForMonth = Math.max(0, balance - principalForMonth);
+         principalForMonth = Math.min(principalForMonth, balance);
+         currentMonthPayment = principalForMonth + interestForMonth + extraPaymentForMonth;
+         balance = 0;
+      } else {
+         balance -= (principalForMonth + extraPaymentForMonth);
+      }
+
+      totalInterestPaid += interestForMonth;
+      totalPrincipalPaid += principalForMonth + extraPaymentForMonth;
+      
+      const year = Math.ceil(month / 12);
+      if (!yearlyData[year]) {
+        yearlyData[year] = {
+          principal: 0,
+          interest: 0,
+          totalPayment: 0,
+          extraPayment: 0,
+          monthlyData: []
+        };
+      }
+      yearlyData[year].principal += principalForMonth;
+      yearlyData[year].interest += interestForMonth;
+      yearlyData[year].totalPayment += currentMonthPayment;
+      yearlyData[year].extraPayment += extraPaymentForMonth;
+      yearlyData[year].monthlyData.push({
+          month: month,
+          principal: principalForMonth,
+          interest: interestForMonth,
+          extraPayment: extraPaymentForMonth,
+          totalPayment: currentMonthPayment,
+          balance: balance
+      });
+    }
+
+    const schedule: AmortizationData[] = [];
+    let cumulativePaid = 0;
+    Object.keys(yearlyData).forEach((yearStr) => {
+      const year = parseInt(yearStr);
+      const data = yearlyData[year];
+      cumulativePaid += data.principal + data.extraPayment;
+
+      schedule.push({
+        year: year,
+        principal: data.principal,
+        interest: data.interest,
+        totalPayment: data.totalPayment,
+        balance: data.monthlyData[data.monthlyData.length-1].balance,
+        loanPaidToDate: (cumulativePaid / p) * 100,
+        extraPayment: data.extraPayment,
+        monthlyData: data.monthlyData,
+      });
+    });
+
+    return { 
+        emi: emiValue, 
+        totalInterest: totalInterestPaid, 
+        totalPayment: p + totalInterestPaid, 
+        amortizationData: schedule 
+    };
+  }, [principal, interestRate, tenure, prepaymentAmount, prepaymentFrequency]);
+  
+  const AmortizationRow = ({ row }: { row: AmortizationData }) => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    return (
+      <>
+        <TableRow className="bg-muted/50 hover:bg-muted">
+          <TableCell>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+              className="size-6"
+            >
+              {isOpen ? (
+                <ChevronDown className="size-4" />
+              ) : (
+                <ChevronRight className="size-4" />
+              )}
+            </Button>
+            {row.year}
+          </TableCell>
+          <TableCell>{formatCurrency(row.principal)}</TableCell>
+          <TableCell>{formatCurrency(row.interest)}</TableCell>
+          <TableCell>{formatCurrency(row.extraPayment)}</TableCell>
+          <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+          <TableCell>{formatCurrency(row.balance)}</TableCell>
+          <TableCell className="text-right">
+            {row.loanPaidToDate.toFixed(2)}%
+          </TableCell>
+        </TableRow>
+        <Collapsible open={isOpen} asChild>
+          <CollapsibleContent asChild>
+            <tr className="bg-background">
+              <TableCell colSpan={7} className="p-0">
+                <div className="p-4 overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Month</TableHead>
+                        <TableHead>Principal</TableHead>
+                        <TableHead>Interest</TableHead>
+                        <TableHead>Extra Payment</TableHead>
+                        <TableHead>Total Payment</TableHead>
+                        <TableHead>Ending Balance</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {row.monthlyData.map((monthData) => (
+                        <TableRow key={monthData.month}>
+                          <TableCell>{monthData.month}</TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.principal)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.interest)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.extraPayment)}
+                          </TableCell>
+                           <TableCell>
+                            {formatCurrency(monthData.totalPayment)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthData.balance)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TableCell>
+            </tr>
+          </CollapsibleContent>
+        </Collapsible>
+      </>
+    );
+  };
+
+  const chartConfig = {
+    principal: { label: 'Principal', color: 'hsl(var(--chart-3))' },
+    interest: { label: 'Interest', color: 'hsl(var(--chart-1))' },
+    extraPayment: { label: 'Extra Payment', color: 'hsl(var(--chart-2))' }
+  };
+  
+  const pieChartData = useMemo(() => ([
+    { name: 'Principal Amount', value: parseFloat(principal) || 0, fill: 'var(--color-principal)' },
+    { name: 'Total Interest', value: totalInterest || 0, fill: 'var(--color-interest)' }
+  ]), [principal, totalInterest]);
+
+
+  return (
+    <TooltipProvider>
+      <header className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:flex">
+        <h1 className="font-headline text-xl font-semibold">EMI Calculator</h1>
+      </header>
+      <main className="flex-1 p-4 md:p-6">
+        <div className="grid gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">
+                Equated Monthly Installment (EMI) Calculator
+              </CardTitle>
+              <CardDescription>
+                Calculate your monthly loan installments and see a detailed
+                amortization schedule.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="currency">Currency</Label>
+                    <Select value={currency} onValueChange={(val) => setCurrency(val as Currency)}>
+                        <SelectTrigger id="currency">
+                            <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="INR">INR (₹)</SelectItem>
+                            <SelectItem value="USD">USD ($)</SelectItem>
+                            <SelectItem value="EUR">EUR (€)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="principal">Loan Amount ({currencySymbols[currency]})</Label>
+                    <Input
+                      id="principal"
+                      type="number"
+                      value={principal}
+                      onChange={(e) => setPrincipal(e.target.value)}
+                    />
+                    <Slider
+                      value={[parseFloat(principal)]}
+                      onValueChange={(value) => setPrincipal(String(value[0]))}
+                      min={100000}
+                      max={20000000}
+                      step={100000}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="interest">Interest Rate (% p.a.)</Label>
+                    <Input
+                      id="interest"
+                      type="number"
+                      value={interestRate}
+                      onChange={(e) => setInterestRate(e.target.value)}
+                      placeholder="e.g., 8.5"
+                      step="0.1"
+                    />
+                    <Slider
+                      value={[parseFloat(interestRate)]}
+                      onValueChange={(value) =>
+                        setInterestRate(String(value[0]))
+                      }
+                      max={20}
+                      step={0.1}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="tenure">Loan Tenure (Years)</Label>
+                    <Input
+                      id="tenure"
+                      type="number"
+                      value={tenure}
+                      onChange={(e) => setTenure(e.target.value)}
+                      placeholder="e.g., 20"
+                    />
+                    <Slider
+                      value={[parseFloat(tenure)]}
+                      onValueChange={(value) => setTenure(String(value[0]))}
+                      max={30}
+                      step={1}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-center gap-4">
+                    {emi !== null && totalInterest !== null && totalPayment !== null && (
+                        <div className="grid grid-cols-1 gap-4 text-center w-full">
+                           <div className="space-y-1 rounded-lg border p-4">
+                              <p className="text-sm font-medium text-muted-foreground">Monthly EMI</p>
+                              <p className="text-2xl font-bold text-primary">{formatCurrency(emi)}</p>
+                            </div>
+                            <div className="space-y-1 rounded-lg border p-4">
+                              <p className="text-sm font-medium text-muted-foreground">Total Interest</p>
+                              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(totalInterest)}</p>
+                            </div>
+                            <div className="space-y-1 rounded-lg border p-4">
+                              <p className="text-sm font-medium text-muted-foreground">Total Payment (Principal + Interest)</p>
+                              <p className="text-2xl font-bold">{formatCurrency(totalPayment)}</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+              </div>
+
+              <Accordion type="single" collapsible className="w-full mt-6">
+                <AccordionItem value="item-1">
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <AccordionTrigger>
+                                Advanced Options (Prepayment)
+                            </AccordionTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Make extra payments to pay off your loan faster and save on interest.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                  <AccordionContent>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="prepayment-freq">
+                          Prepayment Frequency
+                        </Label>
+                        <Select
+                          value={prepaymentFrequency}
+                          onValueChange={(val) =>
+                            setPrepaymentFrequency(val as PrepaymentFrequency)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select frequency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                            <SelectItem value="quarterly">
+                              Quarterly
+                            </SelectItem>
+                            <SelectItem value="yearly">Yearly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="prepayment-amount">
+                          Prepayment Amount ({currencySymbols[currency]})
+                        </Label>
+                        <Input
+                          id="prepayment-amount"
+                          type="number"
+                          value={prepaymentAmount}
+                          onChange={(e) => setPrepaymentAmount(e.target.value)}
+                          placeholder="e.g. 10000"
+                          disabled={prepaymentFrequency === 'none'}
+                        />
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          {amortizationData.length > 0 && (
+            <div className="grid gap-6 lg:grid-cols-5">
+              <Card className="lg:col-span-3">
+                <CardHeader>
+                  <CardTitle className="font-headline">
+                    Loan Amortization
+                  </CardTitle>
+                  <CardDescription>
+                    Breakdown of your payments over the loan tenure.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer
+                    config={chartConfig}
+                    className="min-h-[300px] w-full"
+                  >
+                    <AreaChart
+                      accessibilityLayer
+                      data={amortizationData}
+                      margin={{ left: 12, right: 12, top: 20 }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="year"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        tickFormatter={(value) => `Year ${value}`}
+                      />
+                      <YAxis
+                        tickFormatter={(value) => formatCurrency(value as number)}
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={
+                          <ChartTooltipContent
+                            indicator="dot"
+                            formatter={(value, name) => (
+                              <div className="flex flex-col items-start gap-1">
+                                <span className="font-semibold" style={{color: chartConfig[name as keyof typeof chartConfig]?.color}}>
+                                  {chartConfig[name as keyof typeof chartConfig]?.label}
+                                </span>
+                                <span className="text-sm text-muted-foreground">{formatCurrency(value as number)}</span>
+                              </div>
+                            )}
+                          />
+                        }
+                      />
+                      <ChartLegend content={<ChartLegendContent />} />
+                      <Area
+                        dataKey="principal"
+                        type="natural"
+                        fill="var(--color-principal)"
+                        fillOpacity={0.7}
+                        stroke="var(--color-principal)"
+                        stackId="a"
+                        name="principal"
+                      />
+                      <Area
+                        dataKey="interest"
+                        type="natural"
+                        fill="var(--color-interest)"
+                        fillOpacity={0.7}
+                        stroke="var(--color-interest)"
+                        stackId="a"
+                        name="interest"
+                      />
+                       {prepaymentFrequency !== 'none' && parseFloat(prepaymentAmount) > 0 && (
+                          <Area
+                            dataKey="extraPayment"
+                            type="natural"
+                            fill="var(--color-extraPayment)"
+                            fillOpacity={0.7}
+                            stroke="var(--color-extraPayment)"
+                            stackId="a"
+                            name="extraPayment"
+                          />
+                        )}
+                    </AreaChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+              <Card className="lg:col-span-2">
+                 <CardHeader>
+                  <CardTitle className="font-headline">
+                    Payment Breakdown
+                  </CardTitle>
+                  <CardDescription>
+                    Principal vs. Interest
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                       <PieChart>
+                          <ChartTooltip content={<ChartTooltipContent nameKey="name" formatter={(value) => formatCurrency(value as number)} />} />
+                          <Pie
+                            data={pieChartData}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            labelLine={false}
+                            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                                const RADIAN = Math.PI / 180;
+                                const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                return (
+                                <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                                    {`${(percent * 100).toFixed(0)}%`}
+                                </text>
+                                );
+                            }}
+                          >
+                            {pieChartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <ChartLegend
+                            content={<ChartLegendContent nameKey="name" />}
+                           />
+                       </PieChart>
+                    </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+           {amortizationData.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-headline">Amortization Schedule</CardTitle>
+              </CardHeader>
+              <CardContent className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Year</TableHead>
+                      <TableHead>Principal (A)</TableHead>
+                      <TableHead>Interest (B)</TableHead>
+                      <TableHead>Extra Payments</TableHead>
+                      <TableHead>Total Payment (A + B + Extra)</TableHead>
+                      <TableHead>Balance</TableHead>
+                      <TableHead className="text-right">Loan Paid To Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {amortizationData.map((row) => (
+                      <AmortizationRow key={row.year} row={row} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+           )}
+
+           <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>What is an EMI?</AccordionTrigger>
+                        <AccordionContent>
+                        An Equated Monthly Installment (EMI) is a fixed payment amount made by a borrower to a lender on a specified date each month. EMIs are used to pay off both interest and principal each month so that over a specified number of years, the loan is paid off in full.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                        <AccordionTrigger>How is EMI calculated?</AccordionTrigger>
+                        <AccordionContent>
+                        The mathematical formula for calculating EMI is: EMI = [P x R x (1+R)^N] / [(1+R)^N-1], where P is the principal loan amount, R is the monthly interest rate, and N is the number of monthly installments. Our calculator simplifies this process for you.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                        <AccordionTrigger>What is an amortization schedule?</AccordionTrigger>
+                        <AccordionContent>
+                        An amortization schedule is a table detailing each periodic payment on a loan. It breaks down each payment into its principal and interest components and shows the remaining balance of the loan after each payment is made. This calculator provides a yearly and monthly schedule.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-4">
+                        <AccordionTrigger>How does prepayment of a loan help?</AccordionTrigger>
+                        <AccordionContent>
+                        Making prepayments (paying more than your scheduled EMI) can significantly reduce your total interest cost and shorten your loan tenure. By paying down the principal faster, you reduce the balance on which interest is calculated, leading to substantial savings over the life of the loan.
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-5">
+                        <AccordionTrigger>What is the difference between fixed and floating interest rates?</AccordionTrigger>
+                        <AccordionContent>
+                        A fixed interest rate remains the same throughout the loan tenure, meaning your EMI amount will not change. A floating interest rate, on the other hand, is linked to a benchmark rate and can change over time, causing your EMI amount to increase or decrease. This calculator assumes a fixed interest rate.
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </CardContent>
+           </Card>
+        </div>
+      </main>
+    </TooltipProvider>
+  );
+}
