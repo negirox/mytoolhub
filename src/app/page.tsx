@@ -73,7 +73,6 @@ export default function DashboardPage() {
     if (!currencyContext) {
         throw new Error("CurrencyContext must be used within a CurrencyProvider");
     }
-
     const { globalCurrency, setGlobalCurrency } = currencyContext;
 
   return (

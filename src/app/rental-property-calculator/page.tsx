@@ -46,6 +46,7 @@ import {
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import AdSenseBlock from '@/components/AdSenseBlock';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -481,6 +482,12 @@ export default function RentalPropertyCalculatorPage() {
                                 Cash flow is the net amount of cash moving into and out of the investment. In this calculator, it's the Net Operating Income (NOI) minus any mortgage payments. A positive cash flow means you have money left over after paying all expenses and the mortgage.
                                 </AccordionContent>
                             </AccordionItem>
+                             <AccordionItem value="item-ad">
+                                <AccordionTrigger>Advertisement</AccordionTrigger>
+                                <AccordionContent>
+                                   <AdSenseBlock adSlot="3078648308" adFormat="fluid" adLayoutKey="-f8+2q+2i-1l-4x" style={{ display: 'block' }}/>
+                                </AccordionContent>
+                            </AccordionItem>
                             <AccordionItem value="item-3">
                                 <AccordionTrigger>What is a Capitalization (Cap) Rate?</AccordionTrigger>
                                 <AccordionContent>
@@ -496,7 +503,7 @@ export default function RentalPropertyCalculatorPage() {
                             <AccordionItem value="item-5">
                                 <AccordionTrigger>Why is vacancy rate important?</AccordionTrigger>
                                 <AccordionContent>
-                                It's unrealistic to assume a rental property will be occupied 100% of the time. The vacancy rate accounts for periods when the property is empty between tenants, ensuring a more conservative and realistic projection of your rental income.
+                                It's unrealistic to assume a rental property will be occupied 100% of the time. The vacancy rate accounts for periods when the property is empty between tenants, ensuring a more conservative and realistic projection of your rental income. Check your local market conditions to find a realistic vacancy rate.
                                 </AccordionContent>
                             </AccordionItem>
                             <AccordionItem value="item-6">
@@ -507,6 +514,7 @@ export default function RentalPropertyCalculatorPage() {
                                         <li><strong>Budgeting and Expense Tracking:</strong> Tools like <Link href="https://www.ynab.com" target="_blank" className="text-primary hover:underline">You Need A Budget (YNAB) <ExternalLink className="inline size-3" /></Link> and <Link href="https://www.nerdwallet.com" target="_blank" className="text-primary hover:underline">NerdWallet <ExternalLink className="inline size-3" /></Link> help you track where your money goes.</li>
                                         <li><strong>Financial Planning and Investment:</strong> Services such as <Link href="https://www.empower.com/personal-capital" target="_blank" className="text-primary hover:underline">Empower <ExternalLink className="inline size-3" /></Link> and <Link href="https://www.monarchmoney.com" target="_blank" className="text-primary hover:underline">Monarch Money <ExternalLink className="inline size-3" /></Link> offer a holistic view of your net worth and help you plan for the future.</li>
                                         <li><strong>Business Finance:</strong> For small business owners, <Link href="https://quickbooks.intuit.com" target="_blank" className="text-primary hover:underline">QuickBooks <ExternalLink className="inline size-3" /></Link> and <Link href="https://www.expensify.com" target="_blank" className="text-primary hover:underline">Expensify <ExternalLink className="inline size-3" /></Link> are excellent for managing income, expenses, and payroll.</li>
+                                        <li><strong>DTI Ratio:</strong> Before taking on a new property loan, check your Debt-to-Income ratio with our <Link href="/dti-calculator" className="text-primary hover:underline">DTI Calculator</Link>.</li>
                                     </ul>
                                 </AccordionContent>
                             </AccordionItem>

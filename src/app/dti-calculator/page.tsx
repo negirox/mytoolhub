@@ -35,6 +35,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import Link from 'next/link';
+import AdSenseBlock from '@/components/AdSenseBlock';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -380,6 +381,12 @@ export default function DtiCalculatorPage() {
                         The Debt-to-Income (DTI) ratio is a key financial metric that compares your total monthly debt payments to your gross monthly income. It's expressed as a percentage and helps lenders gauge your ability to manage monthly payments and repay debts.
                         </AccordionContent>
                     </AccordionItem>
+                     <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <AdSenseBlock adSlot="7694311040" adFormat="fluid" adLayoutKey="-f8+2q+2i-1l-4x" style={{ display: 'block' }}/>
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-2">
                         <AccordionTrigger>Why is my DTI ratio important?</AccordionTrigger>
                         <AccordionContent>
@@ -399,7 +406,7 @@ export default function DtiCalculatorPage() {
                      <AccordionItem value="item-4">
                         <AccordionTrigger>How can I lower my DTI ratio?</AccordionTrigger>
                         <AccordionContent>
-                        There are two ways to lower your DTI: increase your income or decrease your debt. Focus on paying down high-interest debts like credit cards, avoid taking on new loans, and look for opportunities to boost your income.
+                        There are two ways to lower your DTI: increase your income or decrease your debt. Focus on paying down high-interest debts like credit cards, avoid taking on new loans, and look for opportunities to boost your income. A good place to start is by analyzing your potential investments with our <Link href="/rental-property-calculator" className='text-primary hover:underline'>Rental Property Calculator</Link>.
                         </AccordionContent>
                     </AccordionItem>
                      <AccordionItem value="item-5">
