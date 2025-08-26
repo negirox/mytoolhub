@@ -32,6 +32,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
+import AdSenseUnit from '@/components/AdSenseUnit';
 
 function Logo() {
   return (
@@ -133,13 +134,8 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="lazyOnload"
         />
-        <script async custom-element="amp-auto-ads"
-          src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js" data-ad-client="ca-pub-9187440931404634" />
       </head>
       <body className="font-body antialiased">
-         <amp-auto-ads type="adsense"
-          data-ad-client="ca-pub-9187440931404634">
-        </amp-auto-ads>
         <CurrencyProvider>
           <SidebarProvider>
             <Sidebar>
@@ -211,7 +207,8 @@ export default function RootLayout({
               </SidebarFooter>
             </Sidebar>
             <SidebarInset>
-              <div className="flex flex-col min-h-svh">
+              <div className="relative flex min-h-svh flex-col">
+                 <AdSenseUnit adSlot="5342210952" autoMode='auto' />
                 <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
                     <Logo />
                     <SidebarTrigger>
