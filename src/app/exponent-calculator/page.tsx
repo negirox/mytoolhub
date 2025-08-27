@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Link from 'next/link';
+import RandomAd from '@/components/RandomAd';
 
 export default function ExponentCalculatorPage() {
     const [base, setBase] = useState('2');
@@ -153,6 +154,12 @@ export default function ExponentCalculatorPage() {
                         </CardHeader>
                         <CardContent>
                             <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="item-ad">
+                                    <AccordionTrigger>Advertisement</AccordionTrigger>
+                                    <AccordionContent>
+                                       <RandomAd />
+                                    </AccordionContent>
+                                </AccordionItem>
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>What is an exponent?</AccordionTrigger>
                                     <AccordionContent>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import RandomAd from '@/components/RandomAd';
 
 const formatNumber = (num: number): string => {
     if (Number.isInteger(num)) {
@@ -134,6 +136,12 @@ export default function LogCalculatorPage() {
                         </CardHeader>
                         <CardContent>
                             <Accordion type="single" collapsible className="w-full">
+                                 <AccordionItem value="item-ad">
+                                    <AccordionTrigger>Advertisement</AccordionTrigger>
+                                    <AccordionContent>
+                                       <RandomAd />
+                                    </AccordionContent>
+                                </AccordionItem>
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>What is a logarithm?</AccordionTrigger>
                                     <AccordionContent>

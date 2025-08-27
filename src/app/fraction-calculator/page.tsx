@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 // Helper function to find the greatest common divisor
 const gcd = (a: number, b: number): number => {
@@ -169,6 +170,12 @@ export default function FractionCalculatorPage() {
                 </CardHeader>
                 <CardContent>
                     <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="item-ad">
+                            <AccordionTrigger>Advertisement</AccordionTrigger>
+                            <AccordionContent>
+                               <RandomAd />
+                            </AccordionContent>
+                        </AccordionItem>
                         <AccordionItem value="item-1">
                             <AccordionTrigger>What is a fraction?</AccordionTrigger>
                             <AccordionContent>

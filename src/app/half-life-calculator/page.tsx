@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 const LN2 = Math.log(2); // Natural log of 2, approx 0.693
 
@@ -149,6 +150,12 @@ export default function HalfLifeCalculatorPage() {
                         </CardHeader>
                         <CardContent>
                             <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="item-ad">
+                                    <AccordionTrigger>Advertisement</AccordionTrigger>
+                                    <AccordionContent>
+                                       <RandomAd />
+                                    </AccordionContent>
+                                </AccordionItem>
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>What is half-life?</AccordionTrigger>
                                     <AccordionContent>
