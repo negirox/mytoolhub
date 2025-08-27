@@ -134,7 +134,6 @@ export default function DashboardPage() {
                       <CardContent className="flex-grow">
                         <p className={`text-sm ${category.textColor} opacity-80`}>
                           {category.description}
-                          <GoogleAd slot="5342210952" format="auto" />
                         </p>
                       </CardContent>
                       <div className="flex items-center p-6 pt-0">
