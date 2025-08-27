@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/chart';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import RandomAd from '@/components/RandomAd';
 
 type UnitSystem = 'metric' | 'imperial';
 type Gender = 'male' | 'female';
@@ -279,6 +280,12 @@ export default function CalorieCalculatorPage() {
                         <AccordionTrigger>What is BMR?</AccordionTrigger>
                         <AccordionContent>
                         Basal Metabolic Rate (BMR) is the number of calories your body needs to accomplish its most basic (basal) life-sustaining functions, such as breathing, circulation, nutrient processing, and cell production. This calculator uses the Mifflin-St Jeor equation to estimate your BMR.
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
