@@ -26,6 +26,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import Link from 'next/link';
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 
 const CURRENCIES_URL =
@@ -278,6 +280,21 @@ export default function CurrencyConverterPage() {
                 </CardContent>
              </Card>
           )}
+          <Card>
+              <CardHeader>
+                <CardTitle className="font-headline">Frequently Asked Questions (FAQ)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                            <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
+                 </Accordion>
+              </CardContent>
+          </Card>
         </div>
       </main>
     </TooltipProvider>

@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Upload, Download, Ratio, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import RandomAd from '@/components/RandomAd';
 
 export default function ImageResizerPage() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -193,6 +194,12 @@ export default function ImageResizerPage() {
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-ad">
+                  <AccordionTrigger>Advertisement</AccordionTrigger>
+                  <AccordionContent>
+                      <RandomAd />
+                  </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="item-1">
                   <AccordionTrigger>Is this tool free to use?</AccordionTrigger>
                   <AccordionContent>
