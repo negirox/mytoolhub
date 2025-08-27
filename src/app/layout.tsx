@@ -216,7 +216,9 @@ export default function RootLayout({
                     </SidebarTrigger>
                 </header>
                 <div className="flex-1">
+                <GoogleAd slot="3078648308" format="fluid" layoutKey="-f8+2q+2i-1l-4x" />
                     {children}
+                <GoogleAd slot="7694311040" format="fluid" layout="in-article" />
                 </div>
                 <footer className="mt-auto border-t bg-background/80 py-4 text-center text-xs text-muted-foreground">
                     <div className="container mx-auto">
