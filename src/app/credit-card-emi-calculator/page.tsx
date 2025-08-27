@@ -43,6 +43,7 @@ import { ChevronDown, ChevronRight, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import RandomAd from '@/components/RandomAd';
 
 const GST_RATE = 0.18; // 18% GST
 
@@ -494,31 +495,37 @@ export default function CreditCardEmiCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-1">
                         <AccordionTrigger>How is Credit Card EMI different from a regular loan EMI?</AccordionTrigger>
                         <AccordionContent>
                         Credit Card EMIs often come with higher interest rates than traditional personal loans. They also involve processing fees and GST on those fees, as well as GST on the interest component of each EMI, which this calculator accounts for.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-2">
                         <AccordionTrigger>What is APR (Annual Percentage Rate)?</AccordionTrigger>
                         <AccordionContent>
                         APR represents the true annual cost of your loan, including the interest rate and any pre-GST processing fees. It gives you a more complete picture of the loan's cost than the interest rate alone.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-3">
                         <AccordionTrigger>Why is GST charged on Credit Card EMIs?</AccordionTrigger>
                         <AccordionContent>
                         The Indian government classifies credit card services as a financial service, which is subject to GST. This tax is applied to the processing fee at the time of conversion and to the interest portion of every monthly installment you pay.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-4">
                         <AccordionTrigger>Can I foreclose my Credit Card EMI?</AccordionTrigger>
                         <AccordionContent>
                         Yes, most banks allow you to foreclose (pay off early) your Credit Card EMI. However, they usually charge a foreclosure fee and require you to pay the outstanding principal along with any accrued interest and applicable GST.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-5">
                         <AccordionTrigger>Does converting a purchase to EMI affect my credit score?</AccordionTrigger>
                         <AccordionContent>
                         Converting a large purchase into EMIs and paying them on time can positively affect your credit score as it demonstrates responsible credit behavior. However, defaulting on your EMI payments will negatively impact your score significantly.

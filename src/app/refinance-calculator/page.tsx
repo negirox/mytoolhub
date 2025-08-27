@@ -35,6 +35,7 @@ import {
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import { Info } from 'lucide-react';
 import { Tooltip as UiTooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import RandomAd from '@/components/RandomAd';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -367,6 +368,12 @@ export default function RefinanceCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>What is mortgage refinancing?</AccordionTrigger>
                         <AccordionContent>

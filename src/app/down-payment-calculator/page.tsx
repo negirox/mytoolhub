@@ -44,6 +44,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 
 const currencySymbols: Record<Currency, string> = {
@@ -393,6 +394,12 @@ export default function DownPaymentCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>What is a down payment?</AccordionTrigger>
                         <AccordionContent>

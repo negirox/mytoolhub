@@ -45,6 +45,7 @@ import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, AreaChar
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
+import RandomAd from '@/components/RandomAd';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -371,6 +372,12 @@ export default function RentVsBuyCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>What is the "break-even point"?</AccordionTrigger>
                         <AccordionContent>
