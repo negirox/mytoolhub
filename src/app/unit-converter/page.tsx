@@ -31,6 +31,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import RandomAd from '@/components/RandomAd';
 
 const CONVERSIONS = {
   length: {
@@ -249,6 +250,12 @@ export default function UnitConverterPage() {
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-ad">
+                  <AccordionTrigger>Advertisement</AccordionTrigger>
+                  <AccordionContent>
+                    <RandomAd />
+                  </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                   <AccordionTrigger>Why do we need unit converters?</AccordionTrigger>
                   <AccordionContent>
