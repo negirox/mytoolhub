@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 export default function PercentErrorCalculatorPage() {
     const [observedValue, setObservedValue] = useState('10');
@@ -120,6 +121,12 @@ export default function PercentErrorCalculatorPage() {
                     </CardHeader>
                     <CardContent>
                         <Accordion type="single" collapsible className="w-full">
+                             <AccordionItem value="item-ad">
+                                <AccordionTrigger>Advertisement</AccordionTrigger>
+                                <AccordionContent>
+                                   <RandomAd />
+                                </AccordionContent>
+                            </AccordionItem>
                             <AccordionItem value="item-1">
                                 <AccordionTrigger>What is Percent Error?</AccordionTrigger>
                                 <AccordionContent>

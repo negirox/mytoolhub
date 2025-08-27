@@ -26,6 +26,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import RandomAd from '@/components/RandomAd';
 
 const currencySymbols: Record<Currency, string> = {
   USD: '$',
@@ -207,31 +208,37 @@ export default function RentAffordabilityCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-1">
                         <AccordionTrigger>What is the 30% rule for rent?</AccordionTrigger>
                         <AccordionContent>
                         The 30% rule is a popular financial guideline suggesting you should spend no more than 30% of your gross monthly income on rent. This helps ensure you have enough money left for other expenses like utilities, food, transportation, savings, and debt repayment.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-2">
                         <AccordionTrigger>Should I use my gross or net income to calculate rent?</AccordionTrigger>
                         <AccordionContent>
                          This calculator and most standard guidelines use your gross (pre-tax) income. This is the amount you earn before any taxes or deductions are taken out. Landlords also typically look at gross income when evaluating your rental application.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-3">
                         <AccordionTrigger>What is a Debt-to-Income (DTI) ratio?</AccordionTrigger>
                         <AccordionContent>
                         Your Debt-to-Income (DTI) ratio compares your total monthly debt payments to your gross monthly income. Landlords use it to assess your ability to make rent payments reliably. A common DTI limit for housing is 36%, meaning your rent plus all other debts shouldn't exceed 36% of your income. Our calculator caps the recommendation at this DTI level.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-4">
                         <AccordionTrigger>What other costs should I consider besides rent?</AccordionTrigger>
                         <AccordionContent>
                         Your total housing cost is more than just the rent. Remember to budget for utilities (electricity, gas, water, internet), renter's insurance, parking fees, pet fees, and moving costs. These should be factored into your overall budget.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-5">
                         <AccordionTrigger>Is it always bad to spend more than 30% on rent?</AccordionTrigger>
                         <AccordionContent>
                         Not necessarily. In high-cost-of-living areas, it might be difficult to stay under 30%. If you have no debt, low transportation costs (e.g., you work from home or walk to work), and are frugal in other areas, you might comfortably afford a higher percentage. The 30% rule is a guideline, not a strict rule.

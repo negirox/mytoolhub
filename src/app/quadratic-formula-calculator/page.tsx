@@ -13,6 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import RandomAd from '@/components/RandomAd';
 
 
 // Function to parse potentially fractional input
@@ -226,6 +227,12 @@ export default function QuadraticFormulaCalculatorPage() {
                         </CardHeader>
                         <CardContent>
                             <Accordion type="single" collapsible className="w-full">
+                                 <AccordionItem value="item-ad">
+                                    <AccordionTrigger>Advertisement</AccordionTrigger>
+                                    <AccordionContent>
+                                       <RandomAd />
+                                    </AccordionContent>
+                                </AccordionItem>
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>What is a quadratic equation?</AccordionTrigger>
                                     <AccordionContent>

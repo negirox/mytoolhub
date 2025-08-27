@@ -26,6 +26,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import RandomAd from '@/components/RandomAd';
 
 type UnitSystem = 'metric' | 'imperial';
 type Goal = 'maintenance' | 'fat_loss' | 'muscle_gain';
@@ -191,31 +192,37 @@ export default function ProteinCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-1">
                         <AccordionTrigger>Why is protein important?</AccordionTrigger>
                         <AccordionContent>
                         Protein is a crucial macronutrient that plays a key role in building and repairing tissues, making enzymes and hormones, and supporting immune function. It's especially vital for muscle repair and growth after exercise. For example, after a workout, protein provides the amino acids your body needs to rebuild tiny muscle tears, making them stronger.
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
                         <AccordionTrigger>How does my goal affect my protein needs?</AccordionTrigger>
                         <AccordionContent>
                          Your protein requirements change based on your goals. For muscle gain, you need more protein (e.g., 1.8-2.2g/kg) to provide the building blocks for new muscle tissue. During fat loss, a higher protein intake helps preserve muscle mass while you're in a calorie deficit and can increase satiety, making it easier to stick to your diet.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-3">
                         <AccordionTrigger>What are good sources of protein?</AccordionTrigger>
                         <AccordionContent>
                         Good sources of protein include lean meats (chicken, turkey, beef), fish (salmon, tuna), eggs, dairy products (Greek yogurt, cottage cheese), legumes (beans, lentils), tofu, and protein supplements like whey or casein powder. A single chicken breast can provide about 30g of protein.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-4">
                         <AccordionTrigger>Can I eat too much protein?</AccordionTrigger>
                         <AccordionContent>
                         For most healthy individuals, a high protein intake is generally safe. However, extremely high intakes (e.g., over 3g per kg of body weight) over a long period might pose risks for individuals with pre-existing kidney conditions. It's always best to consume a balanced diet and consult with a healthcare professional if you have concerns.
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                     <AccordionItem value="item-5">
                         <AccordionTrigger>Is this calculator suitable for everyone?</AccordionTrigger>
                         <AccordionContent>
                         This calculator provides general recommendations for healthy adults. Pregnant or breastfeeding women, and individuals with medical conditions (especially kidney disease), should consult a doctor or registered dietitian for personalized advice, as their protein needs may differ significantly.

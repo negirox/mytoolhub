@@ -33,6 +33,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import AdSenseUnit from '@/components/AdSenseUnit';
+import GoogleAd from '@/components/GoogleAd';
 
 function Logo() {
   return (
@@ -215,7 +216,8 @@ export default function RootLayout({
                     </SidebarTrigger>
                 </header>
                 <div className="flex-1">
-                    {children}
+                   {children}
+                <GoogleAd slot="7694311040" format="fluid" layout="in-article" />
                 </div>
                 <footer className="mt-auto border-t bg-background/80 py-4 text-center text-xs text-muted-foreground">
                     <div className="container mx-auto">

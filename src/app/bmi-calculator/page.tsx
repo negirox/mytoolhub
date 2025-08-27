@@ -24,6 +24,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import RandomAd from '@/components/RandomAd';
 
 type UnitSystem = 'metric' | 'imperial';
 
@@ -312,6 +313,12 @@ export default function BmiCalculatorPage() {
                   <AccordionTrigger>What is Body Mass Index (BMI)?</AccordionTrigger>
                   <AccordionContent>
                     Body Mass Index (BMI) is a measure that uses your height and weight to work out if your weight is healthy. The BMI calculation divides an adult's weight in kilograms by their height in metres squared. It is the most widely used measure for assessing weight status. For example, a person who is 1.75m tall and weighs 70kg would have a BMI of 22.9, which is in the healthy range.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-ad">
+                  <AccordionTrigger>Advertisement</AccordionTrigger>
+                  <AccordionContent>
+                    <RandomAd />
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">

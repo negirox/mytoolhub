@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ArrowDown, ArrowUp } from 'lucide-react';
+import RandomAd from '@/components/RandomAd';
 
 export default function PercentageCalculatorPage() {
   // Main Calculator State
@@ -188,6 +189,12 @@ export default function PercentageCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>What is the basic formula for a percentage?</AccordionTrigger>
                         <AccordionContent>

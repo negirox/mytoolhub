@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import RandomAd from '@/components/RandomAd';
 
 const isValidForBase = (str: string, base: number) => {
     if (str === '') return true;
@@ -228,6 +229,12 @@ export default function BinaryCalculatorPage() {
                         </CardHeader>
                         <CardContent>
                             <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="item-ad">
+                                    <AccordionTrigger>Advertisement</AccordionTrigger>
+                                    <AccordionContent>
+                                       <RandomAd />
+                                    </AccordionContent>
+                                </AccordionItem>
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>What is a Number Base?</AccordionTrigger>
                                     <AccordionContent>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Eraser } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 const factorial = (n: number): number => {
     if (n < 0) return NaN; // Factorial is not defined for negative numbers
@@ -253,6 +254,12 @@ export default function ScientificCalculatorPage() {
                 </CardHeader>
                 <CardContent>
                     <Accordion type="single" collapsible className="w-full">
+                         <AccordionItem value="item-ad">
+                            <AccordionTrigger>Advertisement</AccordionTrigger>
+                            <AccordionContent>
+                               <RandomAd />
+                            </AccordionContent>
+                        </AccordionItem>
                         <AccordionItem value="item-1">
                             <AccordionTrigger>How does this calculator handle the order of operations?</AccordionTrigger>
                             <AccordionContent>

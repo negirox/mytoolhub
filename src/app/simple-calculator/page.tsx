@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Eraser } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 export default function SimpleCalculatorPage() {
   const [input, setInput] = useState('');
@@ -191,31 +192,37 @@ export default function SimpleCalculatorPage() {
                 </CardHeader>
                 <CardContent>
                     <Accordion type="single" collapsible className="w-full">
-                        <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
+                         <AccordionItem value="item-ad">
+                            <AccordionTrigger>Advertisement</AccordionTrigger>
+                            <AccordionContent>
+                               <RandomAd />
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="item-1">
                             <AccordionTrigger>How do I use this calculator?</AccordionTrigger>
                             <AccordionContent>
                             Simply use the buttons to input your numbers and select an operator (+, -, ×, ÷). The calculator performs operations sequentially. Press the '=' button to see the final result of your calculation.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="item-2" className="bg-green-50 dark:bg-green-900/20 rounded-lg px-4 mb-2">
+                        <AccordionItem value="item-2">
                             <AccordionTrigger>What does the 'AC' button do?</AccordionTrigger>
                             <AccordionContent>
                             The 'AC' (All Clear) button completely resets the calculator. It clears the current input, any previous input, the selected operator, and the entire calculation history.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="item-3" className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-4 mb-2">
+                        <AccordionItem value="item-3">
                             <AccordionTrigger>How does the history feature work?</AccordionTrigger>
                             <AccordionContent>
                             The calculator automatically saves your last 10 complete calculations in the history panel. Each time you press the '=' button to get a result, that calculation is added to the top of the list.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="item-4" className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-4 mb-2">
+                        <AccordionItem value="item-4">
                             <AccordionTrigger>Does this calculator follow the order of operations (PEMDAS/BODMAS)?</AccordionTrigger>
                             <AccordionContent>
                             No, this is a simple calculator that processes operations sequentially as they are entered. For example, `2 + 3 × 4` will be calculated as `(2 + 3) × 4 = 20`, not `2 + (3 × 4) = 14`. For complex calculations requiring order of operations, a scientific calculator should be used.
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem value="item-5" className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-4 mb-2">
+                        <AccordionItem value="item-5">
                             <AccordionTrigger>How do I correct a mistake?</AccordionTrigger>
                             <AccordionContent>
                             You can use the backspace button (with the eraser icon) to delete the last digit you entered in the current input. If you need to change the entire number or start over, use the 'AC' button.

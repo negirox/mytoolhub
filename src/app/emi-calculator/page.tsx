@@ -58,6 +58,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import RandomAd from '@/components/RandomAd';
 
 
 type PrepaymentFrequency = 'none' | 'monthly' | 'yearly' | 'quarterly';
@@ -641,6 +642,12 @@ export default function EmiCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                     <AccordionItem value="item-ad">
+                        <AccordionTrigger>Advertisement</AccordionTrigger>
+                        <AccordionContent>
+                           <RandomAd />
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>What is an EMI?</AccordionTrigger>
                         <AccordionContent>

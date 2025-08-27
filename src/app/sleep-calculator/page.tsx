@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Clock, Bed, Sunrise, Moon, Star } from 'lucide-react';
+import RandomAd from '@/components/RandomAd';
 
 const TIME_TO_FALL_ASLEEP = 15; // minutes
 const SLEEP_CYCLE_DURATION = 90; // minutes
@@ -129,6 +130,12 @@ export default function SleepCalculatorPage() {
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-ad">
+                      <AccordionTrigger>Advertisement</AccordionTrigger>
+                      <AccordionContent>
+                        <RandomAd />
+                      </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1" className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-4 mb-2">
                         <AccordionTrigger>What is a sleep cycle?</AccordionTrigger>
                         <AccordionContent>

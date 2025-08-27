@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import RandomAd from '@/components/RandomAd';
 
 // Uses crypto.getRandomValues for better randomness than Math.random()
 const randomBigInt = (min: bigint, max: bigint): bigint => {
@@ -185,6 +186,12 @@ export default function RandomNumberGeneratorPage() {
                     </CardHeader>
                     <CardContent>
                         <Accordion type="single" collapsible className="w-full">
+                            <AccordionItem value="item-ad">
+                                <AccordionTrigger>Advertisement</AccordionTrigger>
+                                <AccordionContent>
+                                   <RandomAd />
+                                </AccordionContent>
+                            </AccordionItem>
                             <AccordionItem value="item-1">
                                 <AccordionTrigger>Are these numbers truly random?</AccordionTrigger>
                                 <AccordionContent>

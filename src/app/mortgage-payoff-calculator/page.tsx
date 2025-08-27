@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import RandomAd from '@/components/RandomAd';
 
 
 const currencySymbols: Record<Currency, string> = {
@@ -337,6 +338,12 @@ export default function MortgagePayoffCalculatorPage() {
                 </CardHeader>
                 <CardContent>
                     <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="item-ad">
+                            <AccordionTrigger>Advertisement</AccordionTrigger>
+                            <AccordionContent>
+                               <RandomAd />
+                            </AccordionContent>
+                        </AccordionItem>
                         <AccordionItem value="item-1">
                             <AccordionTrigger>How do extra payments save me money?</AccordionTrigger>
                             <AccordionContent>
