@@ -22,6 +22,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CurrencyContext, Currency } from '@/context/CurrencyContext';
+import GoogleAd from '@/components/GoogleAd';
 
 
 const categories = [
@@ -109,6 +110,9 @@ export default function DashboardPage() {
                 <p>
                   Whether you're calculating your BMI for health tracking, planning your finances with our detailed EMI and loan calculators, or converting units on the fly, MyToolHub has you covered. Each tool is crafted to be intuitive, mobile-friendly, and completely private—all calculations happen on your device. Explore our collection below and stay tuned as we continuously expand our toolkit!
                 </p>
+                <p>
+                <GoogleAd slot="3078648308" format="fluid" layoutKey="-f8+2q+2i-1l-4x" />
+                </p>
               </div>
               <div className="flex-shrink-0">
                 <Clock />
@@ -130,6 +134,7 @@ export default function DashboardPage() {
                       <CardContent className="flex-grow">
                         <p className={`text-sm ${category.textColor} opacity-80`}>
                           {category.description}
+                          <GoogleAd slot="5342210952" format="auto" />
                         </p>
                       </CardContent>
                       <div className="flex items-center p-6 pt-0">

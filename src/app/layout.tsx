@@ -33,6 +33,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import AdSenseUnit from '@/components/AdSenseUnit';
+import GoogleAd from '@/components/GoogleAd';
 
 function Logo() {
   return (
@@ -167,6 +168,7 @@ export default function RootLayout({
                               <div className="flex items-center gap-2">
                                 {group.icon}
                                 <span>{group.heading}</span>
+                                <GoogleAd slot="5342210952" format="auto" />
                               </div>
                             </Link>
                           </SidebarMenuButton>
